@@ -1,0 +1,38 @@
+// Prisma schema — production-ready relational model.
+// The MVP runtime uses a file-backed JSON store with the same shape
+// (see src/lib/db.ts) so it runs without a database server.
+// To switch to Postgres: set DATABASE_URL, run `prisma migrate dev`,
+// and replace db.ts with Prisma Client calls. Table names match below.
+
+generator client {
+  provider = "sqlite"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  websites     Website[]
+}
+
+model Website {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  slug         String   @unique
+  templateId   String
+  status       String   @default("draft")
+  config       String   // versioned WebsiteConfig JSON
+  customDomain String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  publishedAt  DateTime?
+}

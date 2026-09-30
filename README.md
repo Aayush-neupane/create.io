@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# create.io — Build a website without building it from scratch
 
-## Getting Started
+Choose a professionally designed template, add your content, customize the look, and publish in minutes.
 
-First, run the development server:
+## Quickstart
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev   # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+No database server needed for local dev — websites persist to `./data/*.json` and uploads to `public/uploads/`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Flow
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Landing → Templates → Template preview → Signup → New website → Builder → Publish → `/s/:slug`
 
-## Learn More
+## Architecture
 
-To learn more about Next.js, take a look at the following resources:
+- `src/lib/templates.ts` — 6 template definitions (portfolio, photography, business, restaurant, agency, SaaS)
+- `src/lib/website-defaults.ts` — default content + theme presets
+- `src/components/sections/Sections.tsx` — reusable section components with variants
+- `src/components/templates/Renderer.tsx` — single `TemplateRenderer` used by builder preview AND published site
+- `src/components/builder/BuilderClient.tsx` — 3-panel builder with undo/redo + autosave
+- `src/lib/db.ts` — file JSON store mirroring `prisma/schema.prisma` (swap for Postgres in production)
+- `src/lib/auth.ts` — bcrypt + JWT (jose) httpOnly cookies, ownership checks on every API route
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Production notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Set `AUTH_SECRET` (32+ chars) and `NEXT_PUBLIC_BASE_URL`
+- `prisma/schema.prisma` is Postgres-ready; run migrations and point `db.ts` at Prisma Client
+- Uploads currently use local disk — swap `src/app/api/upload/route.ts` for S3/R2
+- Custom domains: per-site field + DNS instructions in Settings; wire edge routing when ready

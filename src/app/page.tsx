@@ -131,6 +131,18 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* Social proof strip */}
+      <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 72 }}>
+        <p className="mono-meta text-center text-[11px] uppercase" style={{ letterSpacing: "0.16em", color: "var(--ink-3)" }}>
+          Powering new sites from Kathmandu to Pokhara
+        </p>
+        <ul className="mt-5 flex flex-wrap justify-center gap-2">
+          {["freelancers", "trekking guides", "thakali kitchens", "saas startups", "photographers", "consultants", "event planners"].map((s) => (
+            <li key={s} className="rounded-full border px-3.5 py-1.5 text-[13px]" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)", background: "var(--surface)" }}>{s}</li>
+          ))}
+        </ul>
+      </section>
+
       {/* Site kits */}
       <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
         <div className="mb-10 grid justify-items-center gap-4 text-center">
@@ -186,6 +198,77 @@ export default async function LandingPage() {
         </ol>
       </section>
 
+      {/* Builder deep-dive */}
+      <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
+        <div className="card grid gap-10 overflow-hidden p-8 md:grid-cols-2 md:p-12">
+          <div>
+            <p className="eyebrow">The builder</p>
+            <h2 className="mt-3 max-w-md text-4xl font-semibold md:text-5xl">
+              Feels like filling a form. <span className="serif-accent">Looks like hiring an agency.</span>
+            </h2>
+            <ul className="mt-7 space-y-3.5">
+              {[
+                ["Edit anything", "Every word, photo, price and hour is a plain field. Nothing to break."],
+                ["Signature stays intact", "Sections come from the template's own library, so taste is built in."],
+                ["Undo everything", "Full history, autosave, and one-click publish when it feels right."],
+              ].map(([t, d]) => (
+                <li key={t} className="flex gap-3.5">
+                  <span className="icon-tile" aria-hidden>✓</span>
+                  <div>
+                    <p className="font-semibold" style={{ letterSpacing: "-0.015em" }}>{t}</p>
+                    <p className="text-sm" style={{ color: "var(--ink-2)" }}>{d}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <Link href="/new" className="btn-primary mt-8" style={{ height: 46, padding: "0 22px" }}>Try the builder</Link>
+          </div>
+          <div className="grid content-start gap-3 rounded-[20px] border p-5" style={{ borderColor: "var(--line)", background: "var(--paper)" }}>
+            <p className="mono-meta text-[11px] uppercase" style={{ letterSpacing: "0.12em", color: "var(--ink-3)" }}>Ember and Oak — menu section</p>
+            {[
+              ["Charred Sourdough", "Rs. 550"],
+              ["Chicken Sekuwa Plate", "Rs. 1,150"],
+              ["Juju Dhau", "Rs. 350"],
+            ].map(([n, p]) => (
+              <div key={n} className="flex items-baseline gap-2 rounded-xl border bg-white px-4 py-3 text-sm" style={{ borderColor: "var(--line)" }}>
+                <span className="font-medium">{n}</span>
+                <span className="mx-1 flex-1 border-b border-dotted" style={{ borderColor: "var(--ink-3)" }} />
+                <span className="font-mono text-[13px] font-semibold">{p}</span>
+              </div>
+            ))}
+            <div className="flex gap-2">
+              <span className="rounded-lg px-3 py-2 text-center text-xs font-semibold text-white" style={{ background: "var(--ink)" }}>Hide</span>
+              <span className="rounded-lg border px-3 py-2 text-center text-xs font-medium" style={{ borderColor: "var(--line-2)" }}>Duplicate</span>
+              <span className="rounded-lg border px-3 py-2 text-center text-xs font-medium" style={{ borderColor: "var(--line-2)" }}>Variant: Grouped</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
+        <div className="mb-10 grid justify-items-center gap-4 text-center">
+          <p className="eyebrow">Wall of love</p>
+          <h2 className="max-w-xl text-4xl font-semibold md:text-5xl">Namaste, <span className="serif-accent">new website.</span></h2>
+        </div>
+        <div className="grid gap-3.5 md:grid-cols-3">
+          {[
+            ["I published my trekking site between two bus rides to Pokhara. Bookings came before I got home.", "Binod Thapa", "Guide, Himalayan Trails"],
+            ["Clients think I hired an agency in Jhamsikhel. It was me, on a Sunday, with chiya.", "Sabina Karki", "Designer, Lalitpur"],
+            ["Our momo menu finally looks as good as it tastes. Weekend covers are up.", "Tashi Sherpa", "Owner, Lakeside Kitchen"],
+          ].map(([m, n, r]) => (
+            <figure key={n} className="card card-hover flex flex-col p-[26px]">
+              <span className="serif-accent text-3xl" aria-hidden>“</span>
+              <blockquote className="flex-1 text-[15px] leading-relaxed">{m}</blockquote>
+              <figcaption className="mt-5 border-t pt-4 text-sm" style={{ borderColor: "var(--line)" }}>
+                <span className="font-semibold">{n}</span><br />
+                <span style={{ color: "var(--ink-2)" }}>{r}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
       {/* Principles */}
       <section id="features" className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
         <div className="mb-10 grid justify-items-center gap-4 text-center">
@@ -206,6 +289,27 @@ export default async function LandingPage() {
             <li key={s} className="mono-meta rounded-full border px-3.5 py-1.5 text-xs" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)" }}>{s}</li>
           ))}
         </ul>
+      </section>
+
+      {/* FAQ */}
+      <section className="mx-auto max-w-3xl px-6" style={{ paddingTop: 120 }}>
+        <div className="mb-8 grid justify-items-center gap-4 text-center">
+          <p className="eyebrow">Fair questions</p>
+          <h2 className="text-4xl font-semibold md:text-5xl">Asked <span className="serif-accent">often.</span></h2>
+        </div>
+        <div className="divide-y border-y" style={{ borderColor: "var(--line)" }}>
+          {[
+            ["Do I need to write any code?", "Never. If you can fill a form and upload a photo, you can ship a site."],
+            ["Can I use my own domain?", "Yes. Point your domain at us from the builder settings — .com.np works too."],
+            ["What does it cost?", "Starting is free. Paid plans unlock premium sites, custom domains and analytics."],
+            ["I run a shop in Asan, not a startup. Will this work?", "That is exactly who it is for. Menus, hours, price lists and contact pages are first-class."],
+          ].map(([q, a]) => (
+            <details key={q} className="group py-5">
+              <summary className="cursor-pointer list-none font-semibold" style={{ letterSpacing: "-0.015em" }}>{q}<span className="float-right opacity-40 transition group-open:rotate-45">＋</span></summary>
+              <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{a}</p>
+            </details>
+          ))}
+        </div>
       </section>
 
       {/* CTA */}

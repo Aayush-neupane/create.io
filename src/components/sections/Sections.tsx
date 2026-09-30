@@ -31,9 +31,9 @@ export function containerWidth(theme: ThemeConfig): string {
 }
 
 export function sectionPad(theme: ThemeConfig): string {
-  if (theme.sectionSpacing === "compact") return "py-10 md:py-14";
-  if (theme.sectionSpacing === "spacious") return "py-20 md:py-28";
-  return "py-14 md:py-20";
+  if (theme.sectionSpacing === "compact") return "py-12 md:py-16";
+  if (theme.sectionSpacing === "spacious") return "py-24 md:py-32";
+  return "py-16 md:py-24";
 }
 
 export function btnRadius(theme: ThemeConfig): string {
@@ -46,7 +46,7 @@ export function H({ theme, children, className = "" }: { theme: ThemeConfig; chi
   return (
     <h2
       className={className}
-      style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.875rem * ${theme.headingScale})`, fontWeight: 650, letterSpacing: "-0.02em", lineHeight: 1.15 }}
+      style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 700, letterSpacing: "-0.035em", lineHeight: 1.08, textWrap: "balance" }}
     >
       {children}
     </h2>
@@ -55,7 +55,8 @@ export function H({ theme, children, className = "" }: { theme: ThemeConfig; chi
 
 export function Eyebrow({ theme, children }: { theme: ThemeConfig; children: React.ReactNode }) {
   return (
-    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em]" style={{ color: theme.accent }}>
+    <p className="mb-3 flex items-center gap-2 font-mono text-xs font-medium uppercase" style={{ letterSpacing: "0.14em", color: theme.accent }}>
+      <span aria-hidden style={{ width: 18, height: 1, background: "currentColor", opacity: 0.7 }} />
       {children}
     </p>
   );

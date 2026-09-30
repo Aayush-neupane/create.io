@@ -57,7 +57,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     mode: "light",
     tier: "free",
     thumbnailGradient: "linear-gradient(135deg,#eff6ff,#dbeafe)",
-    theme: { ...t, primary: "#1e3a5f", secondary: "#475569", background: "#ffffff", surface: "#f1f5f9", text: "#0f172a", muted: "#64748b", accent: "#2563eb", fontHeading: "Sora", fontBody: "Inter", radius: 8 },
+    theme: { ...t, primary: "#1e3a5f", secondary: "#475569", background: "#ffffff", surface: "#f1f5f9", text: "#0f172a", muted: "#64748b", accent: "#2563eb", fontHeading: "Plus Jakarta Sans", fontBody: "Inter", radius: 8 },
     sections: [
       { type: "navbar", variant: "solid" },
       { type: "hero", variant: "editorial" },
@@ -80,7 +80,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     mode: "light",
     tier: "free",
     thumbnailGradient: "linear-gradient(135deg,#fffbeb,#fed7aa)",
-    theme: { ...t, primary: "#7c2d12", secondary: "#9a3412", background: "#fffdf7", surface: "#fef3e8", text: "#292019", muted: "#8a7a6b", accent: "#ea580c", fontHeading: "Fraunces", fontBody: "DM Sans", radius: 12 },
+    theme: { ...t, primary: "#7c2d12", secondary: "#9a3412", background: "#fffdf7", surface: "#fef3e8", text: "#292019", muted: "#8a7a6b", accent: "#ea580c", fontHeading: "Fraunces", fontBody: "Inter", radius: 12 },
     sections: [
       { type: "navbar", variant: "centered" },
       { type: "hero", variant: "image" },
@@ -126,7 +126,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     mode: "light",
     tier: "premium",
     thumbnailGradient: "linear-gradient(135deg,#ecfdf5,#d1fae5)",
-    theme: { ...t, primary: "#064e3b", secondary: "#047857", background: "#ffffff", surface: "#ecfdf5", text: "#0b1f17", muted: "#5f7267", accent: "#10b981", fontHeading: "Manrope", fontBody: "Inter", radius: 12 },
+    theme: { ...t, primary: "#064e3b", secondary: "#047857", background: "#ffffff", surface: "#ecfdf5", text: "#0b1f17", muted: "#5f7267", accent: "#10b981", fontHeading: "Plus Jakarta Sans", fontBody: "Inter", radius: 12 },
     sections: [
       { type: "navbar", variant: "solid" },
       { type: "hero", variant: "split" },

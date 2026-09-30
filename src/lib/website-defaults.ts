@@ -3,17 +3,11 @@ import { templateSeedContent } from "@/templates";
 
 export const FONT_CHOICES = [
   "Inter",
-  "Geist",
-  "Manrope",
-  "DM Sans",
-  "Sora",
+  "Plus Jakarta Sans",
   "Space Grotesk",
   "Fraunces",
-  "Playfair Display",
-  "Libre Baskerville",
+  "Newsreader",
   "JetBrains Mono",
-  "IBM Plex Serif",
-  "Instrument Serif",
 ];
 
 export const THEME_PRESETS: { name: string; theme: Partial<ThemeConfig> }[] = [

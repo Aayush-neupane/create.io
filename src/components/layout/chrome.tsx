@@ -122,9 +122,31 @@ export function Footer() {
           </div>
         ))}
       </div>
-      <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3 px-6 pb-9 pt-5 text-[13px]" style={{ borderTop: "1px solid var(--line)", color: "var(--ink-3)" }}>
+      <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3 px-6 pb-6 pt-5 text-[13px]" style={{ borderTop: "1px solid var(--line)", color: "var(--ink-3)" }}>
         <span>© 2026 create.io — Minimal sites. Maximum voltage.</span>
         <span className="mono-meta text-xs">paper · jakarta · newsreader · mono</span>
+      </div>
+      <div className="mx-auto max-w-7xl px-6 pb-9">
+        <a
+          href="https://dynamic-aayush38.netlify.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Aayush Neupane — portfolio"
+          className="mx-auto flex w-full max-w-xl items-center justify-center gap-2.5 font-mono text-[0.7rem] uppercase tracking-[0.14em] transition-colors duration-200"
+          style={{ color: "var(--ink-3)" }}
+        >
+          <Image
+            src="/logo.png"
+            alt="Aayush Neupane"
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded-full border object-cover"
+            style={{ borderColor: "var(--line-2)" }}
+          />
+          <span>
+            Developed by <span className="underline-offset-4 hover:underline" style={{ color: "var(--ink)" }}>Aayush Neupane</span>
+          </span>
+        </a>
       </div>
     </footer>
   );

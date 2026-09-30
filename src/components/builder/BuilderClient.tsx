@@ -3,19 +3,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { SectionInstance, SectionType, ThemeConfig, WebsiteConfig, WebsiteRecord } from "@/types/builder";
+import type { PageConfig, SectionInstance, SectionType, ThemeConfig, WebsiteConfig, WebsiteRecord } from "@/types/builder";
 import { TemplateRenderer, SECTION_META } from "@/components/templates/Renderer";
 import { LogoTile } from "@/components/layout/chrome";
 import { isBespoke } from "@/templates";
-import { FONT_CHOICES, THEME_PRESETS, defaultSection, sid } from "@/lib/website-defaults";
+import { FONT_CHOICES, THEME_PRESETS, defaultSection, sanitizePagePath, sid } from "@/lib/website-defaults";
 import { TextField, AreaField, ImageField, ListShell, ItemCard } from "./fields";
 
-type Tab = "content" | "sections" | "design" | "seo" | "settings";
+type Tab = "content" | "sections" | "pages" | "design" | "seo" | "settings";
 type SaveState = "saved" | "saving" | "dirty" | "error";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "content", label: "Content" },
   { id: "sections", label: "Sections" },
+  { id: "pages", label: "Pages" },
   { id: "design", label: "Design" },
   { id: "seo", label: "SEO" },
   { id: "settings", label: "Settings" },
@@ -48,6 +49,7 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
   const [saveState, setSaveState] = useState<SaveState>("saved");
   const [saveMsg, setSaveMsg] = useState("");
   const [publishing, setPublishing] = useState(false);
+  const [activePageId, setActivePageId] = useState<string | null>(null);
 
   const past = useRef<WebsiteConfig[]>([]);
   const future = useRef<WebsiteConfig[]>([]);
@@ -131,43 +133,84 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
     await saveNow("draft");
   }
 
-  const selected = useMemo(() => config.sections.find((s) => s.id === selectedId) ?? null, [config, selectedId]);
+  const activePage = useMemo(() => (config.pages ?? []).find((p) => p.id === activePageId) ?? null, [config, activePageId]);
+  const activeSections = activePage ? activePage.sections : config.sections;
+  const activeConfig: WebsiteConfig = useMemo(() => ({ ...config, sections: activeSections }), [config, activeSections]);
+  function setActiveSections(fn: (list: SectionInstance[]) => SectionInstance[]) {
+    if (activePage) {
+      commit({ ...config, pages: (config.pages ?? []).map((p) => (p.id === activePage.id ? { ...p, sections: fn(p.sections) } : p)) });
+    } else {
+      commit({ ...config, sections: fn(config.sections) });
+    }
+  }
+  function switchPage(id: string | null) {
+    setActivePageId(id);
+    setSelectedId(null);
+    setTab("content");
+  }
+  function addPage(title: string) {
+    const clean = title.trim() || "New page";
+    let path = sanitizePagePath(clean);
+    const taken = new Set((config.pages ?? []).map((p) => p.path));
+    let n = 1;
+    while (taken.has(path)) path = `${sanitizePagePath(clean)}-${++n}`;
+    const page: PageConfig = { id: sid("page"), title: clean, path, sections: [] };
+    commit({ ...config, pages: [...(config.pages ?? []), page] });
+    setActivePageId(page.id);
+    setTab("sections");
+  }
+  function renamePage(id: string, title: string, path: string) {
+    const cleanTitle = title.trim() || "Page";
+    let cleanPath = sanitizePagePath(path || cleanTitle);
+    const taken = new Set((config.pages ?? []).filter((p) => p.id !== id).map((p) => p.path));
+    let n = 1;
+    while (taken.has(cleanPath)) cleanPath = `${sanitizePagePath(path || cleanTitle)}-${++n}`;
+    commit({ ...config, pages: (config.pages ?? []).map((p) => (p.id === id ? { ...p, title: cleanTitle, path: cleanPath } : p)) });
+  }
+  function removePage(id: string) {
+    if (!confirm("Delete this page and all its sections?")) return;
+    commit({ ...config, pages: (config.pages ?? []).filter((p) => p.id !== id) });
+    if (activePageId === id) { setActivePageId(null); setSelectedId(null); }
+  }
+  const selected = useMemo(() => activeSections.find((s) => s.id === selectedId) ?? null, [activeSections, selectedId]);
   const previewWidth = device === "mobile" ? "max-w-[390px]" : device === "tablet" ? "max-w-[768px]" : "max-w-none";
 
   function patchTheme(p: Partial<ThemeConfig>) {
     commit({ ...config, theme: { ...config.theme, ...p } });
   }
   function patchSection(id: string, fn: (s: SectionInstance) => SectionInstance) {
-    commit({ ...config, sections: config.sections.map((s) => (s.id === id ? fn(s) : s)) });
+    setActiveSections((list) => list.map((s) => (s.id === id ? fn(s) : s)));
   }
   function reorderSection(id: string, dir: -1 | 1) {
-    const idx = config.sections.findIndex((s) => s.id === id);
-    commit({ ...config, sections: move(config.sections, idx, dir) });
+    setActiveSections((list) => move(list, list.findIndex((s) => s.id === id), dir));
   }
   function toggleSection(id: string) {
     patchSection(id, (s) => ({ ...s, enabled: !s.enabled }));
   }
   function removeSection(id: string) {
-    const s = config.sections.find((x) => x.id === id);
+    const s = activeSections.find((x) => x.id === id);
     if (!s) return;
     if (!SECTION_META[s.type]?.deletable) return;
     if (!confirm(`Remove ${SECTION_META[s.type].label} section?`)) return;
-    commit({ ...config, sections: config.sections.filter((x) => x.id !== id) });
+    setActiveSections((list) => list.filter((x) => x.id !== id));
     if (selectedId === id) setSelectedId(null);
   }
   function duplicateSection(id: string) {
-    const s = config.sections.find((x) => x.id === id);
+    const s = activeSections.find((x) => x.id === id);
     if (!s) return;
     const copy: SectionInstance = { ...s, id: sid(s.type), content: JSON.parse(JSON.stringify(s.content)) };
-    const idx = config.sections.findIndex((x) => x.id === id);
-    const next = [...config.sections];
-    next.splice(idx + 1, 0, copy);
-    commit({ ...config, sections: next });
+    setActiveSections((list) => {
+      const idx = list.findIndex((x) => x.id === id);
+      const next = [...list];
+      next.splice(idx + 1, 0, copy);
+      return next;
+    });
+    setSelectedId(copy.id);
   }
   function addSection(type: SectionType) {
     const meta = SECTION_META[type];
     const inst = defaultSection(type, meta.variants[0].id);
-    commit({ ...config, sections: [...config.sections, inst] });
+    setActiveSections((list) => [...list, inst]);
     setSelectedId(inst.id);
     setTab("content");
   }
@@ -222,8 +265,9 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
             ))}
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-3">
-            {tab === "content" && <ContentPanel config={config} selected={selected} onSelect={setSelectedId} onPatch={patchSection} />}
-            {tab === "sections" && <SectionsPanel config={config} selectedId={selectedId} onSelect={(id) => { setSelectedId(id); }} onToggle={toggleSection} onMove={reorderSection} onRemove={removeSection} onDuplicate={duplicateSection} onAdd={addSection} />}
+            {tab === "content" && <ContentPanel config={activeConfig} selected={selected} onSelect={setSelectedId} onPatch={patchSection} pageLabel={activePage ? activePage.title : "Home"} />}
+            {tab === "sections" && <SectionsPanel config={activeConfig} selectedId={selectedId} onSelect={(id) => { setSelectedId(id); }} onToggle={toggleSection} onMove={reorderSection} onRemove={removeSection} onDuplicate={duplicateSection} onAdd={addSection} pageLabel={activePage ? activePage.title : "Home"} />}
+            {tab === "pages" && <PagesPanel config={config} activePageId={activePageId} onSwitch={switchPage} onAdd={addPage} onRename={renamePage} onRemove={removePage} siteSlug={site.slug} />}
             {tab === "design" && <DesignPanel theme={config.theme} onPatch={patchTheme} onCustomCss={(v) => commit({ ...config, customCss: v })} customCss={config.customCss || ""} />}
             {tab === "seo" && <SeoPanel config={config} onCommit={commit} />}
             {tab === "settings" && <SettingsPanel site={site} config={config} onCommit={commit} onSite={setSite} />}
@@ -235,7 +279,12 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
           <div className="flex-1 overflow-auto p-4 md:p-6">
             <div className={`mx-auto overflow-hidden rounded-2xl border bg-white transition-all ${previewWidth}`} style={{ borderColor: "var(--line-2)", boxShadow: "0 30px 80px -40px rgba(23,23,27,.35)" }}>
               <div className="builder-preview">
-                <TemplateRenderer config={config} templateId={site.templateId} />
+                {activePage && (
+                  <p className="mono-meta mx-auto mb-2 w-fit rounded-full border bg-white px-3 py-1 text-[11px]" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)" }}>
+                    Editing page: {activePage.title} · /s/{site.slug}/{activePage.path}
+                  </p>
+                )}
+                <TemplateRenderer config={config} templateId={site.templateId} slug={site.slug} pagePath={activePage?.path} />
               </div>
             </div>
           </div>
@@ -261,13 +310,13 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
 }
 
 // ─── LEFT: content ───
-function ContentPanel({ config, selected, onSelect, onPatch }: {
+function ContentPanel({ config, selected, onSelect, onPatch, pageLabel }: {
   config: WebsiteConfig; selected: SectionInstance | null; onSelect: (id: string) => void;
-  onPatch: (id: string, fn: (s: SectionInstance) => SectionInstance) => void;
+  onPatch: (id: string, fn: (s: SectionInstance) => SectionInstance) => void; pageLabel: string;
 }) {
   return (
     <div className="space-y-2">
-      <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">Page sections</p>
+      <p className="mono-meta px-1 text-[10.5px] font-semibold uppercase" style={{ letterSpacing: "0.12em", color: "var(--ink-3)" }}>Editing · {pageLabel}</p>
       {config.sections.map((s) => (
         <button key={s.id} onClick={() => onSelect(s.id)} className={`flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left text-[13px] ${selected?.id === s.id ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 bg-white"}`}>
           <span className="text-neutral-400">☰</span>
@@ -416,14 +465,14 @@ export function SectionFields({ section, onChange, onReplace }: {
 }
 
 // ─── Sections panel ───
-function SectionsPanel({ config, selectedId, onSelect, onToggle, onMove, onRemove, onDuplicate, onAdd }: {
+function SectionsPanel({ config, selectedId, onSelect, onToggle, onMove, onRemove, onDuplicate, onAdd, pageLabel }: {
   config: WebsiteConfig; selectedId: string | null; onSelect: (id: string) => void;
-  onToggle: (id: string) => void; onMove: (id: string, d: -1 | 1) => void; onRemove: (id: string) => void; onDuplicate: (id: string) => void; onAdd: (t: SectionType) => void;
+  onToggle: (id: string) => void; onMove: (id: string, d: -1 | 1) => void; onRemove: (id: string) => void; onDuplicate: (id: string) => void; onAdd: (t: SectionType) => void; pageLabel: string;
 }) {
   const [dragId, setDragId] = useState<string | null>(null);
   return (
     <div className="space-y-2">
-      <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">Reorder · toggle · edit</p>
+      <p className="mono-meta px-1 text-[10.5px] font-semibold uppercase" style={{ letterSpacing: "0.12em", color: "var(--ink-3)" }}>Sections · {pageLabel}</p>
       {config.sections.map((s) => (
         <div key={s.id} draggable onDragStart={() => setDragId(s.id)} onDragOver={(e) => e.preventDefault()} onDrop={() => { /* simple: move via order */ setDragId(null); }}
           onClick={() => onSelect(s.id)}
@@ -432,9 +481,11 @@ function SectionsPanel({ config, selectedId, onSelect, onToggle, onMove, onRemov
           <span className="font-medium">{SECTION_META[s.type]?.label}</span>
           <span className="text-[11px] text-neutral-400">{s.variant}</span>
           <span className="ml-auto flex gap-1" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => onMove(s.id, -1)} className="rounded border border-neutral-200 px-1 text-[11px]">↑</button>
-            <button onClick={() => onMove(s.id, 1)} className="rounded border border-neutral-200 px-1 text-[11px]">↓</button>
-            <button onClick={() => onToggle(s.id)} className="rounded border border-neutral-200 px-1.5 text-[11px]">{s.enabled ? "Hide" : "Show"}</button>
+            <button onClick={() => onMove(s.id, -1)} title="Move up" className="rounded border border-neutral-200 px-1 text-[11px]">↑</button>
+            <button onClick={() => onMove(s.id, 1)} title="Move down" className="rounded border border-neutral-200 px-1 text-[11px]">↓</button>
+            <button onClick={() => onToggle(s.id)} title={s.enabled ? "Hide section" : "Show section"} className="rounded border border-neutral-200 px-1.5 text-[11px]">{s.enabled ? "Hide" : "Show"}</button>
+            <button onClick={() => onDuplicate(s.id)} title="Duplicate section" className="rounded border border-neutral-200 px-1 text-[11px]">⧉</button>
+            {SECTION_META[s.type]?.deletable && <button onClick={() => onRemove(s.id)} title="Delete section" className="rounded border border-neutral-200 px-1 text-[11px] text-red-600">✕</button>}
           </span>
         </div>
       ))}
@@ -447,6 +498,72 @@ function SectionsPanel({ config, selectedId, onSelect, onToggle, onMove, onRemov
         </div>
       </div>
       {dragId && <p className="text-[11px] text-neutral-400">Drag to reorder — use ↑ ↓ for precise placement.</p>}
+    </div>
+  );
+}
+
+// ─── Pages ───
+function PagesPanel({ config, activePageId, onSwitch, onAdd, onRename, onRemove, siteSlug }: {
+  config: WebsiteConfig; activePageId: string | null;
+  onSwitch: (id: string | null) => void; onAdd: (title: string) => void;
+  onRename: (id: string, title: string, path: string) => void; onRemove: (id: string) => void;
+  siteSlug: string;
+}) {
+  const [draft, setDraft] = useState("");
+  const [editing, setEditing] = useState<string | null>(null);
+  const [eTitle, setETitle] = useState("");
+  const [ePath, setEPath] = useState("");
+  const pages = config.pages ?? [];
+  function startEdit(p: PageConfig) {
+    setEditing(p.id);
+    setETitle(p.title);
+    setEPath(p.path);
+  }
+  return (
+    <div className="space-y-2">
+      <p className="mono-meta px-1 text-[10.5px] font-semibold uppercase" style={{ letterSpacing: "0.12em", color: "var(--ink-3)" }}>Whole site · {pages.length + 1} pages</p>
+      <button
+        onClick={() => onSwitch(null)}
+        className={`flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left text-[13px] ${activePageId === null ? "font-semibold text-white" : "bg-white"}`}
+        style={activePageId === null ? { background: "var(--ink)", borderColor: "var(--ink)" } : { borderColor: "var(--line)" }}
+      >
+        <span className="font-mono text-[11px] opacity-60">/</span>
+        <span>Home</span>
+        <span className="mono-meta ml-auto text-[10px] opacity-60">/s/{siteSlug}</span>
+      </button>
+      {pages.map((p) => (
+        <div key={p.id} className="rounded-lg border bg-white" style={{ borderColor: activePageId === p.id ? "var(--ink)" : "var(--line)" }}>
+          <button onClick={() => onSwitch(p.id)} className="flex w-full items-center gap-2 px-2.5 py-2 text-left text-[13px]">
+            <span className="font-mono text-[11px] opacity-60">/{p.path}</span>
+            <span className="font-medium">{p.title}</span>
+            <span className="mono-meta ml-auto text-[10px] opacity-60">{p.sections.length} sections</span>
+          </button>
+          {editing === p.id ? (
+            <div className="space-y-2 border-t px-2.5 py-2.5" style={{ borderColor: "var(--line)" }}>
+              <input value={eTitle} onChange={(e) => setETitle(e.target.value)} placeholder="Page title" className="w-full rounded-md border px-2 py-1.5 text-[13px]" />
+              <div className="flex items-center gap-1.5">
+                <span className="font-mono text-[11px] opacity-60">/s/{siteSlug}/</span>
+                <input value={ePath} onChange={(e) => setEPath(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} className="w-full rounded-md border px-2 py-1.5 font-mono text-[13px]" />
+              </div>
+              <div className="flex gap-1.5">
+                <button onClick={() => { onRename(p.id, eTitle, ePath); setEditing(null); }} className="flex-1 rounded-md px-2 py-1.5 text-xs font-semibold text-white" style={{ background: "var(--ink)" }}>Save</button>
+                <button onClick={() => setEditing(null)} className="rounded-md border px-3 py-1.5 text-xs" style={{ borderColor: "var(--line-2)" }}>Cancel</button>
+                <button onClick={() => { onRemove(p.id); setEditing(null); }} className="rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-600">Delete</button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex gap-1.5 px-2.5 pb-2">
+              <button onClick={() => startEdit(p)} className="text-[11px] underline opacity-60">Rename / path</button>
+              <a href={`/s/${siteSlug}/${p.path}`} target="_blank" className="text-[11px] underline opacity-60">Visit ↗</a>
+            </div>
+          )}
+        </div>
+      ))}
+      <div className="flex gap-1.5 pt-1">
+        <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="New page title…" className="w-full rounded-lg border px-2.5 py-2 text-[13px]" />
+        <button onClick={() => { if (draft.trim()) { onAdd(draft); setDraft(""); } }} className="rounded-lg px-3 py-2 text-[13px] font-semibold text-white" style={{ background: "var(--ink)" }}>Add</button>
+      </div>
+      <p className="px-1 text-[11px] leading-relaxed opacity-60">New pages appear in the navbar automatically. Each page has its own sections.</p>
     </div>
   );
 }
@@ -528,6 +645,7 @@ function SeoPanel({ config, onCommit }: { config: WebsiteConfig; onCommit: (c: W
       <TextField label="SEO title" value={seo.title} onChange={(v) => set({ title: v })} />
       <AreaField label="SEO description" value={seo.description} onChange={(v) => set({ description: v })} />
       <ImageField label="Social preview image" value={seo.socialImage} onChange={(v) => set({ socialImage: v })} />
+      <ImageField label="Favicon (small logo, square works best)" value={seo.favicon} onChange={(v) => set({ favicon: v })} />
       <TextField label="Language" value={seo.language} onChange={(v) => set({ language: v })} />
       <div className="rounded-lg bg-neutral-50 p-3 text-xs text-neutral-600">
         <p className="font-semibold text-neutral-800">Preview</p>

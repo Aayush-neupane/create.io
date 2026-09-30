@@ -1,4 +1,4 @@
-import type { SectionInstance, ThemeConfig, WebsiteConfig } from "@/types/builder";
+import type { PageConfig, SectionInstance, ThemeConfig, WebsiteConfig } from "@/types/builder";
 import {
   AboutSection, ContactSection, CtaSection, EducationSection, ExperienceSection, FaqSection,
   FooterSection, GallerySection, HeroSection, HoursSection, MenuSection, NavbarSection,
@@ -29,13 +29,27 @@ export const SECTION_META: Record<string, { label: string; variants: { id: strin
   footer: { label: "Footer", variants: [{ id: "simple", label: "Simple" }, { id: "columns", label: "Columns" }, { id: "big", label: "Big type" }, { id: "minimal", label: "Minimal centered" }], deletable: false },
 };
 
-export function renderSection(s: SectionInstance, theme: ThemeConfig, templateId?: string) {
+export interface NavPage {
+  title: string;
+  href: string;
+}
+
+/** Whole-site nav entries (home + subpages). Empty without a slug. */
+export function navPages(config: WebsiteConfig, slug?: string): NavPage[] {
+  if (!slug) return [];
+  const base = `/s/${slug}`;
+  const home: NavPage[] = [{ title: "Home", href: base }];
+  const subs = (config.pages ?? []).map((p: PageConfig) => ({ title: p.title, href: `${base}/${p.path}` }));
+  return subs.length > 0 ? [...home, ...subs] : [];
+}
+
+export function renderSection(s: SectionInstance, theme: ThemeConfig, templateId?: string, pages?: NavPage[]) {
   if (templateId) {
     const Bespoke = getBespoke(templateId, s.type, s.variant);
-    if (Bespoke) return <Bespoke content={s.content as Record<string, unknown>} theme={theme} />;
+    if (Bespoke) return <Bespoke content={s.content as Record<string, unknown>} theme={theme} pages={pages} />;
   }
   switch (s.type) {
-    case "navbar": return <NavbarSection s={s} theme={theme} />;
+    case "navbar": return <NavbarSection s={s} theme={theme} pages={pages} />;
     case "hero": return <HeroSection s={s} theme={theme} />;
     case "about": return <AboutSection s={s} theme={theme} />;
     case "skills": return <SkillsSection s={s} theme={theme} />;
@@ -53,18 +67,23 @@ export function renderSection(s: SectionInstance, theme: ThemeConfig, templateId
     case "faq": return <FaqSection s={s} theme={theme} />;
     case "cta": return <CtaSection s={s} theme={theme} />;
     case "contact": return <ContactSection s={s} theme={theme} />;
-    case "footer": return <FooterSection s={s} theme={theme} />;
+    case "footer": return <FooterSection s={s} theme={theme} pages={pages} />;
     default: return null;
   }
 }
 
-export function TemplateRenderer({ config, templateId, previewDevice }: { config: WebsiteConfig; templateId?: string; previewDevice?: "desktop" | "tablet" | "mobile" }) {
+export function TemplateRenderer({ config, templateId, slug, pagePath, previewDevice }: {
+  config: WebsiteConfig; templateId?: string; slug?: string; pagePath?: string; previewDevice?: "desktop" | "tablet" | "mobile";
+}) {
   void previewDevice;
+  const active = pagePath ? (config.pages ?? []).find((p) => p.path === pagePath) : undefined;
+  const sections = active ? active.sections : config.sections;
+  const pages = navPages(config, slug);
   return (
     <div style={wrapStyle(config.theme)} className="min-h-full">
       {config.customCss && <style>{config.customCss}</style>}
-      {config.sections.filter((s) => s.enabled).map((s) => (
-        <div key={s.id}>{renderSection(s, config.theme, templateId)}</div>
+      {sections.filter((s) => s.enabled).map((s) => (
+        <div key={s.id}>{renderSection(s, config.theme, templateId, pages)}</div>
       ))}
     </div>
   );

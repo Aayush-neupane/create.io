@@ -14,6 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title,
     description,
+    icons: seo.socialImage ? [{ url: seo.socialImage }] : undefined,
     openGraph: {
       title,
       description,
@@ -41,7 +42,7 @@ export default async function PublishedPage({ params }: { params: Promise<{ slug
           Draft preview — this site isn&apos;t published yet. <a href={`/builder/${site.id}`} className="font-semibold underline">Open in builder</a>
         </div>
       )}
-      <TemplateRenderer config={cfg} templateId={site.templateId} />
+      <TemplateRenderer config={cfg} templateId={site.templateId} slug={site.slug} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: cfg.siteName, description: cfg.siteDescription }) }}

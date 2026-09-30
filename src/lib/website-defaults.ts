@@ -265,6 +265,7 @@ export function buildConfigFromTemplate(
       ],
     },
     sections: instances,
+    pages: [],
     seo: {
       title: `${opts.siteName} — ${opts.tagline || "Welcome"}`,
       description: opts.siteDescription || opts.tagline || "A professional website.",
@@ -275,21 +276,36 @@ export function buildConfigFromTemplate(
   };
 }
 
+/** Sanitize one section list (home or subpage) without ever throwing. */
+export function sanitizeSections(raw: unknown): SectionInstance[] {
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+  return (raw as SectionInstance[]).map((s) => ({
+    id: typeof s?.id === "string" ? s.id : sid("section"),
+    type: (s?.type ?? "about") as SectionType,
+    variant: typeof s?.variant === "string" ? s.variant : "simple",
+    enabled: s?.enabled !== false,
+    content: ((s?.content ?? {}) as Record<string, unknown>) ?? {},
+  }));
+}
+
+export function sanitizePagePath(raw: unknown): string {
+  const p = String(raw ?? "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48);
+  return p || "page";
+}
+
 /** Fill every missing piece of a stored config so rendering can never crash —
  *  corrupted or legacy configs degrade to a working site instead of a 500. */
 export function normalizeConfig(raw: unknown): WebsiteConfig {
   const c = (raw ?? {}) as Partial<WebsiteConfig>;
   const theme = { ...baseTheme(), ...((c.theme ?? {}) as Partial<ThemeConfig>) };
-  const sections =
-    Array.isArray(c.sections) && c.sections.length > 0
-      ? (c.sections as SectionInstance[]).map((s) => ({
-          id: typeof s?.id === "string" ? s.id : sid("section"),
-          type: (s?.type ?? "about") as SectionType,
-          variant: typeof s?.variant === "string" ? s.variant : "simple",
-          enabled: s?.enabled !== false,
-          content: ((s?.content ?? {}) as Record<string, unknown>) ?? {},
-        }))
-      : [defaultSection("hero", "split"), defaultSection("contact", "minimal"), defaultSection("footer", "simple")];
+  const home = sanitizeSections(c.sections);
+  const sections = home.length > 0 ? home : [defaultSection("hero", "split"), defaultSection("contact", "minimal"), defaultSection("footer", "simple")];
+  const pages = (Array.isArray(c.pages) ? c.pages : []).map((p) => ({
+    id: typeof p?.id === "string" ? p.id : sid("page"),
+    title: typeof p?.title === "string" && p.title ? p.title : "Page",
+    path: sanitizePagePath(p?.path),
+    sections: sanitizeSections(p?.sections),
+  }));
   const nav = (c.navigation ?? {}) as Partial<WebsiteConfig["navigation"]>;
   const seo = (c.seo ?? {}) as Partial<SeoConfig>;
   return {
@@ -302,6 +318,7 @@ export function normalizeConfig(raw: unknown): WebsiteConfig {
       links: Array.isArray(nav.links) ? nav.links : [],
     },
     sections,
+    pages,
     seo: {
       title: typeof seo.title === "string" ? seo.title : "",
       description: typeof seo.description === "string" ? seo.description : "",

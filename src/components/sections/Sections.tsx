@@ -98,9 +98,9 @@ export function EmptyArt({ theme, glyph, caption, className = "", style }: {
 }
 
 // ─── NAVBAR ───
-export function NavbarSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
+export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: ThemeConfig; pages?: { title: string; href: string }[] }) {
   const c = s.content as { logo?: string; links?: { label: string; href: string }[]; cta?: string };
-  const links = arr<{ label: string; href: string }>(c.links);
+  const links = [...arr<{ label: string; href: string }>(c.links), ...((pages ?? []).map((pg) => ({ label: pg.title, href: pg.href })))];
   if (s.variant === "overlay") {
     return (
       <nav className="absolute inset-x-0 top-0 z-10">
@@ -907,8 +907,9 @@ export function ContactSection({ s, theme }: { s: SectionInstance; theme: ThemeC
   );
 }
 
-export function FooterSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
+export function FooterSection({ s, theme, pages }: { s: SectionInstance; theme: ThemeConfig; pages?: { title: string; href: string }[] }) {
   const c = s.content as Record<string, unknown>;
+  void pages;
   if (s.variant === "big") {
     return (
       <footer className="px-6 pb-8 pt-16" style={{ background: theme.primary, color: "#fff" }}>

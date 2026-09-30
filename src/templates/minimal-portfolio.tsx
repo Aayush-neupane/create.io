@@ -8,6 +8,19 @@ import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/co
 export interface BespokeProps {
   content: Record<string, unknown>;
   theme: ThemeConfig;
+  /** Whole-site pages for nav linking. Empty on single-page sites. */
+  pages?: { title: string; href: string }[];
+}
+
+/** Navbar links followed by whole-site page links (deduped by href). */
+export function withPages(
+  content: Record<string, unknown>,
+  pages?: { title: string; href: string }[],
+): { label: string; href: string }[] {
+  const base = arr<{ label: string; href: string }>(content.links);
+  const extra = (pages ?? []).map((pg) => ({ label: pg.title, href: pg.href }));
+  const seen = new Set(base.map((l) => l.href));
+  return [...base, ...extra.filter((l) => !seen.has(l.href))];
 }
 
 type C = (props: BespokeProps) => React.ReactNode;
@@ -26,8 +39,8 @@ function IndexLabel({ theme, n, label }: { theme: ThemeConfig; n: string; label:
   );
 }
 
-const Navbar: C = ({ content, theme }) => {
-  const links = arr<{ label: string; href: string }>(content.links);
+const Navbar: C = ({ content, theme, pages }) => {
+  const links = withPages(content, pages);
   return (
     <nav className="border-b" style={{ borderColor: theme.surface, background: theme.background }}>
       <div className={`mx-auto flex items-baseline justify-between px-6 py-5 ${containerWidth(theme)}`}>

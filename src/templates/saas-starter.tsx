@@ -5,11 +5,12 @@
 import type { SectionType, ThemeConfig } from "@/types/builder";
 import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
+import { withPages } from "./minimal-portfolio";
 
 type C = (props: BespokeProps) => React.ReactNode;
 
-const Navbar: C = ({ content, theme }) => {
-  const links = arr<{ label: string; href: string }>(content.links);
+const Navbar: C = ({ content, theme, pages }) => {
+  const links = withPages(content, pages);
   return (
     <div className="sticky top-3 z-30 px-4">
       <nav className="mx-auto flex max-w-4xl items-center justify-between border bg-white/90 py-2.5 pl-5 pr-2.5 shadow-sm backdrop-blur" style={{ borderRadius: 999, borderColor: theme.surface }}>

@@ -61,6 +61,14 @@ export interface SeoConfig {
   language: string;
 }
 
+export interface PageConfig {
+  id: string;
+  title: string;
+  /** URL path segment, e.g. "about". Home page lives at the site root. */
+  path: string;
+  sections: SectionInstance[];
+}
+
 export interface WebsiteConfig {
   version: 1;
   siteName: string;
@@ -68,6 +76,8 @@ export interface WebsiteConfig {
   theme: ThemeConfig;
   navigation: { logo: string; links: { label: string; href: string }[] };
   sections: SectionInstance[];
+  /** Additional pages beyond home. */
+  pages: PageConfig[];
   seo: SeoConfig;
   analyticsId?: string;
   customCss?: string;

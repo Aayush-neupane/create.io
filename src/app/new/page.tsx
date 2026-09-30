@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TEMPLATES } from "@/lib/templates";
 
-const TYPES = ["Portfolio", "Personal", "Business", "Restaurant", "Freelancer", "Agency"];
+const TYPES = ["Portfolio", "Personal", "Business", "Restaurant", "Freelancer", "Agency", "Event", "SaaS"];
 
 function Flow() {
   const router = useRouter();

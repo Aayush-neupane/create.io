@@ -41,7 +41,7 @@ const grotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "create.io — Whole websites, predesigned. Maximum voltage.",
+  title: "Create.IO",
   description: "Pick a complete, predesigned website. Add your content, tune the look, publish in minutes. No code, no blank canvas.",
   icons: { icon: "/logo.png", apple: "/logo.png" },
 };

@@ -1,6 +1,5 @@
-import type { SectionInstance, SectionType, ThemeConfig, WebsiteConfig } from "@/types/builder";
+import type { SectionInstance, SectionType, SeoConfig, ThemeConfig, WebsiteConfig } from "@/types/builder";
 import { templateSeedContent } from "@/templates";
-
 export const FONT_CHOICES = [
   "Inter",
   "Plus Jakarta Sans",
@@ -273,5 +272,44 @@ export function buildConfigFromTemplate(
       favicon: "",
       language: "en",
     },
+  };
+}
+
+/** Fill every missing piece of a stored config so rendering can never crash —
+ *  corrupted or legacy configs degrade to a working site instead of a 500. */
+export function normalizeConfig(raw: unknown): WebsiteConfig {
+  const c = (raw ?? {}) as Partial<WebsiteConfig>;
+  const theme = { ...baseTheme(), ...((c.theme ?? {}) as Partial<ThemeConfig>) };
+  const sections =
+    Array.isArray(c.sections) && c.sections.length > 0
+      ? (c.sections as SectionInstance[]).map((s) => ({
+          id: typeof s?.id === "string" ? s.id : sid("section"),
+          type: (s?.type ?? "about") as SectionType,
+          variant: typeof s?.variant === "string" ? s.variant : "simple",
+          enabled: s?.enabled !== false,
+          content: ((s?.content ?? {}) as Record<string, unknown>) ?? {},
+        }))
+      : [defaultSection("hero", "split"), defaultSection("contact", "minimal"), defaultSection("footer", "simple")];
+  const nav = (c.navigation ?? {}) as Partial<WebsiteConfig["navigation"]>;
+  const seo = (c.seo ?? {}) as Partial<SeoConfig>;
+  return {
+    version: 1,
+    siteName: typeof c.siteName === "string" && c.siteName ? c.siteName : "Untitled site",
+    siteDescription: typeof c.siteDescription === "string" ? c.siteDescription : "",
+    theme,
+    navigation: {
+      logo: typeof nav.logo === "string" ? nav.logo : "Home",
+      links: Array.isArray(nav.links) ? nav.links : [],
+    },
+    sections,
+    seo: {
+      title: typeof seo.title === "string" ? seo.title : "",
+      description: typeof seo.description === "string" ? seo.description : "",
+      socialImage: typeof seo.socialImage === "string" ? seo.socialImage : "",
+      favicon: typeof seo.favicon === "string" ? seo.favicon : "",
+      language: typeof seo.language === "string" ? seo.language : "en",
+    },
+    ...(typeof c.analyticsId === "string" ? { analyticsId: c.analyticsId } : {}),
+    ...(typeof c.customCss === "string" ? { customCss: c.customCss } : {}),
   };
 }

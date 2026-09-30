@@ -42,7 +42,9 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
   const [config, setConfig] = useState<WebsiteConfig>(initial.config);
   const [tab, setTab] = useState<Tab>((initialTab as Tab) || "content");
   const [device, setDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
-  const [selectedId, setSelectedId] = useState<string | null>(initial.config.sections[1]?.id ?? null);
+  const [selectedId, setSelectedId] = useState<string | null>(
+    Array.isArray(initial.config?.sections) ? (initial.config.sections[1]?.id ?? initial.config.sections[0]?.id ?? null) : null,
+  );
   const [saveState, setSaveState] = useState<SaveState>("saved");
   const [saveMsg, setSaveMsg] = useState("");
   const [publishing, setPublishing] = useState(false);
@@ -201,7 +203,7 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
           {site.status === "published" ? (
             <button onClick={unpublish} className="rounded-[9px] px-3 py-1.5 text-[13px] font-medium" style={{ background: "var(--surface-2)" }}>Unpublish</button>
           ) : (
-            <button onClick={publish} disabled={publishing} className="btn-primary rounded-[9px] px-3 py-1.5 text-[13px] disabled:opacity-60" style={{ height: 33 }}>
+            <button onClick={publish} disabled={publishing || saveState === "saving"} className="btn-primary rounded-[9px] px-3 py-1.5 text-[13px] disabled:opacity-60" style={{ height: 33 }}>
               {publishing ? "Publishing…" : "Publish"}
             </button>
           )}

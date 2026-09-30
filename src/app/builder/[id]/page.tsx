@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
 import { findWebsiteById } from "@/lib/db";
+import { normalizeConfig } from "@/lib/website-defaults";
 import { BuilderClient } from "@/components/builder/BuilderClient";
 
 export default async function BuilderPage({
@@ -16,5 +17,5 @@ export default async function BuilderPage({
   const sp = await searchParams;
   const site = await findWebsiteById(id);
   if (!site || site.userId !== user.id) redirect("/dashboard");
-  return <BuilderClient initial={site} initialTab={sp.tab} />;
+  return <BuilderClient initial={{ ...site, config: normalizeConfig(site.config) }} initialTab={sp.tab} />;
 }

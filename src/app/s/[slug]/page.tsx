@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { findWebsiteBySlug, listWebsites } from "@/lib/db";
+import { normalizeConfig } from "@/lib/website-defaults";
 import { TemplateRenderer } from "@/components/templates/Renderer";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const site = await findWebsiteBySlug(slug);
   if (!site) return { title: "Not found" };
-  const seo = site.config.seo;
+  const seo = normalizeConfig(site.config).seo;
   const title = seo.title || site.name;
   const description = seo.description || site.config.siteDescription;
   return {
@@ -32,7 +33,7 @@ export default async function PublishedPage({ params }: { params: Promise<{ slug
     // Allow owners to preview drafts via direct link? Keep simple: show draft with notice.
     // Public visitors see 404 for drafts; we can't know visitor, so render with noindex banner.
   }
-  const cfg = site.config;
+  const cfg = normalizeConfig(site.config);
   return (
     <div className="published-site min-h-screen bg-white">
       {site.status !== "published" && (

@@ -29,7 +29,12 @@ export const updateWebsiteSchema = z.object({
     .optional(),
   status: z.enum(["draft", "published"]).optional(),
   customDomain: z.string().max(120).optional(),
-  config: z.any().optional(),
+  config: z
+    .object({
+      sections: z.array(z.any()).min(1, "Website must keep at least one section."),
+    })
+    .passthrough()
+    .optional(),
 });
 
 export function safeError(e: unknown): string {

@@ -316,7 +316,7 @@ export default async function LandingPage() {
       <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
         <div className="card relative grid justify-items-center gap-[18px] overflow-hidden px-6 py-[92px] text-center" style={{ borderRadius: 36 }}>
           <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(60% 120% at 12% 0%, rgba(79,70,229,.16), transparent 60%), radial-gradient(60% 120% at 88% 100%, rgba(147,51,234,.14), transparent 60%)" }} aria-hidden />
-          <p className="eyebrow relative">No code · No canvas · No kidding</p>
+          <p className="eyebrow relative">Free to start · Live in minutes</p>
           <h2 className="relative max-w-2xl font-semibold" style={{ fontSize: "clamp(38px, 6vw, 72px)", lineHeight: 1, letterSpacing: "-0.055em" }}>
             Your website is <span className="serif-accent">waiting.</span>
           </h2>

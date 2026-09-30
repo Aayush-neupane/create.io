@@ -97,7 +97,7 @@ export default async function LandingPage() {
         </div>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {TEMPLATES.slice(0, 6).map((t) => (
-            <Link key={t.id} href={`/templates/${t.id}`} className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-neutral-400">
+            <div key={t.id} className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-neutral-400">
               <div className="aspect-[16/10] overflow-hidden" style={{ background: t.thumbnailGradient }}>
                 <LiveCard templateId={t.id} />
               </div>
@@ -108,7 +108,8 @@ export default async function LandingPage() {
                 </div>
                 <p className="mt-1.5 line-clamp-2 text-sm text-neutral-600">{t.description}</p>
               </div>
-            </Link>
+              <Link href={`/templates/${t.id}`} aria-label={`Preview ${t.name}`} className="absolute inset-0 rounded-2xl" />
+            </div>
           ))}
         </div>
       </section>

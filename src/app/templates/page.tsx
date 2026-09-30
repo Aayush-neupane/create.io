@@ -94,13 +94,11 @@ export default function TemplatesPage() {
 
           <div className="mt-8 grid gap-6 sm:grid-cols-2">
             {list.map((t) => (
-              <div key={t.id} className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-neutral-400 hover:shadow-md">
-                <Link href={`/templates/${t.id}`} className="relative block">
-                  <div className="aspect-[16/10]">
-                    <LiveCard templateId={t.id} />
-                  </div>
-                  <span className="absolute inset-0" aria-hidden />
-                </Link>
+              <div key={t.id} className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-neutral-400 hover:shadow-md">
+                <div className="aspect-[16/10]">
+                  <LiveCard templateId={t.id} />
+                </div>
+                <Link href={`/templates/${t.id}`} aria-label={`Open full preview of ${t.name}`} className="absolute inset-x-0 top-0 aspect-[16/10]" />
                 <div className="border-t border-neutral-100 p-5">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold">{t.name}</h3>

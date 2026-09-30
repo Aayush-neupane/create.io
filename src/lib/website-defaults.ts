@@ -1,4 +1,5 @@
 import type { SectionInstance, SectionType, ThemeConfig, WebsiteConfig } from "@/types/builder";
+import { templateSeedContent } from "@/templates";
 
 export const FONT_CHOICES = [
   "Inter",
@@ -226,89 +227,31 @@ export function personalize(content: Record<string, unknown>, owner: string, tag
   return out;
 }
 
-export function templateSeed(templateId: string): {
-  heroTitle?: string; heroSubtitle?: string; heroDescription?: string; eyebrow?: string;
-  aboutTitle?: string; aboutBody?: string; stats?: { value: string; label: string }[];
-} {
-  switch (templateId) {
-    case "creative-portfolio":
-      return {
-        eyebrow: "Photographer — Portland, OR",
-        heroTitle: "Light, honestly observed",
-        heroSubtitle: "Editorial & portrait photography",
-        heroDescription: "I photograph people, places and quiet in-between moments for magazines, brands and families.",
-        stats: [{ value: "400+", label: "Shoots" }, { value: "9", label: "Years" }, { value: "26", label: "Publications" }],
-        aboutTitle: "A patient eye",
-        aboutBody: "My work starts with listening. Every session is unhurried — the best frames usually arrive when nobody is performing.",
-      };
-    case "professional-business":
-      return {
-        eyebrow: "Trusted since 2012",
-        heroTitle: "Clarity for complex decisions",
-        heroSubtitle: "Strategy & operations consulting",
-        heroDescription: "I help founders and operators cut through noise, fix what matters and grow with confidence.",
-        stats: [{ value: "120+", label: "Engagements" }, { value: "94%", label: "Repeat clients" }, { value: "$40M", label: "Value created" }],
-      };
-    case "restaurant":
-      return {
-        eyebrow: "Wood-fired kitchen — Est. 2016",
-        heroTitle: "Ember & Oak",
-        heroSubtitle: "Seasonal cooking, natural wine",
-        heroDescription: "A neighborhood restaurant built around fire, farms and hospitality. Walk-ins welcome.",
-        aboutTitle: "Cooked over oak, served with warmth",
-        aboutBody: "Our menu changes with the market. Everything is made in-house — bread, pasta, pickles and all.",
-      };
-    case "agency":
-      return {
-        eyebrow: "Studio North — Design & Build",
-        heroTitle: "We ship brands that win",
-        heroSubtitle: "Agency for ambitious teams",
-        heroDescription: "Brand, web and product under one roof. Senior team only, no hand-offs, no bloat.",
-        stats: [{ value: "80+", label: "Launches" }, { value: "14", label: "Awards" }, { value: "6", label: "Countries" }],
-      };
-    case "saas-starter":
-      return {
-        eyebrow: "New — Launchpad 2.0",
-        heroTitle: "Launch your product site in days",
-        heroSubtitle: "SaaS marketing, minus the agency",
-        heroDescription: "A crisp, conversion-ready marketing page with pricing, FAQ and analytics baked in.",
-        stats: [{ value: "3.2x", label: "More signups" }, { value: "0.9s", label: "Median load" }, { value: "99.9%", label: "Uptime" }],
-      };
-    default:
-      return {};
-  }
-}
-
 export function buildConfigFromTemplate(
   templateId: string,
   sections: { type: SectionType; variant: string }[],
   theme: ThemeConfig,
   opts: { siteName: string; ownerName: string; tagline: string; siteDescription: string },
 ): WebsiteConfig {
-  const instances = sections.map((s) => defaultSection(s.type, s.variant));
+  // Per-template predesigned library owns the seed content: unique copy per kind.
+  const libSeed = templateSeedContent(templateId);
+  const instances = sections.map((s) => {
+    const inst = defaultSection(s.type, s.variant);
+    const seed = libSeed[s.type];
+    if (seed) inst.content = { ...inst.content, ...JSON.parse(JSON.stringify(seed)) };
+    return inst;
+  });
   const byType = (t: SectionType) => instances.find((s) => s.type === t);
 
   const nav = byType("navbar");
-  if (nav) nav.content = { ...(nav.content as object), logo: opts.ownerName || opts.siteName };
+  if (nav) nav.content = { ...(nav.content as object), logo: opts.ownerName || (nav.content as Record<string, unknown>).logo || opts.siteName };
   const hero = byType("hero");
   if (hero) {
-    const seed = templateSeed(templateId);
     hero.content = {
       ...(hero.content as object),
-      ...(seed.heroTitle && !opts.ownerName ? { title: seed.heroTitle } : {}),
-      ...(seed.heroSubtitle && !opts.tagline ? { subtitle: seed.heroSubtitle } : {}),
-      ...(seed.heroDescription ? { description: seed.heroDescription } : {}),
-      ...(seed.eyebrow ? { eyebrow: seed.eyebrow } : {}),
       ...(opts.ownerName ? { title: opts.ownerName } : {}),
       ...(opts.tagline ? { subtitle: opts.tagline } : {}),
     };
-    if (seed.stats) hero.content = { ...(hero.content as object), stats: seed.stats };
-  }
-  const about = byType("about");
-  if (about) {
-    const seed = templateSeed(templateId);
-    if (seed.aboutTitle) about.content = { ...(about.content as object), title: seed.aboutTitle };
-    if (seed.aboutBody) about.content = { ...(about.content as object), body: seed.aboutBody };
   }
   const contact = byType("contact");
   if (contact && opts.ownerName) {

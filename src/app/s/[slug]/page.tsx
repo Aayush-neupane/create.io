@@ -40,7 +40,7 @@ export default async function PublishedPage({ params }: { params: Promise<{ slug
           Draft preview — this site isn&apos;t published yet. <a href={`/builder/${site.id}`} className="font-semibold underline">Open in builder</a>
         </div>
       )}
-      <TemplateRenderer config={cfg} />
+      <TemplateRenderer config={cfg} templateId={site.templateId} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: cfg.siteName, description: cfg.siteDescription }) }}

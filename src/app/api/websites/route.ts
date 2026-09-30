@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const data = createWebsiteSchema.parse(body);
     const tpl = getTemplate(data.templateId);
     const theme = { ...baseTheme(), ...tpl.theme };
-    const owner = data.ownerName || user.name;
+    const owner = data.ownerName || "";
     const config = buildConfigFromTemplate(
       tpl.id,
       tpl.sections,

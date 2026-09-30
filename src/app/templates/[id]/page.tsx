@@ -50,7 +50,7 @@ export default async function TemplatePreviewPage({
       </div>
       <div className="flex flex-1 justify-center bg-neutral-100 p-4 md:p-8">
         <div className={`w-full overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm ${width}`}>
-          <TemplateRenderer config={config} />
+          <TemplateRenderer config={config} templateId={tpl.id} />
         </div>
       </div>
     </div>

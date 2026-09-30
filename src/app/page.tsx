@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Navbar, Footer } from "@/components/layout/chrome";
-import { TemplateThumb } from "@/components/templates/Thumb";
+import { LiveCard } from "@/components/templates/LiveCard";
 import { currentUser } from "@/lib/auth";
 import { TEMPLATES } from "@/lib/templates";
 
@@ -98,8 +98,8 @@ export default async function LandingPage() {
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {TEMPLATES.slice(0, 6).map((t) => (
             <Link key={t.id} href={`/templates/${t.id}`} className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-neutral-400">
-              <div className="aspect-[16/10] p-6" style={{ background: t.thumbnailGradient }}>
-                <TemplateThumb t={t} />
+              <div className="aspect-[16/10] overflow-hidden" style={{ background: t.thumbnailGradient }}>
+                <LiveCard templateId={t.id} />
               </div>
               <div className="p-5">
                 <div className="flex items-center justify-between">

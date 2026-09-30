@@ -5,6 +5,7 @@ import {
   PricingSection, ProcessSection, ProjectsSection, ServicesSection, SkillsSection,
   TeamSection, TestimonialsSection, wrapStyle,
 } from "@/components/sections/Sections";
+import { getBespoke } from "@/templates";
 
 export const SECTION_META: Record<string, { label: string; variants: { id: string; label: string }[]; deletable: boolean }> = {
   navbar: { label: "Navbar", variants: [{ id: "minimal", label: "Minimal" }, { id: "solid", label: "Solid" }, { id: "overlay", label: "Overlay" }, { id: "bold", label: "Bold bar" }, { id: "centered", label: "Centered" }], deletable: false },
@@ -28,7 +29,11 @@ export const SECTION_META: Record<string, { label: string; variants: { id: strin
   footer: { label: "Footer", variants: [{ id: "simple", label: "Simple" }, { id: "columns", label: "Columns" }, { id: "big", label: "Big type" }, { id: "minimal", label: "Minimal centered" }], deletable: false },
 };
 
-export function renderSection(s: SectionInstance, theme: ThemeConfig) {
+export function renderSection(s: SectionInstance, theme: ThemeConfig, templateId?: string) {
+  if (templateId) {
+    const Bespoke = getBespoke(templateId, s.type, s.variant);
+    if (Bespoke) return <Bespoke content={s.content as Record<string, unknown>} theme={theme} />;
+  }
   switch (s.type) {
     case "navbar": return <NavbarSection s={s} theme={theme} />;
     case "hero": return <HeroSection s={s} theme={theme} />;
@@ -53,13 +58,13 @@ export function renderSection(s: SectionInstance, theme: ThemeConfig) {
   }
 }
 
-export function TemplateRenderer({ config, previewDevice }: { config: WebsiteConfig; previewDevice?: "desktop" | "tablet" | "mobile" }) {
+export function TemplateRenderer({ config, templateId, previewDevice }: { config: WebsiteConfig; templateId?: string; previewDevice?: "desktop" | "tablet" | "mobile" }) {
   void previewDevice;
   return (
     <div style={wrapStyle(config.theme)} className="min-h-full">
       {config.customCss && <style>{config.customCss}</style>}
       {config.sections.filter((s) => s.enabled).map((s) => (
-        <div key={s.id}>{renderSection(s, config.theme)}</div>
+        <div key={s.id}>{renderSection(s, config.theme, templateId)}</div>
       ))}
     </div>
   );

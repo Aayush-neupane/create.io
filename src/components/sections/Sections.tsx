@@ -1,6 +1,6 @@
 import type { SectionInstance, ThemeConfig } from "@/types/builder";
 
-function fontStack(name: string): string {
+export function fontStack(name: string): string {
   return `'${name}', ui-sans-serif, system-ui, sans-serif`;
 }
 
@@ -36,13 +36,13 @@ export function sectionPad(theme: ThemeConfig): string {
   return "py-14 md:py-20";
 }
 
-function btnRadius(theme: ThemeConfig): string {
+export function btnRadius(theme: ThemeConfig): string {
   if (theme.buttonStyle === "pill") return "rounded-full";
   if (theme.buttonStyle === "square") return "rounded-none";
   return "rounded-lg";
 }
 
-function H({ theme, children, className = "" }: { theme: ThemeConfig; children: React.ReactNode; className?: string }) {
+export function H({ theme, children, className = "" }: { theme: ThemeConfig; children: React.ReactNode; className?: string }) {
   return (
     <h2
       className={className}
@@ -53,7 +53,7 @@ function H({ theme, children, className = "" }: { theme: ThemeConfig; children: 
   );
 }
 
-function Eyebrow({ theme, children }: { theme: ThemeConfig; children: React.ReactNode }) {
+export function Eyebrow({ theme, children }: { theme: ThemeConfig; children: React.ReactNode }) {
   return (
     <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em]" style={{ color: theme.accent }}>
       {children}
@@ -61,11 +61,11 @@ function Eyebrow({ theme, children }: { theme: ThemeConfig; children: React.Reac
   );
 }
 
-function str(v: unknown, fb = ""): string {
+export function str(v: unknown, fb = ""): string {
   return typeof v === "string" ? v : fb;
 }
 
-function arr<T>(v: unknown): T[] {
+export function arr<T>(v: unknown): T[] {
   return Array.isArray(v) ? (v as T[]) : [];
 }
 

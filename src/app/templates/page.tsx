@@ -109,11 +109,7 @@ export default function TemplatesPage() {
                 <div className="flex items-center gap-3 px-[18px] py-[13px]">
                   <div className="min-w-0">
                     <span className="block truncate text-[14.5px] font-semibold" style={{ letterSpacing: "-0.015em" }}>{t.name}</span>
-                    <span className="mono-meta text-[10.5px] uppercase" style={{ letterSpacing: "0.08em", color: "var(--ink-3)" }}>{t.category}</span>
-                  </div>
-                  <div className="ml-auto flex gap-0.5 opacity-60 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
-                    <Link href={`/templates/${t.id}`} aria-label="Preview" className="grid h-[34px] w-[34px] place-items-center rounded-[9px] text-[15px] transition-colors hover:bg-black/5">◉</Link>
-                    <Link href={`/new?template=${t.id}`} aria-label="Use template" className="grid h-[34px] w-[34px] place-items-center rounded-[9px] text-[15px] transition-colors hover:bg-black/5">＋</Link>
+                    <span className="mono-meta text-[10.5px] uppercase" style={{ letterSpacing: "0.08em", color: "var(--ink-3)" }}>{t.category} · {t.sections.length} sections</span>
                   </div>
                 </div>
                 <div className="flex gap-2 border-t px-[14px] py-3" style={{ borderColor: "var(--line)" }}>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { SectionInstance, SectionType, ThemeConfig, WebsiteConfig, WebsiteRecord } from "@/types/builder";
 import { TemplateRenderer, SECTION_META } from "@/components/templates/Renderer";
+import { LogoTile } from "@/components/layout/chrome";
 import { isBespoke } from "@/templates";
 import { FONT_CHOICES, THEME_PRESETS, defaultSection, sid } from "@/lib/website-defaults";
 import { TextField, AreaField, ImageField, ListShell, ItemCard } from "./fields";
@@ -174,7 +175,7 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
       {/* Top bar */}
       <header className="flex h-14 shrink-0 items-center gap-3 border-b bg-white/80 px-4 backdrop-blur" style={{ borderColor: "var(--line)" }}>
         <Link href="/dashboard" className="flex items-center gap-2" aria-label="Back to dashboard">
-          <img src="/logo.png" alt="create.io" className="h-7 w-7 rounded-md" />
+          <LogoTile size={28} />
         </Link>
         <input
           value={config.siteName}

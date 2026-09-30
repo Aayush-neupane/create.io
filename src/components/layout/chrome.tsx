@@ -1,15 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
 
+export function LogoTile({ size = 28 }: { size?: number }) {
+  return (
+    <span
+      className="grid flex-none place-items-center overflow-hidden"
+      style={{ width: size, height: size, borderRadius: 9, background: "#17171b", boxShadow: "0 0 0 1px rgba(0,0,0,.4) inset" }}
+    >
+      <Image src="/logo.png" alt="" width={size - 4} height={size - 4} priority />
+    </span>
+  );
+}
+
 export function BrandMark({ size = 28 }: { size?: number }) {
   return (
     <span className="flex items-center gap-2.5">
-      <span
-        className="grid place-items-center overflow-hidden border transition-transform duration-300 hover:-rotate-6"
-        style={{ width: size, height: size, borderRadius: 9, borderColor: "var(--line-2)", background: "var(--surface)" }}
-      >
-        <Image src="/logo.png" alt="" width={size - 6} height={size - 6} priority />
-      </span>
+      <LogoTile size={size} />
       <span className="text-[17px] font-semibold" style={{ letterSpacing: "-0.035em" }}>
         create.io
       </span>

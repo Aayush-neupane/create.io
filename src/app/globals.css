@@ -76,17 +76,10 @@ p, li {
   gap: 8px;
   font-family: var(--font-mono), monospace;
   font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--accent-text);
-}
-.eyebrow::before {
-  content: "";
-  width: 18px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.7;
 }
 
 .serif-accent {
@@ -194,11 +187,11 @@ p, li {
   text-transform: uppercase;
 }
 
-.dotgrid {
-  background-image: radial-gradient(rgba(23, 23, 27, 0.14) 1px, transparent 1.3px);
-  background-size: 22px 22px;
-  mask-image: radial-gradient(ellipse 62% 60% at 50% 30%, #000 10%, transparent 76%);
-  -webkit-mask-image: radial-gradient(ellipse 62% 60% at 50% 30%, #000 10%, transparent 76%);
+.blueprint {
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 66% 58% at 50% 28%, #000 15%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 66% 58% at 50% 28%, #000 15%, transparent 75%);
 }
 
 .icon-tile {

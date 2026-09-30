@@ -28,7 +28,7 @@ export default async function LandingPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden pb-4 pt-16 md:pt-24">
-        <div className="dotgrid pointer-events-none absolute inset-0" aria-hidden />
+        <div className="blueprint pointer-events-none absolute inset-0" aria-hidden />
         <div className="relative mx-auto grid max-w-7xl justify-items-center gap-6 px-6 text-center">
           <Link href="/templates" className="pill">
             <span className="tag">New</span>
@@ -75,7 +75,6 @@ export default async function LandingPage() {
 
         {/* Browser-window showcase */}
         <div className="relative mx-auto mt-14 max-w-5xl px-6">
-          <div className="pointer-events-none absolute inset-x-[10%] -top-8 h-44 rounded-full opacity-30 blur-[90px]" style={{ background: "var(--grad)" }} aria-hidden />
           <div className="card relative overflow-hidden text-left" style={{ borderRadius: "28px 28px 0 0", borderBottom: 0 }}>
             <div className="flex h-12 items-center gap-3.5 border-b px-5" style={{ borderColor: "var(--line)" }}>
               <span className="flex gap-[7px]">
@@ -151,7 +150,9 @@ export default async function LandingPage() {
                 <Link href={`/templates/${t.id}`} aria-label={`Open ${t.name}`} className="absolute inset-0" />
               </div>
               <div className="flex items-center gap-3.5 border-t p-[18px_20px]" style={{ borderColor: "var(--line)" }}>
-                <span className="icon-tile" aria-hidden>{t.name.slice(0, 1)}</span>
+                <span className="grid h-10 w-10 flex-none place-items-center rounded-[13px] text-sm font-bold text-white" style={{ background: t.theme.primary }} aria-hidden>
+                  {t.name.slice(0, 1)}
+                </span>
                 <div className="min-w-0 flex-1">
                   <h3 className="truncate text-[17px] font-semibold">{t.name}</h3>
                   <p className="truncate text-[13.5px]" style={{ color: "var(--ink-2)" }}>{t.description}</p>

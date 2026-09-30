@@ -1,44 +1,80 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export function BrandMark({ size = 32 }: { size?: number }) {
+export function BrandMark({ size = 28 }: { size?: number }) {
   return (
-    <span className="flex items-center gap-2">
-      <Image src="/logo.png" alt="create.io" width={size} height={size} className="rounded-md" priority />
-      <span className="text-[15px] font-semibold tracking-tight text-neutral-900">create.io</span>
+    <span className="flex items-center gap-2.5">
+      <span
+        className="grid place-items-center overflow-hidden border transition-transform duration-300 hover:-rotate-6"
+        style={{ width: size, height: size, borderRadius: 9, borderColor: "var(--line-2)", background: "var(--surface)" }}
+      >
+        <Image src="/logo.png" alt="" width={size - 6} height={size - 6} priority />
+      </span>
+      <span className="text-[17px] font-semibold" style={{ letterSpacing: "-0.035em" }}>
+        create.io
+      </span>
     </span>
   );
 }
 
+const NAV = [
+  { href: "/templates", label: "Templates" },
+  { href: "/#how", label: "How it works" },
+  { href: "/#features", label: "Features" },
+];
+
 export function Navbar({ user }: { user?: { name: string } | null }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2" aria-label="create.io home">
+    <header
+      className="sticky top-0 z-40"
+      style={{
+        background: "color-mix(in srgb, var(--paper) 78%, transparent)",
+        backdropFilter: "blur(18px) saturate(1.4)",
+        WebkitBackdropFilter: "blur(18px) saturate(1.4)",
+        borderBottom: "1px solid var(--line)",
+      }}
+    >
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-7 px-6">
+        <Link href="/" aria-label="create.io home">
           <BrandMark />
         </Link>
-        <nav className="hidden items-center gap-7 text-sm text-neutral-600 md:flex">
-          <Link href="/templates" className="hover:text-neutral-900">Templates</Link>
-          <Link href="/#how" className="hover:text-neutral-900">How it works</Link>
-          <Link href="/#features" className="hover:text-neutral-900">Features</Link>
-          {user && <Link href="/dashboard" className="hover:text-neutral-900">Dashboard</Link>}
+        <nav className="ml-2 hidden items-center gap-0.5 md:flex">
+          {NAV.map((n) => (
+            <Link
+              key={n.href}
+              href={n.href}
+              className="rounded-[9px] px-3 py-[7px] text-sm transition-colors"
+              style={{ color: "var(--ink-2)" }}
+            >
+              {n.label}
+            </Link>
+          ))}
+          {user && (
+            <Link href="/dashboard" className="rounded-[9px] px-3 py-[7px] text-sm font-medium" style={{ color: "var(--ink)" }}>
+              Dashboard
+            </Link>
+          )}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-2">
           {user ? (
             <>
-              <Link href="/dashboard" className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100">
-                Dashboard
-              </Link>
-              <Link href="/new" className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700">
+              <span className="mono-meta mr-1 hidden text-xs lg:inline" style={{ color: "var(--ink-3)" }}>
+                {user.name}
+              </span>
+              <Link href="/new" className="btn-primary" style={{ height: 36, fontSize: 13 }}>
                 New website
               </Link>
             </>
           ) : (
             <>
-              <Link href="/login" className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100">
+              <Link
+                href="/login"
+                className="rounded-[9px] px-3 py-2 text-sm font-medium transition-colors"
+                style={{ color: "var(--ink-2)" }}
+              >
                 Log in
               </Link>
-              <Link href="/signup" className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700">
+              <Link href="/new" className="btn-primary" style={{ height: 36, fontSize: 13 }}>
                 Start building
               </Link>
             </>
@@ -50,19 +86,39 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
 }
 
 export function Footer() {
+  const cols: { h: string; links: { href: string; label: string }[] }[] = [
+    { h: "Product", links: [{ href: "/templates", label: "Templates" }, { href: "/new", label: "Create a site" }, { href: "/dashboard", label: "Dashboard" }] },
+    { h: "Library", links: [{ href: "/templates", label: "Portfolio" }, { href: "/templates", label: "Business" }, { href: "/templates", label: "Restaurant" }] },
+    { h: "Account", links: [{ href: "/login", label: "Log in" }, { href: "/signup", label: "Sign up" }, { href: "/settings", label: "Settings" }] },
+  ];
   return (
-    <footer className="border-t border-neutral-200 bg-white">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-10 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-2">
-          <Image src="/logo.png" alt="create.io" width={28} height={28} className="rounded-md" />
-          <span className="text-sm font-semibold text-neutral-900">create.io</span>
-          <span className="text-sm text-neutral-500">— Build a website without building it from scratch.</span>
+    <footer style={{ borderTop: "1px solid var(--line)", marginTop: 96 }}>
+      <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[1.7fr_1fr_1fr_1fr]">
+        <div>
+          <BrandMark />
+          <p className="mt-4 max-w-[330px] text-sm" style={{ color: "var(--ink-2)" }}>
+            Whole websites, predesigned. Pick one, make it yours, publish in minutes.
+          </p>
+          <p className="mono-meta mt-4 text-xs" style={{ color: "var(--ink-3)" }}>
+            6 sites · 50+ sections · 0 code
+          </p>
         </div>
-        <div className="flex gap-6 text-sm text-neutral-500">
-          <Link href="/templates" className="hover:text-neutral-900">Templates</Link>
-          <Link href="/dashboard" className="hover:text-neutral-900">Dashboard</Link>
-          <Link href="/login" className="hover:text-neutral-900">Log in</Link>
-        </div>
+        {cols.map((c) => (
+          <div key={c.h}>
+            <h4 className="mono-meta mb-3.5 text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.14em", color: "var(--ink-3)" }}>
+              {c.h}
+            </h4>
+            {c.links.map((l) => (
+              <Link key={l.label} href={l.href} className="block py-[5px] text-sm transition-all hover:translate-x-[3px]" style={{ color: "var(--ink-2)" }}>
+                {l.label}
+              </Link>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3 px-6 pb-9 pt-5 text-[13px]" style={{ borderTop: "1px solid var(--line)", color: "var(--ink-3)" }}>
+        <span>© 2026 create.io — Minimal sites. Maximum voltage.</span>
+        <span className="mono-meta text-xs">paper · jakarta · newsreader · mono</span>
       </div>
     </footer>
   );

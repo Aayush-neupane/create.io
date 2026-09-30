@@ -441,6 +441,10 @@ export function SectionFields({ section, onChange, onReplace }: {
       {(section.type === "cta") && (
         <><TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} /><AreaField label="Description" value={str("description")} onChange={(v) => onChange({ description: v })} /></>
       )}
+      {(section.type === "logos") && (
+        <><TextField label="Heading" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+        <TextField label="Names (comma separated)" value={(Array.isArray(c["items"]) ? (c["items"] as string[]).join(", ") : "")} onChange={(v) => onChange({ items: v.split(",").map((x) => x.trim()).filter(Boolean) })} /></>
+      )}
       {(section.type === "contact") && (
         <>
           <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />

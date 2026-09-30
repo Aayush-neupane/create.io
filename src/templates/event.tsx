@@ -203,6 +203,7 @@ export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
     stats: [{ value: "Dec 20", label: "Poush 5" }, { value: "40+", label: "Artists" }, { value: "8k", label: "Expected crowd" }],
   },
   gallery: { heading: "", title: "Last year was loud", images: ["", "", "", "", "", "", "", ""] },
+  logos: { heading: "In partnership with", items: ["Himal Beverages", "Yak Gear", "Patan Suites", "Momo Mart", "Sajilo Pay"] },
   process: {
     heading: "Running order", title: "The day, hour by hour",
     steps: [

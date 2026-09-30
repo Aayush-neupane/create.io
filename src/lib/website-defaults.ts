@@ -180,6 +180,8 @@ export function defaultContentFor(type: SectionType): Record<string, unknown> {
       };
     case "cta":
       return { title: "Have a project in mind?", description: "Tell me about your goals — I'll reply within one business day.", primaryCta: "Start a project", secondaryCta: "Book a call" };
+    case "logos":
+      return { heading: "Trusted by", items: ["Sajilo", "Himal Trails", "Momo Mart", "Kumari Pay", "FitNepal"] };
     case "contact":
       return { heading: "Contact", title: "Let's work together", email: "namaste@example.com.np", phone: "", location: "Kathmandu, Nepal", body: "Currently booking new projects for next quarter." };
     case "footer":

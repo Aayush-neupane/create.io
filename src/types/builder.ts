@@ -18,6 +18,7 @@ export type SectionType =
   | "process"
   | "faq"
   | "cta"
+  | "logos"
   | "contact"
   | "footer";
 

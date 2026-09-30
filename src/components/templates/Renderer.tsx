@@ -1,7 +1,7 @@
 import type { PageConfig, SectionInstance, ThemeConfig, WebsiteConfig } from "@/types/builder";
 import {
   AboutSection, ContactSection, CtaSection, EducationSection, ExperienceSection, FaqSection,
-  FooterSection, GallerySection, HeroSection, HoursSection, MenuSection, NavbarSection,
+  FooterSection, GallerySection, HeroSection, HoursSection, LogosSection, MenuSection, NavbarSection,
   PricingSection, ProcessSection, ProjectsSection, ServicesSection, SkillsSection,
   TeamSection, TestimonialsSection, wrapStyle,
 } from "@/components/sections/Sections";
@@ -25,6 +25,7 @@ export const SECTION_META: Record<string, { label: string; variants: { id: strin
   process: { label: "Process", variants: [{ id: "steps", label: "Steps" }], deletable: true },
   faq: { label: "FAQ", variants: [{ id: "accordion", label: "Accordion" }], deletable: true },
   cta: { label: "Call to action", variants: [{ id: "banner", label: "Banner" }], deletable: true },
+  logos: { label: "Logos", variants: [{ id: "row", label: "Row" }, { id: "grid", label: "Grid" }], deletable: true },
   contact: { label: "Contact", variants: [{ id: "minimal", label: "Minimal" }, { id: "split", label: "Split" }], deletable: false },
   footer: { label: "Footer", variants: [{ id: "simple", label: "Simple" }, { id: "columns", label: "Columns" }, { id: "big", label: "Big type" }, { id: "minimal", label: "Minimal centered" }], deletable: false },
 };
@@ -66,6 +67,7 @@ export function renderSection(s: SectionInstance, theme: ThemeConfig, templateId
     case "process": return <ProcessSection s={s} theme={theme} />;
     case "faq": return <FaqSection s={s} theme={theme} />;
     case "cta": return <CtaSection s={s} theme={theme} />;
+    case "logos": return <LogosSection s={s} theme={theme} />;
     case "contact": return <ContactSection s={s} theme={theme} />;
     case "footer": return <FooterSection s={s} theme={theme} pages={pages} />;
     default: return null;

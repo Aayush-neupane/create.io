@@ -745,6 +745,35 @@ export function GallerySection({ s, theme }: { s: SectionInstance; theme: ThemeC
   );
 }
 
+export function LogosSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
+  const c = s.content as Record<string, unknown>;
+  const items = arr<string>(c.items);
+  if (s.variant === "grid") {
+    return (
+      <section className={sectionPad(theme)}>
+        <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
+          {str(c.heading) && <p className="text-center font-mono text-xs uppercase" style={{ letterSpacing: "0.2em", color: theme.muted }}>{str(c.heading)}</p>}
+          <div className="mx-auto mt-6 grid max-w-3xl grid-cols-2 gap-3 sm:grid-cols-3">
+            {items.map((name, i) => (
+              <div key={i} className="border px-4 py-5 text-center font-bold" style={{ borderRadius: theme.radius, borderColor: theme.surface, fontFamily: fontStack(theme.fontHeading) }}>{name}</div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+  return (
+    <section className="border-y" style={{ borderColor: theme.surface, background: theme.surface }}>
+      <div className={`mx-auto flex flex-wrap items-center justify-center gap-x-10 gap-y-3 px-6 py-8 ${containerWidth(theme)}`}>
+        {str(c.heading) && <span className="w-full text-center font-mono text-[11px] uppercase" style={{ letterSpacing: "0.2em", color: theme.muted }}>{str(c.heading)}</span>}
+        {items.map((name, i) => (
+          <span key={i} className="text-lg font-bold opacity-60" style={{ fontFamily: fontStack(theme.fontHeading) }}>{name}</span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function MenuSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
   const c = s.content as Record<string, unknown>;
   const groups = arr<{ name: string; items: { name: string; description: string; price: string }[] }>(c.groups);

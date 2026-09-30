@@ -130,6 +130,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     sections: [
       { type: "navbar", variant: "solid" },
       { type: "hero", variant: "split" },
+      { type: "logos", variant: "row" },
       { type: "services", variant: "cards" },
       { type: "projects", variant: "list" },
       { type: "pricing", variant: "tiers" },
@@ -175,6 +176,7 @@ export const TEMPLATES: TemplateDefinition[] = [
       { type: "navbar", variant: "solid" },
       { type: "hero", variant: "poster" },
       { type: "gallery", variant: "masonry" },
+      { type: "logos", variant: "row" },
       { type: "process", variant: "steps" },
       { type: "team", variant: "grid" },
       { type: "pricing", variant: "tiers" },

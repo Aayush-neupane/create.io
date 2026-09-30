@@ -205,6 +205,7 @@ const Footer: C = ({ content, theme }) => (
 
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
   navbar: { logo: "Sajilo", links: [{ label: "Features", href: "#work" }, { label: "Pricing", href: "#pricing" }, { label: "FAQ", href: "#faq" }], cta: "Get started" },
+  logos: { heading: "Powering modern Nepali teams", items: ["Sajilo Rentals", "Himalayan Trails", "Momo Mart", "Kumari Pay", "FitNepal"] },
   hero: {
     eyebrow: "Sajilo 2.0 is live", title: "Analytics your whole team gets", subtitle: "",
     description: "Sajilo turns business data into decisions, dashboards, alerts and reports without the SQL. Built in Kathmandu, used across South Asia.",

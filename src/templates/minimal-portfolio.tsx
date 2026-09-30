@@ -195,16 +195,16 @@ const Footer: C = ({ content, theme }) => (
 );
 
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
-  navbar: { logo: "A. Morgan", links: [{ label: "Profile", href: "#about" }, { label: "Work", href: "#work" }, { label: "Contact", href: "#contact" }], cta: "" },
+  navbar: { logo: "A. Shrestha", links: [{ label: "Profile", href: "#about" }, { label: "Work", href: "#work" }, { label: "Contact", href: "#contact" }], cta: "" },
   hero: {
-    eyebrow: "Folio — 2026", title: "Alex Morgan", subtitle: "Product Designer & Developer",
-    description: "I design and build interfaces for teams who care about craft. Eight years across SaaS, fintech and developer tools.",
+    eyebrow: "Folio — 2083", title: "Aashish Shrestha", subtitle: "Product Designer & Developer",
+    description: "I design and build interfaces for teams who care about craft. Eight years across fintech, travel tech and developer tools in Kathmandu.",
     primaryCta: "Selected work ↓", secondaryCta: "Email me", image: "",
     stats: [{ value: "8", label: "Years practice" }, { value: "47", label: "Projects shipped" }, { value: "6", label: "Design awards" }],
   },
   about: {
     heading: "Profile", title: "Designer who codes, developer who cares about design",
-    body: "I work at the intersection of product design and front-end engineering — most comfortable owning a project from first sketch to production deploy. Currently open to select freelance engagements.",
+    body: "I work at the intersection of product design and front-end engineering — most comfortable owning a project from first sketch to production deploy. Based in Lalitpur, working with clients across Nepal and beyond.",
     image: "", bullets: ["Product strategy & UX", "Design systems", "React / Next.js / TypeScript"],
   },
   skills: {
@@ -214,21 +214,21 @@ export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
   projects: {
     heading: "Selected work", title: "Projects", description: "",
     items: [
-      { title: "Ledgerline Dashboard", description: "Analytics suite for a fintech startup — cut time-to-insight from days to minutes.", image: "", tags: ["Product", "Next.js"], url: "#", github: "#" },
-      { title: "Fieldnotes App", description: "Offline-first journaling app with 40k monthly writers.", image: "", tags: ["Mobile web", "PWA"], url: "#", github: "#" },
-      { title: "Mono Type System", description: "Open-source type scale and tooling adopted by 2k+ projects.", image: "", tags: ["Open source", "Typography"], url: "#", github: "#" },
+      { title: "Sajilo Banking", description: "Mobile banking UX for a Kathmandu digital wallet — onboarding completed 2x faster.", image: "", tags: ["Fintech", "Next.js"], url: "#", github: "#" },
+      { title: "Himalayan Trails", description: "Trekking booking platform for a Pokhara operator, in English and Nepali.", image: "", tags: ["Travel", "i18n"], url: "#", github: "#" },
+      { title: "Nepali Type Scale", description: "Open Devanagari-friendly type tooling adopted by local studios.", image: "", tags: ["Open source", "Typography"], url: "#", github: "#" },
     ],
   },
   experience: {
     heading: "Experience", title: "Where I've worked",
     items: [
-      { company: "Freelance", role: "Independent Designer-Developer", start: "2021", end: "Now", description: "Product design + builds for SaaS and fintech clients." },
-      { company: "Ledgerline", role: "Product Designer", start: "2019", end: "2021", description: "Owned dashboard UX across web and mobile." },
-      { company: "Studio Mono", role: "UI Developer", start: "2017", end: "2019", description: "Marketing sites and interactive prototypes." },
+      { company: "Freelance", role: "Independent Designer-Developer", start: "2021", end: "Now", description: "Product design + builds for Nepali SaaS and fintech clients." },
+      { company: "Sajilo Tech", role: "Product Designer", start: "2019", end: "2021", description: "Owned wallet UX across web and mobile." },
+      { company: "Studio Patan", role: "UI Developer", start: "2017", end: "2019", description: "Marketing sites and interactive prototypes." },
     ],
   },
-  contact: { heading: "Contact", title: "Get in touch", email: "hello@alexmorgan.design", phone: "", location: "Berlin, DE", body: "Currently booking projects for next quarter." },
-  footer: { tagline: "Set in Inter. Built with care.", copyright: "© 2026 Alex Morgan — All rights reserved.", showSocial: true },
+  contact: { heading: "Contact", title: "Get in touch", email: "namaste@aashish.com.np", phone: "+977-98510-12345", location: "Lalitpur, Nepal", body: "Currently booking projects for next quarter. Prefer Chiya over email threads." },
+  footer: { tagline: "Set in Inter. Built with care in Lalitpur.", copyright: "© 2026 Aashish Shrestha — All rights reserved.", showSocial: true },
 };
 
 export const components: Record<string, C> = {

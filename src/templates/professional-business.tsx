@@ -212,26 +212,26 @@ const Footer: C = ({ content, theme }) => (
 );
 
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
-  navbar: { logo: "Harbor & Co.", links: [{ label: "Practice", href: "#work" }, { label: "Results", href: "#results" }, { label: "FAQ", href: "#faq" }], cta: "Get in touch" },
+  navbar: { logo: "Himalaya Advisors", links: [{ label: "Practice", href: "#work" }, { label: "Results", href: "#results" }, { label: "FAQ", href: "#faq" }], cta: "Get in touch" },
   hero: {
-    eyebrow: "Briefing 01 — Who we help", title: "Clarity for complex decisions", subtitle: "",
-    description: "Harbor & Co. helps founders and operators cut through noise — pricing, hiring and growth strategy for companies doing $1–50M.",
+    eyebrow: "Briefing 01, who we help", title: "Clarity for complex decisions", subtitle: "",
+    description: "Himalaya Advisors helps Nepali founders cut through noise, pricing, hiring and growth strategy for companies doing Rs. 1-50 crore.",
     primaryCta: "Book a consultation", secondaryCta: "", image: "",
-    stats: [{ value: "120+", label: "Engagements" }, { value: "94%", label: "Repeat clients" }, { value: "14 yrs", label: "In practice" }],
+    stats: [{ value: "80+", label: "Engagements" }, { value: "92%", label: "Repeat clients" }, { value: "12 yrs", label: "In practice" }],
   },
   services: {
     heading: "Practice areas", title: "How we can help", description: "",
     items: [
-      { title: "Growth Strategy", description: "A 4-week diagnostic ending in a sequenced 12-month plan with owners and metrics.", icon: "", price: "from $8k" },
-      { title: "Pricing & Packaging", description: "Research-backed repackaging that lifts ARPA without churning your base.", icon: "", price: "from $6k" },
-      { title: "Operator Coaching", description: "Monthly working sessions for founders stepping into the CEO role.", icon: "", price: "from $2k/mo" },
+      { title: "Growth Strategy", description: "A 4-week diagnostic ending in a sequenced 12-month plan with owners and metrics.", icon: "", price: "from Rs. 3,20,000" },
+      { title: "Pricing and Packaging", description: "Research-backed repackaging that lifts average revenue without churning your base.", icon: "", price: "from Rs. 2,40,000" },
+      { title: "Operator Coaching", description: "Monthly working sessions for founders stepping into the CEO role.", icon: "", price: "from Rs. 80,000/mo" },
     ],
   },
   process: {
     heading: "Engagement model", title: "A calm, senior-only process",
     steps: [
-      { title: "Diagnose", description: "Stakeholder interviews and data review in week one.", icon: "" },
-      { title: "Decide", description: "One focused workshop to choose the highest-leverage moves.", icon: "" },
+      { title: "Diagnose", description: "Stakeholder interviews and data review in week one, in Nepali or English.", icon: "" },
+      { title: "Decide", description: "One focused workshop in Kathmandu to choose the highest-leverage moves.", icon: "" },
       { title: "Execute", description: "We stay in the room while your team ships the changes.", icon: "" },
       { title: "Review", description: "90-day check-in against the metrics we set together.", icon: "" },
     ],
@@ -239,16 +239,16 @@ export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
   testimonials: {
     heading: "Client record", title: "Results, in their words",
     items: [
-      { name: "Dana Whitfield", role: "CEO", company: "Beacon Logistics", message: "Harbor found the pricing leak we'd missed for two years. ARPA is up 31%.", photo: "" },
-      { name: "Priest Desai", role: "Founder", company: "Loopwork", message: "The rare consultant who argues with you — and is usually right.", photo: "" },
-      { name: "Carla Mendez", role: "COO", company: "Northbeam", message: "Our leadership team finally rows in the same direction.", photo: "" },
+      { name: "Dikshya Adhikari", role: "CEO", company: "Sajilo Rentals", message: "Himalaya found the pricing leak we had missed for two years. Revenue per customer is up 31 percent.", photo: "" },
+      { name: "Prakash KC", role: "Founder", company: "Loop Pasal", message: "The rare consultant who argues with you, and is usually right.", photo: "" },
+      { name: "Sneha Rana", role: "COO", company: "Northbeam Treks", message: "Our leadership team finally rows in the same direction.", photo: "" },
     ],
   },
   pricing: {
     heading: "Engagement options", title: "Work with us",
     items: [
-      { name: "Diagnostic", price: "$4,800", period: "2 weeks", description: "Know exactly what's wrong.", features: ["Stakeholder interviews", "Data & funnel review", "Written findings"], featured: false },
-      { name: "Advisory", price: "$6,500", period: "per month", description: "A senior partner in your corner.", features: ["Weekly working sessions", "Async review", "Quarterly planning"], featured: true },
+      { name: "Diagnostic", price: "Rs. 1,90,000", period: "2 weeks", description: "Know exactly what is wrong.", features: ["Stakeholder interviews", "Data and funnel review", "Written findings"], featured: false },
+      { name: "Advisory", price: "Rs. 2,60,000", period: "per month", description: "A senior partner in your corner.", features: ["Weekly working sessions", "Async review", "Quarterly planning"], featured: true },
       { name: "Embedded", price: "Custom", period: "per quarter", description: "We join the team.", features: ["On-site workshops", "Team coaching", "Board support"], featured: false },
     ],
   },
@@ -256,12 +256,12 @@ export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
     heading: "Due diligence", title: "Fair questions",
     items: [
       { q: "How fast can we start?", a: "Diagnostics begin within two weeks of signing. Advisory slots are limited to four clients." },
-      { q: "Do you work with early-stage companies?", a: "Selectively — typically post-revenue with a team of five or more." },
+      { q: "Do you work outside Kathmandu?", a: "Yes, we regularly travel to Pokhara, Chitwan and Biratnagar, remote works too." },
       { q: "What do you need from us?", a: "Access to your numbers, your team for interviews, and one decision-maker in the room." },
     ],
   },
-  cta: { title: "One call could save you a quarter.", description: "A 30-minute conversation. If we're not a fit, we'll tell you who is.", primaryCta: "Book a consultation", secondaryCta: "" },
-  footer: { tagline: "Harbor & Co. Consulting", copyright: "© 2026 Harbor & Co. All rights reserved.", showSocial: true },
+  cta: { title: "One call could save you a quarter.", description: "A 30-minute conversation over chiya. If we are not a fit, we will tell you who is.", primaryCta: "Book a consultation", secondaryCta: "" },
+  footer: { tagline: "Himalaya Business Advisors", copyright: "2026 Himalaya Advisors, Durbarmarg, Kathmandu.", showSocial: true },
 };
 
 export const components: Record<string, C> = {

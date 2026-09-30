@@ -193,39 +193,39 @@ const Footer: C = ({ content, theme }) => (
 );
 
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
-  navbar: { logo: "Ember & Oak", links: [{ label: "Menu", href: "#menu" }, { label: "About", href: "#about" }, { label: "Reservations", href: "#contact" }], cta: "" },
+  navbar: { logo: "Ember and Oak", links: [{ label: "Menu", href: "#menu" }, { label: "About", href: "#about" }, { label: "Reservations", href: "#contact" }], cta: "" },
   hero: {
-    eyebrow: "Wood-fired kitchen — Est. 2016", title: "Fire-kissed & seasonal", subtitle: "",
-    description: "A neighborhood dining room built around oak fire, family farms and natural wine. Menus change with the market.",
+    eyebrow: "Wood-fired kitchen, Lazimpat, Est. 2016", title: "Fire-kissed and seasonal", subtitle: "",
+    description: "A neighborhood dining room in Lazimpat built around oak fire, Kavre farms and Himalayan hospitality. Walk-ins welcome.",
     primaryCta: "Reserve a table", secondaryCta: "See the menu", image: "", stats: [],
   },
   about: {
     heading: "Our story", title: "Cooked over oak, served with warmth",
-    body: "Ember & Oak began as a twelve-seat counter with one wood oven. A decade later we still cook everything over fire — bread at dawn, vegetables at noon, whole animals on weekends.",
-    image: "", bullets: ["Wood-fired everything", "Family farms within 100 miles", "Natural wine list"],
+    body: "Ember and Oak began as a twelve-seat counter in Jhamsikhel with one wood oven. A decade later we still cook everything over fire, bread at dawn, tarkari at noon, whole kukhura on weekends.",
+    image: "", bullets: ["Wood-fired everything", "Kavre farms within 50 km", "Local wine and chhyang list"],
   },
   menu: {
-    heading: "The menu", title: "Eat & drink",
+    heading: "The menu", title: "Eat and drink",
     groups: [
-      { name: "To Start", items: [{ name: "Charred Sourdough", description: "Whipped ricotta, hot honey", price: "$9" }, { name: "Ember Beets", description: "Pistachio, citrus, herbs", price: "$13" }] },
-      { name: "From the Fire", items: [{ name: "Half Chicken al Mattone", description: "Rosemary jus, grilled lemon", price: "$27" }, { name: "Dry-aged Ribeye", description: "Bone marrow butter, watercress", price: "$46" }] },
-      { name: "To Finish", items: [{ name: "Olive Oil Cake", description: "Citrus mascarpone", price: "$10" }, { name: "Affogato", description: "Vanilla gelato, double espresso", price: "$7" }] },
+      { name: "To Start", items: [{ name: "Charred Sourdough", description: "Whipped ricotta, hot honey", price: "Rs. 550" }, { name: "Ember Beets", description: "Pistachio, citrus, herbs", price: "Rs. 495" }] },
+      { name: "From the Fire", items: [{ name: "Chicken Sekuwa Plate", description: "Rosemary jus, grilled lemon, dhedo", price: "Rs. 1,150" }, { name: "Buff Sukuti Sizzler", description: "Smoked buff, timur, watercress", price: "Rs. 1,250" }] },
+      { name: "To Finish", items: [{ name: "Juju Dhau", description: "Bhaktapur king curd, honey", price: "Rs. 350" }, { name: "Chiya Affogato", description: "Vanilla gelato, double milk chiya", price: "Rs. 300" }] },
     ],
   },
   gallery: { heading: "", title: "From the pass", images: ["", "", "", "", "", ""] },
   hours: {
-    heading: "Find us", title: "Hours & location", address: "214 Alder Street, Portland, OR", phone: "(503) 555-0114",
-    rows: [{ day: "Tue – Thu", time: "5pm – 10pm" }, { day: "Fri – Sat", time: "5pm – 11pm" }, { day: "Sunday", time: "4pm – 9pm" }, { day: "Mon", time: "Oven rests" }],
+    heading: "Find us", title: "Hours and location", address: "214 Lazimpat Road, Kathmandu", phone: "(01) 444-0114",
+    rows: [{ day: "Tue to Thu", time: "11am to 10pm" }, { day: "Fri and Sat", time: "11am to 11pm" }, { day: "Sunday", time: "12pm to 9pm" }, { day: "Monday", time: "Oven rests" }],
   },
   testimonials: {
     heading: "", title: "Guest book",
     items: [
-      { name: "The Oregonian", role: "", company: "Restaurant of the Year", message: "The most exciting fire cooking on the West Coast right now.", photo: "" },
-      { name: "Daniel R.", role: "", company: "Regular since 2017", message: "We've celebrated everything here. The ribeye alone is worth moving for.", photo: "" },
+      { name: "Wave Magazine", role: "", company: "Best of Kathmandu", message: "The most exciting fire cooking in the valley right now.", photo: "" },
+      { name: "Daniel R.", role: "", company: "Regular since 2017", message: "We have celebrated everything here. The sekuwa alone is worth moving to Lazimpat for.", photo: "" },
     ],
   },
-  contact: { heading: "Reservations", title: "Join us at the table", email: "hello@emberandoak.com", phone: "(503) 555-0114", location: "214 Alder Street, Portland", body: "Parties of 7+ please call. Full buyouts available Mondays." },
-  footer: { tagline: "Ember & Oak", copyright: "© 2026 Ember & Oak — Portland, OR.", showSocial: true },
+  contact: { heading: "Reservations", title: "Join us at the table", email: "namaste@emberandoak.com.np", phone: "(01) 444-0114", location: "214 Lazimpat Road, Kathmandu", body: "Parties of 7 or more, please call. Full buyouts available on Mondays." },
+  footer: { tagline: "Ember and Oak", copyright: "2026 Ember and Oak, Lazimpat, Kathmandu.", showSocial: true },
 };
 
 export const components: Record<string, C> = {

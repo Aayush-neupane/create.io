@@ -203,47 +203,47 @@ const Footer: C = ({ content, theme }) => (
 );
 
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
-  navbar: { logo: "Launchpad", links: [{ label: "Features", href: "#work" }, { label: "Pricing", href: "#pricing" }, { label: "FAQ", href: "#faq" }], cta: "Get started" },
+  navbar: { logo: "Sajilo", links: [{ label: "Features", href: "#work" }, { label: "Pricing", href: "#pricing" }, { label: "FAQ", href: "#faq" }], cta: "Get started" },
   hero: {
-    eyebrow: "Launchpad 2.0 is live →", title: "Analytics your whole team gets", subtitle: "",
-    description: "Launchpad turns product data into decisions — dashboards, alerts and reports without the SQL.",
+    eyebrow: "Sajilo 2.0 is live", title: "Analytics your whole team gets", subtitle: "",
+    description: "Sajilo turns business data into decisions, dashboards, alerts and reports without the SQL. Built in Kathmandu, used across South Asia.",
     primaryCta: "Start free trial", secondaryCta: "", image: "",
-    stats: [{ value: "4,000+", label: "teams" }, { value: "4.9/5", label: "rating" }, { value: "SOC 2", label: "certified" }],
+    stats: [{ value: "900+", label: "teams" }, { value: "4.8/5", label: "rating" }, { value: "eSewa", label: "and Khalti ready" }],
   },
   services: {
     heading: "Features", title: "Everything you need to grow", description: "",
     items: [
-      { title: "Live dashboards", description: "Metrics that update in real time, shareable with one link.", icon: "", price: "" },
-      { title: "Smart alerts", description: "Get pinged in Slack the moment a metric moves.", icon: "", price: "" },
-      { title: "Weekly reports", description: "Board-ready summaries generated every Monday.", icon: "", price: "" },
+      { title: "Live dashboards", description: "Metrics that update in real time, shareable with one link, in Nepali or English.", icon: "", price: "" },
+      { title: "Smart alerts", description: "Get pinged on Viber or Slack the moment a metric moves.", icon: "", price: "" },
+      { title: "Weekly reports", description: "Board-ready summaries generated every Monday morning.", icon: "", price: "" },
     ],
   },
   projects: {
-    heading: "", title: "Loved by modern teams", description: "",
+    heading: "", title: "Loved by Nepali teams", description: "",
     items: [
-      { title: "Acme Corp", description: "Cut reporting time from 2 days to 20 minutes.", image: "", tags: [], url: "#", github: "#" },
-      { title: "Northwind", description: "Found a $400k churn leak in week one.", image: "", tags: [], url: "#", github: "#" },
-      { title: "Globex", description: "One dashboard replaced eleven spreadsheets.", image: "", tags: [], url: "#", github: "#" },
+      { title: "Sajilo Rentals", description: "Cut reporting time from 2 days to 20 minutes.", image: "", tags: [], url: "#", github: "#" },
+      { title: "Himalayan Trails", description: "Found a Rs. 40 lakh churn leak in week one.", image: "", tags: [], url: "#", github: "#" },
+      { title: "Momo Mart", description: "One dashboard replaced eleven spreadsheets.", image: "", tags: [], url: "#", github: "#" },
     ],
   },
   pricing: {
     heading: "", title: "Simple pricing",
     items: [
-      { name: "Starter", price: "$0", period: "mo", description: "For side projects.", features: ["3 dashboards", "7-day retention", "Community support"], featured: false },
-      { name: "Growth", price: "$24", period: "mo", description: "For teams finding fit.", features: ["Unlimited dashboards", "Slack alerts", "Priority support"], featured: true },
-      { name: "Scale", price: "$79", period: "mo", description: "For companies at speed.", features: ["SSO & audit log", "Dedicated CSM", "99.99% SLA"], featured: false },
+      { name: "Starter", price: "Rs. 0", period: "mo", description: "For side projects.", features: ["3 dashboards", "7-day retention", "Community support"], featured: false },
+      { name: "Growth", price: "Rs. 2,900", period: "mo", description: "For teams finding fit.", features: ["Unlimited dashboards", "Viber alerts", "Priority support"], featured: true },
+      { name: "Scale", price: "Rs. 9,500", period: "mo", description: "For companies at speed.", features: ["SSO and audit log", "Dedicated manager", "99.9% uptime"], featured: false },
     ],
   },
   faq: {
     heading: "", title: "Questions?",
     items: [
-      { q: "Is there really a free plan?", a: "Yes — free forever for up to 3 dashboards. No credit card required." },
+      { q: "Is there really a free plan?", a: "Yes, free forever for up to 3 dashboards. No credit card, no eSewa needed." },
       { q: "How long does setup take?", a: "Most teams connect a source and see first dashboards in under 15 minutes." },
-      { q: "Can I cancel anytime?", a: "Anytime, in two clicks, with your data exportable first." },
+      { q: "Can I pay with eSewa or Khalti?", a: "Yes, plus cards and bank transfer for annual plans with VAT bills." },
     ],
   },
-  cta: { title: "See what your data is hiding.", description: "Join 4,000+ teams making faster decisions with Launchpad.", primaryCta: "Start free trial", secondaryCta: "" },
-  footer: { tagline: "Launchpad", copyright: "© 2026 Launchpad Inc. — Analytics for everyone.", showSocial: true },
+  cta: { title: "See what your data is hiding.", description: "Join 900 plus Nepali teams making faster decisions with Sajilo.", primaryCta: "Start free trial", secondaryCta: "" },
+  footer: { tagline: "Sajilo", copyright: "2026 Sajilo Inc., Kathmandu. Analytics for everyone.", showSocial: true },
 };
 
 export const components: Record<string, C> = {

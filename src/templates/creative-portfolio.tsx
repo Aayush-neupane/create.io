@@ -150,28 +150,28 @@ const Footer: C = ({ content, theme }) => (
 );
 
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
-  navbar: { logo: "June Park", links: [{ label: "Frames", href: "#work" }, { label: "About", href: "#about" }, { label: "Bookings", href: "#contact" }], cta: "" },
+  navbar: { logo: "Prerana Gurung", links: [{ label: "Frames", href: "#work" }, { label: "About", href: "#about" }, { label: "Bookings", href: "#contact" }], cta: "" },
   hero: {
-    eyebrow: "Editorial & portrait photographer", title: "Light, honestly observed", subtitle: "",
-    description: "I photograph people, places and the quiet in-between — for magazines, brands and families who hate posing.",
+    eyebrow: "Wedding and travel photographer, Pokhara", title: "Light, honestly observed", subtitle: "",
+    description: "I photograph weddings, treks and everyday life across Nepal, for couples, magazines and brands who hate posing.",
     primaryCta: "Enter the gallery", secondaryCta: "", image: "",
-    stats: [{ value: "400+", label: "Shoots" }, { value: "9", label: "Years" }, { value: "26", label: "Publications" }],
+    stats: [{ value: "200+", label: "Weddings" }, { value: "9", label: "Years" }, { value: "14", label: "Districts covered" }],
   },
   gallery: { heading: "", title: "Selected frames", images: ["", "", "", "", ""] },
   about: {
     heading: "The photographer", title: "A patient eye",
-    body: "My work starts with listening. Every session is unhurried — the best frames usually arrive when nobody is performing. Available worldwide.",
-    image: "", bullets: ["Editorial & magazine", "Portraits & weddings", "Prints & books"],
+    body: "My work starts with listening. Every shoot is unhurried, the best frames arrive when nobody is performing. Home base in Pokhara, available from Mechi to Mahakali.",
+    image: "", bullets: ["Weddings and pre-wedding", "Treks and travel stories", "Prints and photo books"],
   },
   testimonials: {
     heading: "Field notes", title: "Kind words",
     items: [
-      { name: "Mara Jensen", role: "Photo Editor", company: "Drift Magazine", message: "June sees what the rest of us walk past. The cover story tripled our newsstand sales.", photo: "" },
-      { name: "Tom & Priya", role: "Married", company: "Big Sur", message: "We forgot the camera existed. The album makes us cry every time.", photo: "" },
+      { name: "Aayush and Shreya", role: "Married", company: "Ghandruk", message: "We forgot the camera existed. The album makes our families cry every Dashain.", photo: "" },
+      { name: "Binod Thapa", role: "Editor", company: "Nepali Traveller", message: "Prerana sees what the rest of us walk past. Our Mustang cover sold out.", photo: "" },
     ],
   },
-  contact: { heading: "Bookings", title: "Let's make something honest", email: "hello@junepark.photo", phone: "", location: "Portland, OR — travels worldwide", body: "Now booking for next season. Tell me about your story and timeline." },
-  footer: { tagline: "Stay in the light.", copyright: "© 2026 June Park Photography.", showSocial: true },
+  contact: { heading: "Bookings", title: "Lets make something honest", email: "namaste@prerana.photo", phone: "+977-98560-67890", location: "Pokhara, travels all over Nepal", body: "Wedding season (Nov-Feb) books out fast. Tell me your date and venue." },
+  footer: { tagline: "Stay in the light.", copyright: "2026 Prerana Gurung Photography, Pokhara.", showSocial: true },
 };
 
 export const components: Record<string, C> = {

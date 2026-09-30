@@ -203,34 +203,34 @@ const Footer: C = ({ content, theme }) => (
 );
 
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
-  navbar: { logo: "Studio North", links: [{ label: "Work", href: "#work" }, { label: "Studio", href: "#about" }, { label: "Contact", href: "#contact" }], cta: "Start a project ↗" },
+  navbar: { logo: "Studio Himal", links: [{ label: "Work", href: "#work" }, { label: "Studio", href: "#about" }, { label: "Contact", href: "#contact" }], cta: "Start a project" },
   hero: {
-    eyebrow: "● Booking Q3 projects", title: "We ship brands that win", subtitle: "",
-    description: "Studio North is a senior-only design and engineering team. Brand, website and product — under one roof, shipped in weeks.",
+    eyebrow: "Booking projects for 2083", title: "We ship brands that win", subtitle: "",
+    description: "Studio Himal is a senior-only design and engineering team in Lalitpur. Brand, website and product, under one roof, shipped in weeks.",
     primaryCta: "See the work", secondaryCta: "Our process", image: "",
-    stats: [{ value: "80+", label: "Launches" }, { value: "14", label: "Awards" }, { value: "6 wks", label: "Avg. timeline" }],
+    stats: [{ value: "60+", label: "Launches" }, { value: "9", label: "Awards" }, { value: "6 wks", label: "Avg. timeline" }],
   },
   services: {
     heading: "Capabilities", title: "Everything you need to launch", description: "Fixed-scope sprints with senior people only.",
     items: [
-      { title: "Brand Identity", description: "Naming, logo, type and voice — a complete kit in three weeks.", icon: "", price: "from $9k" },
-      { title: "Web Design & Build", description: "Marketing sites and product UI, designed and shipped by the same team.", icon: "", price: "from $14k" },
-      { title: "Design Engineering", description: "Design systems and component libraries your team will actually use.", icon: "", price: "from $11k" },
+      { title: "Brand Identity", description: "Naming, logo, type and voice, a complete kit in three weeks.", icon: "", price: "from Rs. 3,50,000" },
+      { title: "Web Design and Build", description: "Marketing sites and product UI, designed and shipped by the same team.", icon: "", price: "from Rs. 5,50,000" },
+      { title: "Design Engineering", description: "Design systems and component libraries your team will actually use.", icon: "", price: "from Rs. 4,25,000" },
     ],
   },
   projects: {
     heading: "Case work", title: "Recent wins", description: "",
     items: [
-      { title: "Pulse Fitness", description: "Rebrand + booking platform. Trial signups up 3.1x in 90 days.", image: "", tags: ["Brand", "Web", "Booking"], url: "#", github: "#" },
-      { title: "Ledgerline", description: "Product UI for a fintech scale-up. Onboarding completion doubled.", image: "", tags: ["Product", "Design system"], url: "#", github: "#" },
-      { title: "Fern & Field", description: "E-commerce for a plant studio. AOV up 44% after relaunch.", image: "", tags: ["E-commerce", "Brand"], url: "#", github: "#" },
+      { title: "Sajilo Rentals", description: "Rebrand plus booking platform. Trial signups up 3x in 90 days.", image: "", tags: ["Brand", "Web", "Booking"], url: "#", github: "#" },
+      { title: "Kumari Pay", description: "Product UI for a fintech scale-up. Onboarding completion doubled.", image: "", tags: ["Product", "Design system"], url: "#", github: "#" },
+      { title: "Fern and Field", description: "E-commerce for a Jhamsikhel plant studio. Order value up 44 percent.", image: "", tags: ["E-commerce", "Brand"], url: "#", github: "#" },
     ],
   },
   process: {
-    heading: "Process", title: "How we'll work",
+    heading: "Process", title: "How we will work",
     steps: [
       { title: "Sprint 0", description: "Stakeholders, audit and a plan you can hold us to.", icon: "" },
-      { title: "Design", description: "Weekly drops in Figma. Real content, no lorem.", icon: "" },
+      { title: "Design", description: "Weekly drops in Figma. Real content, Nepali and English.", icon: "" },
       { title: "Build", description: "Clean code, CMS, analytics and QA baked in.", icon: "" },
       { title: "Launch", description: "Ship, measure, and a 30-day tune-up included.", icon: "" },
     ],
@@ -238,21 +238,21 @@ export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
   team: {
     heading: "Team", title: "No juniors, no hand-offs",
     members: [
-      { name: "Alex North", role: "Founder, Design", photo: "", bio: "Ex-agency CD. 12 years, 100+ launches." },
-      { name: "Sam Rivera", role: "Engineering Lead", photo: "", bio: "Full-stack. Ships fast, tests everything." },
-      { name: "Jo Kim", role: "Brand Director", photo: "", bio: "Identity systems with actual personality." },
+      { name: "Aayush Neupane", role: "Founder, Design", photo: "", bio: "Ex-agency CD. 10 years, 80 plus launches." },
+      { name: "Sabin Shrestha", role: "Engineering Lead", photo: "", bio: "Full-stack. Ships fast, tests everything." },
+      { name: "Prerana Karki", role: "Brand Director", photo: "", bio: "Identity systems with actual personality." },
     ],
   },
   testimonials: {
     heading: "Client proof", title: "Loved by founders",
     items: [
-      { name: "Nina Park", role: "CEO", company: "Pulse", message: "They operate like co-founders. Best money we've spent.", photo: "" },
-      { name: "Omar Haddad", role: "Founder", company: "Ledgerline", message: "Design quality you'd expect at 3x the price.", photo: "" },
-      { name: "Liv Chen", role: "CMO", company: "Fern & Field", message: "The site paid for itself before launch day ended.", photo: "" },
+      { name: "Nina Shrestha", role: "CEO", company: "Sajilo Rentals", message: "They operate like co-founders. Best money we have spent.", photo: "" },
+      { name: "Omar Shrestha", role: "Founder", company: "Kumari Pay", message: "Design quality you would expect at 3x the price.", photo: "" },
+      { name: "Liv Chen", role: "CMO", company: "Fern and Field", message: "The site paid for itself before launch day ended.", photo: "" },
     ],
   },
-  cta: { title: "Have something ambitious? Let's build it.", description: "Tell us where you're headed — we'll reply within one business day.", primaryCta: "Start a project ↗", secondaryCta: "" },
-  footer: { tagline: "Let's build ↗", copyright: "© 2026 Studio North. All rights reserved.", showSocial: true },
+  cta: { title: "Have something ambitious? Lets build it.", description: "Tell us where you are headed, we will reply within one business day.", primaryCta: "Start a project", secondaryCta: "" },
+  footer: { tagline: "Lets build", copyright: "2026 Studio Himal, Jhamsikhel, Lalitpur.", showSocial: true },
 };
 
 export const components: Record<string, C> = {

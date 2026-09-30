@@ -95,7 +95,7 @@ export const TEMPLATES: TemplateDefinition[] = [
   },
   {
     id: "agency",
-    name: "Studio North",
+    name: "Studio Himal",
     category: "Agency",
     description: "Confident agency site with services, process, team and case work. Built to win clients.",
     tags: ["agency", "studio", "startup", "saas"],
@@ -118,7 +118,7 @@ export const TEMPLATES: TemplateDefinition[] = [
   },
   {
     id: "saas-starter",
-    name: "Launchpad SaaS",
+    name: "Sajilo",
     category: "SaaS",
     description: "Crisp SaaS marketing page with pricing, FAQ and a strong call to action.",
     tags: ["saas", "startup", "product", "landing"],

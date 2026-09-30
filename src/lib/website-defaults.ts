@@ -69,9 +69,9 @@ export function defaultContentFor(type: SectionType): Record<string, unknown> {
         title: "How I can help",
         description: "Fixed-scope engagements with clear deliverables and timelines.",
         items: [
-          { title: "Website Design", description: "Custom, conversion-focused websites designed around your brand and audience.", icon: "sparkles", price: "from $2,400" },
-          { title: "Development", description: "Fast, accessible builds with Next.js, TypeScript and modern tooling.", icon: "code", price: "from $3,200" },
-          { title: "Brand Identity", description: "Logo, type and color systems that make you look established from day one.", icon: "palette", price: "from $1,800" },
+          { title: "Website Design", description: "Custom, conversion-focused websites designed around your brand and audience.", icon: "sparkles", price: "from Rs. 95,000" },
+          { title: "Development", description: "Fast, accessible builds with Next.js, TypeScript and modern tooling.", icon: "code", price: "from Rs. 1,25,000" },
+          { title: "Brand Identity", description: "Logo, type and color systems that make you look established from day one.", icon: "palette", price: "from Rs. 70,000" },
         ],
       };
     case "projects":
@@ -80,9 +80,9 @@ export function defaultContentFor(type: SectionType): Record<string, unknown> {
         title: "Projects",
         description: "A few engagements I'm proud of.",
         items: [
-          { title: "Northwind Analytics", description: "Marketing site + dashboard redesign that lifted trial signups 38%.", image: "", tags: ["Next.js", "Design system"], url: "#", github: "#" },
-          { title: "Cabin & Co.", description: "Booking experience for a boutique detailing studio. 4.9★ from 300+ reviews.", image: "", tags: ["Booking", "SEO"], url: "#", github: "#" },
-          { title: "Flexfit Studio", description: "Class scheduling and membership site for a fitness studio.", image: "", tags: ["Scheduling", "CMS"], url: "#", github: "#" },
+          { title: "Sajilo Banking", description: "Marketing site + dashboard redesign that lifted trial signups 38%.", image: "", tags: ["Next.js", "Design system"], url: "#", github: "#" },
+          { title: "Himalayan Trails", description: "Booking experience for a Pokhara trekking company. 4.9★ from 300+ reviews.", image: "", tags: ["Booking", "SEO"], url: "#", github: "#" },
+          { title: "FitNepal Studio", description: "Class scheduling and membership site for a fitness studio in Lalitpur.", image: "", tags: ["Scheduling", "CMS"], url: "#", github: "#" },
         ],
       };
     case "experience":
@@ -91,8 +91,8 @@ export function defaultContentFor(type: SectionType): Record<string, unknown> {
         title: "Where I've worked",
         items: [
           { company: "Freelance", role: "Product Designer & Developer", start: "2021", end: "Present", description: "Partnering with startups and studios on websites, design systems and product UI." },
-          { company: "Studio North", role: "Senior Designer", start: "2018", end: "2021", description: "Led web projects for SaaS and e-commerce clients; built the studio's component library." },
-          { company: "Pixelworks", role: "UI Developer", start: "2016", end: "2018", description: "Shipped marketing sites and interactive prototypes for agency clients." },
+          { company: "Studio Kathmandu", role: "Senior Designer", start: "2018", end: "2021", description: "Led web projects for SaaS and e-commerce clients; built the studio's component library." },
+          { company: "Pixel Danfe", role: "UI Developer", start: "2016", end: "2018", description: "Shipped marketing sites and interactive prototypes for agency clients." },
         ],
       };
     case "education":
@@ -100,7 +100,7 @@ export function defaultContentFor(type: SectionType): Record<string, unknown> {
         heading: "Education",
         title: "Background",
         items: [
-          { school: "State University", degree: "B.S. Computer Science", start: "2012", end: "2016", description: "Focus on human-computer interaction and web technologies." },
+          { school: "Tribhuvan University", degree: "B.Sc. Computer Science", start: "2012", end: "2016", description: "Focus on human-computer interaction and web technologies." },
         ],
       };
     case "testimonials":
@@ -108,9 +108,9 @@ export function defaultContentFor(type: SectionType): Record<string, unknown> {
         heading: "Kind words",
         title: "Testimonials",
         items: [
-          { name: "Sarah Kim", role: "Founder", company: "Northwind", message: "The rare designer who thinks in systems and ships like an engineer. Our conversion rate speaks for itself.", photo: "" },
-          { name: "Marcus Lee", role: "CTO", company: "Flexfit", message: "Fast, communicative, and obsessive about detail. The site paid for itself within two months.", photo: "" },
-          { name: "Elena Rossi", role: "Marketing Lead", company: "Cabin & Co.", message: "Bookings doubled after launch. Customers constantly compliment the website.", photo: "" },
+          { name: "Sabina Shrestha", role: "Founder", company: "Sajilo Banking", message: "The rare designer who thinks in systems and ships like an engineer. Our conversion rate speaks for itself.", photo: "" },
+          { name: "Rohit Maharjan", role: "CTO", company: "FitNepal", message: "Fast, communicative, and obsessive about detail. The site paid for itself within two months.", photo: "" },
+          { name: "Anjali Thapa", role: "Marketing Lead", company: "Himalayan Trails", message: "Bookings doubled after launch. Customers constantly compliment the website.", photo: "" },
         ],
       };
     case "pricing":
@@ -118,9 +118,9 @@ export function defaultContentFor(type: SectionType): Record<string, unknown> {
         heading: "Pricing",
         title: "Simple, transparent plans",
         items: [
-          { name: "Starter", price: "$1,900", period: "one-time", description: "Perfect for a sharp one-page presence.", features: ["1-page custom site", "Copy polish", "Basic SEO", "2-week delivery"], featured: false },
-          { name: "Studio", price: "$3,900", period: "one-time", description: "Our most popular full website package.", features: ["Up to 6 pages", "CMS + blog", "Advanced SEO", "Analytics setup"], featured: true },
-          { name: "Scale", price: "$7,500", period: "one-time", description: "For teams that need design + build.", features: ["Everything in Studio", "Design system", "Priority support", "Training"], featured: false },
+          { name: "Starter", price: "Rs. 75,000", period: "one-time", description: "Perfect for a sharp one-page presence.", features: ["1-page custom site", "Copy polish", "Basic SEO", "2-week delivery"], featured: false },
+          { name: "Studio", price: "Rs. 1,50,000", period: "one-time", description: "Our most popular full website package.", features: ["Up to 6 pages", "CMS + blog", "Advanced SEO", "Analytics setup"], featured: true },
+          { name: "Scale", price: "Rs. 2,90,000", period: "one-time", description: "For teams that need design + build.", features: ["Everything in Studio", "Design system", "Priority support", "Training"], featured: false },
         ],
       };
     case "gallery":
@@ -134,17 +134,17 @@ export function defaultContentFor(type: SectionType): Record<string, unknown> {
         heading: "Menu",
         title: "Taste of the house",
         groups: [
-          { name: "Starters", items: [{ name: "Burrata & Heirloom", description: "Basil oil, aged balsamic, grilled sourdough", price: "$14" }, { name: "Crispy Calamari", description: "Lemon aioli, parsley", price: "$13" }] },
-          { name: "Mains", items: [{ name: "Wood-fired Margherita", description: "San Marzano, fior di latte, basil", price: "$18" }, { name: "Herb-roast Chicken", description: "Rosemary jus, seasonal vegetables", price: "$26" }] },
-          { name: "Desserts", items: [{ name: "Olive Oil Cake", description: "Citrus mascarpone", price: "$9" }, { name: "Affogato", description: "Vanilla gelato, double espresso", price: "$7" }] },
+          { name: "Starters", items: [{ name: "Burrata & Heirloom", description: "Basil oil, aged balsamic, grilled sourdough", price: "Rs. 550" }, { name: "Crispy Calamari", description: "Lemon aioli, parsley", price: "Rs. 495" }] },
+          { name: "Mains", items: [{ name: "Wood-fired Margherita", description: "San Marzano, fior di latte, basil", price: "Rs. 850" }, { name: "Herb-roast Chicken", description: "Rosemary jus, seasonal vegetables", price: "Rs. 1,150" }] },
+          { name: "Desserts", items: [{ name: "Olive Oil Cake", description: "Citrus mascarpone", price: "Rs. 350" }, { name: "Affogato", description: "Vanilla gelato, double espresso", price: "Rs. 250" }] },
         ],
       };
     case "hours":
       return {
         heading: "Visit us",
         title: "Hours & location",
-        address: "123 Main Street, Portland, OR",
-        phone: "(503) 555-0114",
+        address: "214 Lazimpat Road, Kathmandu",
+        phone: "(01) 444-0114",
         rows: [{ day: "Mon – Thu", time: "11:30a – 10p" }, { day: "Fri – Sat", time: "11:30a – 11p" }, { day: "Sunday", time: "12p – 9p" }],
       };
     case "team":
@@ -152,9 +152,9 @@ export function defaultContentFor(type: SectionType): Record<string, unknown> {
         heading: "Team",
         title: "The people behind it",
         members: [
-          { name: "Alex Morgan", role: "Founder & CEO", photo: "", bio: "Previously led product at two SaaS startups." },
-          { name: "Jamie Chen", role: "Design Director", photo: "", bio: "Systems thinker, type nerd." },
-          { name: "Riley Patel", role: "Engineering Lead", photo: "", bio: "Ships fast without breaking things." },
+          { name: "Aashish Shrestha", role: "Founder & CEO", photo: "", bio: "Previously led product at two Kathmandu startups." },
+          { name: "Sabina Karki", role: "Design Director", photo: "", bio: "Systems thinker, type nerd." },
+          { name: "Rohit Maharjan", role: "Engineering Lead", photo: "", bio: "Ships fast without breaking things." },
         ],
       };
     case "process":
@@ -181,7 +181,7 @@ export function defaultContentFor(type: SectionType): Record<string, unknown> {
     case "cta":
       return { title: "Have a project in mind?", description: "Tell me about your goals — I'll reply within one business day.", primaryCta: "Start a project", secondaryCta: "Book a call" };
     case "contact":
-      return { heading: "Contact", title: "Let's work together", email: "hello@example.com", phone: "", location: "Portland, OR", body: "Currently booking new projects for next quarter." };
+      return { heading: "Contact", title: "Let's work together", email: "namaste@example.com.np", phone: "", location: "Kathmandu, Nepal", body: "Currently booking new projects for next quarter." };
     case "footer":
       return { tagline: "Designed and built with care.", copyright: "© 2026 All rights reserved.", showSocial: true };
     default:

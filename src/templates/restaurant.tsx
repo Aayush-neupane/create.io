@@ -3,7 +3,7 @@
  * Hearth system: centered crest masthead, dotted menu leaders, reservation cards.
  */
 import type { SectionType, ThemeConfig } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
+import { fontStack, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 
 type C = (props: BespokeProps) => React.ReactNode;
@@ -57,7 +57,7 @@ const About: C = ({ content, theme }) => (
       </div>
       <div className="flex aspect-[4/5] items-center justify-center overflow-hidden" style={{ borderRadius: theme.radius * 1.4, background: theme.surface }}>
         {str(content.image) ? <img src={str(content.image)} alt="" className="h-full w-full object-cover" /> : (
-          <span className="italic opacity-30" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "4rem" }}>❦</span>
+          <EmptyArt theme={theme} glyph="❦" caption="The hearth" className="h-full" />
         )}
       </div>
     </div>
@@ -105,7 +105,7 @@ const Gallery: C = ({ content, theme }) => {
           {images.map((img, i) => (
             <div key={i} className="break-inside-avoid overflow-hidden" style={{ borderRadius: theme.radius, background: theme.surface, aspectRatio: i % 3 === 1 ? "3/4" : "1/1" }}>
               {img ? <img src={img} alt="" className="h-full w-full object-cover" /> : (
-                <div className="flex h-full min-h-44 items-center justify-center text-xs italic" style={{ color: theme.muted }}>Plate {i + 1}</div>
+                <EmptyArt theme={theme} glyph={String(i + 1).padStart(2, "0")} caption="From the pass" className="h-full min-h-44" />
               )}
             </div>
           ))}

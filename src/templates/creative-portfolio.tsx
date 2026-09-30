@@ -3,7 +3,7 @@
  * Darkroom system: near-black canvas, serif display, frame numbers, white-on-dark poster.
  */
 import type { SectionType, ThemeConfig } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
+import { fontStack, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 
 type C = (props: BespokeProps) => React.ReactNode;
@@ -57,9 +57,7 @@ const Gallery: C = ({ content, theme }) => {
   const frame = (img: string | undefined, i: number, cls: string) => (
     <figure key={i} className={`${cls} group relative overflow-hidden`} style={{ borderRadius: theme.radius, background: "#1c1c1f" }}>
       {img ? <img src={img} alt="" className="h-full w-full object-cover" /> : (
-        <div className="flex h-full min-h-40 items-center justify-center">
-          <span className="italic opacity-30" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "2.5rem" }}>{String(i + 1).padStart(2, "0")}</span>
-        </div>
+        <EmptyArt theme={theme} glyph={String(i + 1).padStart(2, "0")} caption="Exposure" className="h-full min-h-40" />
       )}
       <figcaption className="absolute bottom-2 left-3 font-mono text-[10px] text-white/70">FIG. {String(i + 1).padStart(2, "0")}</figcaption>
     </figure>

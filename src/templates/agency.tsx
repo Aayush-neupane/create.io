@@ -3,7 +3,7 @@
  * Studio system: sticker badges, oversized grotesk, alternating case rows, violet current.
  */
 import type { SectionType, ThemeConfig } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
+import { fontStack, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 
 type C = (props: BespokeProps) => React.ReactNode;
@@ -95,9 +95,9 @@ const Projects: C = ({ content, theme }) => {
         <div className="mt-10 space-y-10">
           {items.map((p, i) => (
             <article key={i} className={`grid items-stretch gap-5 md:grid-cols-2 ${i % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""}`}>
-              <div className="relative min-h-64 overflow-hidden" style={{ borderRadius: theme.radius * 1.3, background: i % 2 ? theme.primary : theme.accent }}>
+              <div className="relative min-h-64 overflow-hidden" style={{ borderRadius: theme.radius * 1.3 }}>
                 {p.image ? <img src={p.image} alt={p.title} className="absolute inset-0 h-full w-full object-cover" /> : (
-                  <span className="absolute bottom-4 left-6 font-bold text-white/90" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "4.5rem", lineHeight: 1 }}>{String(i + 1).padStart(2, "0")}</span>
+                  <EmptyArt theme={theme} glyph={String(i + 1).padStart(2, "0")} caption={arr<string>(p.tags)[0] || "Case work"} className="absolute inset-0" />
                 )}
                 <span className="absolute left-4 top-4 rounded-full bg-black/50 px-2.5 py-1 font-mono text-[10px] text-white">{arr<string>(p.tags)[0] || "Case"}</span>
               </div>
@@ -144,9 +144,9 @@ const Team: C = ({ content, theme }) => {
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           {members.map((m, i) => (
             <div key={i} className="group">
-              <div className="relative aspect-[4/5] overflow-hidden" style={{ borderRadius: theme.radius * 1.2, background: theme.surface }}>
+              <div className="relative aspect-[4/5] overflow-hidden" style={{ borderRadius: theme.radius * 1.2 }}>
                 {m.photo ? <img src={m.photo} alt={m.name} className="h-full w-full object-cover" /> : (
-                  <span className="flex h-full items-center justify-center font-bold opacity-20" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "5rem" }}>{m.name.split(" ").map((w) => w[0]).join("")}</span>
+                  <EmptyArt theme={theme} glyph={m.name.split(" ").map((w) => w[0]).join("")} caption="Studio" className="absolute inset-0" />
                 )}
                 <span className="absolute bottom-3 left-3 rounded-full px-3 py-1 text-[11px] font-bold text-white" style={{ background: theme.primary }}>{m.role}</span>
               </div>

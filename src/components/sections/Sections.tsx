@@ -70,6 +70,33 @@ export function arr<T>(v: unknown): T[] {
   return Array.isArray(v) ? (v as T[]) : [];
 }
 
+/** Art-directed stand-in for empty image slots — layered gradient, etched
+ *  lines, oversized glyph. Sites look finished before a single upload. */
+export function EmptyArt({ theme, glyph, caption, className = "", style }: {
+  theme: ThemeConfig; glyph: string; caption?: string; className?: string; style?: React.CSSProperties;
+}) {
+  return (
+    <div
+      className={`relative flex h-full w-full flex-col items-center justify-center gap-2 overflow-hidden ${className}`}
+      style={{
+        background: `radial-gradient(120% 110% at 18% 0%, color-mix(in srgb, ${theme.accent} 32%, transparent), transparent 55%), linear-gradient(155deg, color-mix(in srgb, ${theme.primary} 94%, ${theme.background}), color-mix(in srgb, ${theme.primary} 68%, ${theme.surface}))`,
+        color: "#fff",
+        ...style,
+      }}
+    >
+      <div className="absolute inset-0" style={{ backgroundImage: "repeating-linear-gradient(-45deg, rgba(255,255,255,.9) 0 1px, transparent 1px 10px)", opacity: 0.1 }} aria-hidden />
+      <span aria-hidden style={{ fontFamily: fontStack(theme.fontHeading), fontWeight: 800, fontSize: "clamp(2.6rem, 7vw, 5rem)", lineHeight: 1, letterSpacing: "-0.04em", opacity: 0.92 }}>
+        {glyph}
+      </span>
+      {caption && (
+        <span className="relative font-mono text-[10px] uppercase" style={{ letterSpacing: "0.22em", opacity: 0.65 }}>
+          {caption}
+        </span>
+      )}
+    </div>
+  );
+}
+
 // ─── NAVBAR ───
 export function NavbarSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
   const c = s.content as { logo?: string; links?: { label: string; href: string }[]; cta?: string };
@@ -269,12 +296,9 @@ export function HeroSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
             </dl>
           )}
         </div>
-        <div className="aspect-square overflow-hidden md:aspect-[4/5]" style={{ borderRadius: theme.radius * 1.5, background: theme.surface }}>
+        <div className="aspect-square overflow-hidden md:aspect-[4/5]" style={{ borderRadius: theme.radius * 1.5 }}>
           {str(c.image) ? <img src={str(c.image)} alt="" className="h-full w-full object-cover" /> : (
-            <div className="flex h-full flex-col items-center justify-center gap-2 p-8 text-center" style={{ color: theme.muted }}>
-              <span className="text-4xl" style={{ fontFamily: fontStack(theme.fontHeading) }}>{str(c.title).slice(0, 1) || "A"}</span>
-              <span className="text-sm">Upload a portrait in Content → Hero</span>
-            </div>
+            <EmptyArt theme={theme} glyph={str(c.title).slice(0, 1) || "A"} caption="Portrait" className="h-full" />
           )}
         </div>
       </div>
@@ -340,7 +364,7 @@ export function AboutSection({ s, theme }: { s: SectionInstance; theme: ThemeCon
       <div className={`mx-auto px-6 ${containerWidth(theme)} ${s.variant === "split" ? "grid gap-10 md:grid-cols-2" : ""}`}>
         {s.variant === "split" && (
           <div className="aspect-[4/3] overflow-hidden" style={{ borderRadius: theme.radius, background: theme.background }}>
-            {str(c.image) ? <img src={str(c.image)} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-sm" style={{ color: theme.muted }}>About image</div>}
+            {str(c.image) ? <img src={str(c.image)} alt="" className="h-full w-full object-cover" /> : <EmptyArt theme={theme} glyph="✳" caption="About" className="h-full min-h-56" />}
           </div>
         )}
         <div>
@@ -548,7 +572,7 @@ export function ProjectsSection({ s, theme }: { s: SectionInstance; theme: Theme
             <article key={i} className="overflow-hidden border" style={{ borderRadius: theme.radius, borderColor: theme.surface, background: theme.background }}>
               <div className="aspect-[4/3]" style={{ background: theme.surface }}>
                 {p.image ? <img src={p.image} alt={p.title} className="h-full w-full object-cover" /> : (
-                  <div className="flex h-full items-center justify-center text-2xl font-bold opacity-20" style={{ fontFamily: fontStack(theme.fontHeading) }}>{p.title.slice(0, 1)}</div>
+                  <EmptyArt theme={theme} glyph={p.title.slice(0, 1)} caption={arr<string>(p.tags)[0] || "Work"} className="h-full" />
                 )}
               </div>
               <div className="p-5">
@@ -686,7 +710,7 @@ export function GallerySection({ s, theme }: { s: SectionInstance; theme: ThemeC
     const [first, ...rest] = images;
     const cell = (img: string | undefined, i: number, cls = "aspect-square") => (
       <div key={i} className={`${cls} overflow-hidden`} style={{ borderRadius: theme.radius, background: theme.surface }}>
-        {img ? <img src={img} alt={`Gallery ${i + 1}`} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-xs" style={{ color: theme.muted }}>Photo {i + 1}</div>}
+        {img ? <img src={img} alt={`Gallery ${i + 1}`} className="h-full w-full object-cover" /> : <EmptyArt theme={theme} glyph={String(i + 1).padStart(2, "0")} caption="Frame" className="h-full min-h-32" />}
       </div>
     );
     return (
@@ -712,7 +736,7 @@ export function GallerySection({ s, theme }: { s: SectionInstance; theme: ThemeC
         <div className={`mt-8 grid gap-3 ${s.variant === "masonry" ? "grid-cols-2 md:grid-cols-3" : "grid-cols-2 md:grid-cols-3"}`}>
           {images.map((img, i) => (
             <div key={i} className="aspect-square overflow-hidden" style={{ borderRadius: theme.radius, background: theme.surface }}>
-              {img ? <img src={img} alt={`Gallery ${i + 1}`} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-xs" style={{ color: theme.muted }}>Photo {i + 1}</div>}
+              {img ? <img src={img} alt={`Gallery ${i + 1}`} className="h-full w-full object-cover" /> : <EmptyArt theme={theme} glyph={String(i + 1).padStart(2, "0")} caption="Frame" className="h-full min-h-32" />}
             </div>
           ))}
         </div>
@@ -779,7 +803,7 @@ export function TeamSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
           {members.map((m, i) => (
             <div key={i}>
               <div className="aspect-square overflow-hidden" style={{ borderRadius: theme.radius, background: theme.surface }}>
-                {m.photo ? <img src={m.photo} alt={m.name} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-3xl font-bold opacity-20" style={{ fontFamily: fontStack(theme.fontHeading) }}>{m.name.slice(0, 1)}</div>}
+                {m.photo ? <img src={m.photo} alt={m.name} className="h-full w-full object-cover" /> : <EmptyArt theme={theme} glyph={m.name.slice(0, 1)} caption={m.role || "Team"} className="h-full" />}
               </div>
               <h3 className="mt-3 font-semibold">{m.name}</h3>
               <p className="text-sm" style={{ color: theme.accent }}>{m.role}</p>

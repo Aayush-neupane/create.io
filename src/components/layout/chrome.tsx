@@ -123,7 +123,7 @@ export function Footer() {
         ))}
       </div>
       <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3 px-6 pb-6 pt-5 text-[13px]" style={{ borderTop: "1px solid var(--line)", color: "var(--ink-3)" }}>
-        <span>© 2026 create.io — Your website, already designed.</span>
+        <span>© 2026 create.io — No code · No canvas · No kidding.</span>
         <span className="mono-meta text-xs">paper · jakarta · newsreader · mono</span>
       </div>
       <div className="mx-auto max-w-7xl px-6 pb-9">

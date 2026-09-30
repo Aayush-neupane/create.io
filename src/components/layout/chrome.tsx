@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { currentUser } from "@/lib/auth";
 
-export async function Navbar() {
-  const user = await currentUser();
+export function Navbar({ user }: { user?: { name: string } | null }) {
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">

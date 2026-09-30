@@ -1,5 +1,3 @@
-"use client";
-
 import type { SectionInstance, ThemeConfig } from "@/types/builder";
 
 function fontStack(name: string): string {
@@ -621,10 +619,10 @@ export function ContactSection({ s, theme }: { s: SectionInstance; theme: ThemeC
           {str(c.location) && <p><span style={{ color: theme.muted }}>Based in — </span>{str(c.location)}</p>}
         </div>
       </div>
-      <form className="space-y-3 border p-6" style={{ borderRadius: theme.radius, borderColor: theme.surface, background: theme.surface }} onSubmit={(e) => e.preventDefault()}>
-        <input required placeholder="Your name" className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm" style={{ borderColor: theme.background }} />
-        <input required type="email" placeholder="Email address" className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm" style={{ borderColor: theme.background }} />
-        <textarea required placeholder="Tell me about your project…" rows={4} className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm" style={{ borderColor: theme.background }} />
+      <form action="#contact" className="space-y-3 border p-6" style={{ borderRadius: theme.radius, borderColor: theme.surface, background: theme.surface }}>
+        <input required name="name" placeholder="Your name" className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm" style={{ borderColor: theme.background }} />
+        <input required name="email" type="email" placeholder="Email address" className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm" style={{ borderColor: theme.background }} />
+        <textarea required name="message" placeholder="Tell me about your project…" rows={4} className="w-full rounded-lg border bg-white px-3 py-2.5 text-sm" style={{ borderColor: theme.background }} />
         <button className={`${btnRadius(theme)} w-full py-2.5 text-sm font-semibold text-white`} style={{ background: theme.primary }}>Send message</button>
         <p className="text-center text-xs" style={{ color: theme.muted }}>This demo form doesn&apos;t send email yet.</p>
       </form>

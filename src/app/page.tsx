@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { Navbar, Footer } from "@/components/layout/chrome";
+import { currentUser } from "@/lib/auth";
 import { TEMPLATES } from "@/lib/templates";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const user = await currentUser();
   return (
     <div className="min-h-screen bg-[#fafafa]">
-      <Navbar />
+      <Navbar user={user} />
 
       {/* Hero */}
       <section className="border-b border-neutral-200 bg-white">

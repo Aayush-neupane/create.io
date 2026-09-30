@@ -63,7 +63,7 @@ function Flow() {
               </button>
             ))}
           </div>
-          <button onClick={() => setStep(2)} className="mt-6 w-full rounded-lg bg-neutral-900 py-2.5 text-sm font-medium text-white">Continue</button>
+          <button onClick={() => setStep(2)} className="btn-primary mt-6 w-full">Continue</button>
         </>
       )}
 
@@ -81,7 +81,7 @@ function Flow() {
           {err && <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{err}</p>}
           <div className="mt-6 flex gap-2">
             <button onClick={() => setStep(1)} className="rounded-lg border border-neutral-200 px-5 py-2.5 text-sm font-medium">Back</button>
-            <button onClick={create} disabled={loading} className="flex-1 rounded-lg bg-neutral-900 py-2.5 text-sm font-medium text-white disabled:opacity-60">{loading ? "Creating…" : "Create website"}</button>
+            <button onClick={create} disabled={loading} className="btn-primary flex-1 disabled:opacity-60">{loading ? "Creating…" : "Create website"}</button>
           </div>
         </>
       )}
@@ -91,7 +91,7 @@ function Flow() {
 
 export default function NewPage() {
   return (
-    <div className="min-h-screen bg-[#fafafa] px-6 py-10">
+    <div className="min-h-screen px-6 py-10" style={{ background: "var(--paper)" }}>
       <div className="mx-auto mb-6 max-w-3xl"><Link href="/dashboard" className="text-sm text-neutral-500">← Dashboard</Link></div>
       <Suspense><Flow /></Suspense>
     </div>

@@ -6,7 +6,7 @@ export default async function SettingsPage() {
   const user = await currentUser();
   if (!user) redirect("/login");
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="min-h-screen" style={{ background: "var(--paper)" }}>
       <header className="border-b border-neutral-200 bg-white">
         <div className="mx-auto flex max-w-3xl items-center gap-3 px-6 py-4">
           <Link href="/dashboard" className="text-sm text-neutral-500">← Dashboard</Link>

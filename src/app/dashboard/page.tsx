@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   const sites = await websitesForUser(user.id);
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="min-h-screen" style={{ background: "var(--paper)" }}>
       <header className="border-b border-neutral-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-6 py-4">
           <Link href="/" className="flex items-center gap-2">
@@ -26,7 +26,7 @@ export default async function DashboardPage() {
           </nav>
           <div className="ml-auto flex items-center gap-2">
             <span className="hidden text-sm text-neutral-500 sm:inline">{user.name}</span>
-            <Link href="/new" className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700">+ Create Website</Link>
+            <Link href="/new" className="btn-primary" style={{ height: 36, fontSize: 13 }}>+ Create Website</Link>
             <DashboardActions />
           </div>
         </div>
@@ -41,7 +41,7 @@ export default async function DashboardPage() {
             <h3 className="text-lg font-semibold">You don&apos;t have a website yet.</h3>
             <p className="mt-2 max-w-sm text-sm text-neutral-500">Choose a template and start building your first website.</p>
             <div className="mt-6 flex gap-2">
-              <Link href="/new" className="rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white">Create Website</Link>
+              <Link href="/new" className="btn-primary" style={{ height: 42, padding: "0 20px" }}>Create Website</Link>
               <Link href="/templates" className="rounded-lg border border-neutral-200 px-5 py-2.5 text-sm font-medium">Browse Templates</Link>
             </div>
           </div>
@@ -60,7 +60,7 @@ export default async function DashboardPage() {
                   </Link>
                 )}
                 <div className="mt-4 grid grid-cols-3 gap-2">
-                  <Link href={`/builder/${s.id}`} className="rounded-lg bg-neutral-900 px-2 py-2 text-center text-[13px] font-medium text-white">Edit</Link>
+                  <Link href={`/builder/${s.id}`} className="btn-primary flex-1" style={{ height: 36, fontSize: 13 }}>Edit</Link>
                   <Link href={`/s/${s.slug}`} className="rounded-lg border border-neutral-200 px-2 py-2 text-center text-[13px] font-medium">Preview</Link>
                   <Link href={`/builder/${s.id}?tab=settings`} className="rounded-lg border border-neutral-200 px-2 py-2 text-center text-[13px] font-medium">Settings</Link>
                 </div>

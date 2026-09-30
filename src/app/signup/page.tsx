@@ -30,7 +30,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#fafafa] px-6">
+    <div className="flex min-h-screen items-center justify-center px-6" style={{ background: "var(--paper)" }}>
       <div className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-8">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">← Back</Link>
@@ -52,7 +52,7 @@ export default function SignupPage() {
             <input value={password} onChange={(e) => setPassword(e.target.value)} required type="password" minLength={8} placeholder="Minimum 8 characters" className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" />
           </div>
           {err && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{err}</p>}
-          <button disabled={loading} className="w-full rounded-lg bg-neutral-900 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-60">
+          <button disabled={loading} className="btn-primary w-full disabled:opacity-60">
             {loading ? "Creating…" : "Create account"}
           </button>
         </form>

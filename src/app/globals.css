@@ -239,3 +239,19 @@ p, li {
 }
 
 .builder-preview a, .published-site a { text-decoration: none; }
+
+/* ─── builder surface reskin: map generic neutrals onto paper tokens ─── */
+.builder .border-neutral-200 { border-color: var(--line); }
+.builder .border-neutral-100 { border-color: var(--line); }
+.builder .bg-neutral-100 { background: var(--surface-2); }
+.builder .bg-neutral-50 { background: var(--paper); }
+.builder .bg-neutral-50\/50 { background: rgba(255, 255, 255, 0.55); }
+.builder .bg-neutral-900 { background: var(--ink); }
+.builder .border-neutral-900 { border-color: var(--ink); }
+.builder .text-neutral-900 { color: var(--ink); }
+.builder .text-neutral-700 { color: var(--ink-2); }
+.builder .text-neutral-600 { color: var(--ink-2); }
+.builder .text-neutral-500 { color: var(--ink-3); }
+.builder .text-neutral-400 { color: var(--ink-3); }
+.builder input, .builder textarea, .builder select { font-family: var(--font-sans), sans-serif; }
+.builder input:focus, .builder textarea:focus, .builder select:focus { border-color: var(--accent-line) !important; }

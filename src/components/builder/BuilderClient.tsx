@@ -170,36 +170,37 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
   }
 
   return (
-    <div className="flex h-screen flex-col bg-[#fafafa]">
+    <div className="builder flex h-screen flex-col" style={{ background: "var(--paper)" }}>
       {/* Top bar */}
-      <header className="flex h-14 shrink-0 items-center gap-3 border-b border-neutral-200 bg-white px-4">
+      <header className="flex h-14 shrink-0 items-center gap-3 border-b bg-white/80 px-4 backdrop-blur" style={{ borderColor: "var(--line)" }}>
         <Link href="/dashboard" className="flex items-center gap-2" aria-label="Back to dashboard">
           <img src="/logo.png" alt="create.io" className="h-7 w-7 rounded-md" />
         </Link>
         <input
           value={config.siteName}
           onChange={(e) => commit({ ...config, siteName: e.target.value })}
-          className="w-48 rounded-md px-2 py-1 text-sm font-semibold focus:bg-neutral-100 focus:outline-none"
+          className="mono-meta w-48 rounded-md px-2 py-1 text-[13px] font-semibold focus:outline-none"
+          style={{ color: "var(--ink)" }}
         />
-        <span className="hidden text-xs text-neutral-400 sm:inline">/s/{site.slug}</span>
-        <div className="mx-auto hidden items-center gap-1 rounded-lg border border-neutral-200 p-1 md:flex">
+        <span className="mono-meta hidden text-[11px] sm:inline" style={{ color: "var(--ink-3)" }}>/s/{site.slug}</span>
+        <div className="mx-auto hidden items-center gap-0.5 rounded-[11px] border p-[3px] md:flex" style={{ borderColor: "var(--line)", background: "var(--paper-2)" }}>
           {(["desktop", "tablet", "mobile"] as const).map((d) => (
-            <button key={d} onClick={() => setDevice(d)} className={`rounded-md px-3 py-1 text-xs font-medium capitalize ${device === d ? "bg-neutral-900 text-white" : "text-neutral-600"}`}>{d}</button>
+            <button key={d} onClick={() => setDevice(d)} className="rounded-lg px-3 py-1 text-xs font-medium capitalize transition-all" style={device === d ? { background: "var(--surface)", color: "var(--ink)", boxShadow: "0 1px 3px rgba(0,0,0,.12)" } : { color: "var(--ink-2)" }}>{d}</button>
           ))}
         </div>
-        <div className="ml-auto flex items-center gap-2">
-          <span className="hidden text-xs text-neutral-500 sm:inline">
-            {saveState === "saving" ? "Saving…" : saveState === "dirty" ? "Unsaved changes" : saveState === "error" ? "Save failed" : "Saved"}
+        <div className="ml-auto flex items-center gap-1.5">
+          <span className="mono-meta mr-1 hidden text-[11px] sm:inline" style={{ color: "var(--ink-3)" }}>
+            {saveState === "saving" ? "saving…" : saveState === "dirty" ? "unsaved" : saveState === "error" ? "save failed" : "saved"}
           </span>
           <span className={`h-2 w-2 rounded-full ${saveState === "saved" ? "bg-emerald-500" : saveState === "error" ? "bg-red-500" : "bg-amber-400"}`} />
-          <button onClick={undo} disabled={past.current.length === 0} className="rounded-lg border border-neutral-200 px-2.5 py-1.5 text-xs disabled:opacity-40" title="Undo (Ctrl+Z)">↩</button>
-          <button onClick={redo} disabled={future.current.length === 0} className="rounded-lg border border-neutral-200 px-2.5 py-1.5 text-xs disabled:opacity-40" title="Redo">↪</button>
-          <Link href={`/s/${site.slug}`} target="_blank" className="rounded-lg border border-neutral-200 px-3 py-1.5 text-[13px] font-medium">Preview</Link>
-          <button onClick={() => saveNow()} className="rounded-lg border border-neutral-200 px-3 py-1.5 text-[13px] font-medium">Save</button>
+          <button onClick={undo} disabled={past.current.length === 0} className="rounded-[9px] border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--line-2)" }} title="Undo (Ctrl+Z)">↩</button>
+          <button onClick={redo} disabled={future.current.length === 0} className="rounded-[9px] border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--line-2)" }} title="Redo">↪</button>
+          <Link href={`/s/${site.slug}`} target="_blank" className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Preview</Link>
+          <button onClick={() => saveNow()} className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Save</button>
           {site.status === "published" ? (
-            <button onClick={unpublish} className="rounded-lg bg-neutral-200 px-3 py-1.5 text-[13px] font-medium">Unpublish</button>
+            <button onClick={unpublish} className="rounded-[9px] px-3 py-1.5 text-[13px] font-medium" style={{ background: "var(--surface-2)" }}>Unpublish</button>
           ) : (
-            <button onClick={publish} disabled={publishing} className="rounded-lg bg-neutral-900 px-3 py-1.5 text-[13px] font-medium text-white disabled:opacity-60">
+            <button onClick={publish} disabled={publishing} className="btn-primary rounded-[9px] px-3 py-1.5 text-[13px] disabled:opacity-60" style={{ height: 33 }}>
               {publishing ? "Publishing…" : "Publish"}
             </button>
           )}
@@ -209,10 +210,10 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
 
       <div className="flex min-h-0 flex-1">
         {/* Left sidebar */}
-        <aside className="flex w-64 shrink-0 flex-col border-r border-neutral-200 bg-white">
-          <div className="flex border-b border-neutral-200">
+        <aside className="flex w-64 shrink-0 flex-col border-r bg-white" style={{ borderColor: "var(--line)" }}>
+          <div className="flex border-b" style={{ borderColor: "var(--line)" }}>
             {TABS.map((t) => (
-              <button key={t.id} onClick={() => setTab(t.id)} className={`flex-1 px-1 py-2.5 text-[11px] font-medium ${tab === t.id ? "border-b-2 border-neutral-900 text-neutral-900" : "text-neutral-500"}`}>
+              <button key={t.id} onClick={() => setTab(t.id)} className="mono-meta flex-1 px-1 py-2.5 text-[10.5px] font-semibold uppercase" style={tab === t.id ? { color: "var(--accent-text)", boxShadow: "inset 0 -2px 0 var(--accent)" } : { color: "var(--ink-3)" }}>
                 {t.label}
               </button>
             ))}
@@ -227,9 +228,9 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
         </aside>
 
         {/* Preview */}
-        <main className="flex min-w-0 flex-1 flex-col bg-neutral-100">
+        <main className="flex min-w-0 flex-1 flex-col" style={{ background: "var(--paper-2)" }}>
           <div className="flex-1 overflow-auto p-4 md:p-6">
-            <div className={`mx-auto overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition-all ${previewWidth}`}>
+            <div className={`mx-auto overflow-hidden rounded-2xl border bg-white transition-all ${previewWidth}`} style={{ borderColor: "var(--line-2)", boxShadow: "0 30px 80px -40px rgba(23,23,27,.35)" }}>
               <div className="builder-preview">
                 <TemplateRenderer config={config} templateId={site.templateId} />
               </div>
@@ -238,10 +239,10 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
         </main>
 
         {/* Right panel */}
-        <aside className="hidden w-72 shrink-0 flex-col border-l border-neutral-200 bg-white lg:flex">
-          <div className="border-b border-neutral-200 px-4 py-3">
-            <h3 className="text-[13px] font-semibold">{selected ? SECTION_META[selected.type]?.label : "Page style"}</h3>
-            <p className="text-xs text-neutral-500">{selected ? "Edit content, variant and visibility." : "Select a section to edit."}</p>
+        <aside className="hidden w-72 shrink-0 flex-col border-l bg-white lg:flex" style={{ borderColor: "var(--line)" }}>
+          <div className="border-b px-4 py-3" style={{ borderColor: "var(--line)" }}>
+            <h3 className="text-[13px] font-semibold" style={{ letterSpacing: "-0.015em" }}>{selected ? SECTION_META[selected.type]?.label : "Page style"}</h3>
+            <p className="mono-meta mt-0.5 text-[10.5px] uppercase" style={{ letterSpacing: "0.1em", color: "var(--ink-3)" }}>{selected ? "content · variant · visibility" : "select a section"}</p>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-4">
             {selected ? (

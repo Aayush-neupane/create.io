@@ -42,6 +42,7 @@ export async function POST(req: Request) {
     });
     return NextResponse.json({ website: site });
   } catch (e) {
+    console.error("[api:api/websites/route.ts]", e);
     return NextResponse.json({ error: safeError(e) }, { status: 400 });
   }
 }

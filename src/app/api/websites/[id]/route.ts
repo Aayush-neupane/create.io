@@ -39,6 +39,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     });
     return NextResponse.json({ website: updated });
   } catch (e) {
+    console.error("[api:api/websites/[id]/route.ts]", e);
     return NextResponse.json({ error: safeError(e) }, { status: 400 });
   }
 }

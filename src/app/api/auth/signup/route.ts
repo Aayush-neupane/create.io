@@ -19,6 +19,7 @@ export async function POST(req: Request) {
     await createSession(user.id);
     return NextResponse.json({ id: user.id, name: user.name, email: user.email });
   } catch (e) {
+    console.error("[api:api/auth/signup/route.ts]", e);
     return NextResponse.json({ error: safeError(e) }, { status: 400 });
   }
 }

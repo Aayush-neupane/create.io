@@ -1,8 +1,54 @@
 import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
-import type { UserRecord, WebsiteRecord } from "@/types/builder";
+import type { UserRecord, WebsiteConfig, WebsiteRecord } from "@/types/builder";
 
+// ─── Store selection ─────────────────────────────────────────────────────────
+// DATABASE_URL set → PostgreSQL (Neon serverless, works on Netlify/Vercel).
+// Otherwise → local JSON files (zero-setup `npm run dev`).
+// Both stores expose the same functions; routes never branch.
+
+type Prisma = import("@prisma/client").PrismaClient;
+
+const globalForPrisma = globalThis as unknown as { prisma?: Prisma };
+
+async function prisma(): Promise<Prisma | null> {
+  if (!process.env.DATABASE_URL) return null;
+  if (!globalForPrisma.prisma) {
+    const [{ PrismaClient }, { PrismaNeon }] = await Promise.all([
+      import("@prisma/client"),
+      import("@prisma/adapter-neon"),
+    ]);
+    const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL });
+    globalForPrisma.prisma = new PrismaClient({ adapter }) as Prisma;
+  }
+  return globalForPrisma.prisma;
+}
+
+function toUser(u: { id: string; name: string; email: string; passwordHash: string; createdAt: Date }): UserRecord {
+  return { id: u.id, name: u.name, email: u.email, passwordHash: u.passwordHash, createdAt: u.createdAt.toISOString() };
+}
+
+function toSite(w: {
+  id: string; userId: string; name: string; slug: string; templateId: string; status: string;
+  config: unknown; customDomain: string | null; createdAt: Date; updatedAt: Date; publishedAt: Date | null;
+}): WebsiteRecord {
+  return {
+    id: w.id,
+    userId: w.userId,
+    name: w.name,
+    slug: w.slug,
+    templateId: w.templateId,
+    status: w.status as WebsiteRecord["status"],
+    config: w.config as WebsiteConfig,
+    ...(w.customDomain ? { customDomain: w.customDomain } : {}),
+    createdAt: w.createdAt.toISOString(),
+    updatedAt: w.updatedAt.toISOString(),
+    ...(w.publishedAt ? { publishedAt: w.publishedAt.toISOString() } : {}),
+  };
+}
+
+// ─── Local JSON store (dev fallback) ───
 const DATA_DIR = path.join(process.cwd(), "data");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
 const SITES_FILE = path.join(DATA_DIR, "websites.json");
@@ -44,21 +90,42 @@ export function slugify(input: string): string {
 
 // ─── Users ───
 export async function listUsers(): Promise<UserRecord[]> {
+  const db = await prisma();
+  if (db) return (await db.user.findMany()).map(toUser);
   await ensureDir();
   return readJson<UserRecord[]>(USERS_FILE, []);
 }
 
 export async function findUserByEmail(email: string): Promise<UserRecord | null> {
+  const db = await prisma();
+  if (db) {
+    const u = await db.user.findFirst({ where: { email: { equals: email, mode: "insensitive" } } });
+    return u ? toUser(u) : null;
+  }
   const users = await listUsers();
   return users.find((u) => u.email.toLowerCase() === email.toLowerCase()) ?? null;
 }
 
 export async function findUserById(id: string): Promise<UserRecord | null> {
+  const db = await prisma();
+  if (db) {
+    const u = await db.user.findUnique({ where: { id } });
+    return u ? toUser(u) : null;
+  }
   const users = await listUsers();
   return users.find((u) => u.id === id) ?? null;
 }
 
 export async function saveUser(user: UserRecord): Promise<UserRecord> {
+  const db = await prisma();
+  if (db) {
+    await db.user.upsert({
+      where: { id: user.id },
+      update: { name: user.name, email: user.email, passwordHash: user.passwordHash },
+      create: { id: user.id, name: user.name, email: user.email, passwordHash: user.passwordHash },
+    });
+    return user;
+  }
   const users = await listUsers();
   const idx = users.findIndex((u) => u.id === user.id);
   if (idx >= 0) users[idx] = user;
@@ -69,6 +136,8 @@ export async function saveUser(user: UserRecord): Promise<UserRecord> {
 
 // ─── Websites ───
 export async function listWebsites(): Promise<WebsiteRecord[]> {
+  const db = await prisma();
+  if (db) return (await db.website.findMany()).map(toSite);
   await ensureDir();
   return readJson<WebsiteRecord[]>(SITES_FILE, []);
 }
@@ -81,11 +150,21 @@ export async function websitesForUser(userId: string): Promise<WebsiteRecord[]> 
 }
 
 export async function findWebsiteById(id: string): Promise<WebsiteRecord | null> {
+  const db = await prisma();
+  if (db) {
+    const w = await db.website.findUnique({ where: { id } });
+    return w ? toSite(w) : null;
+  }
   const all = await listWebsites();
   return all.find((w) => w.id === id) ?? null;
 }
 
 export async function findWebsiteBySlug(slug: string): Promise<WebsiteRecord | null> {
+  const db = await prisma();
+  if (db) {
+    const w = await db.website.findUnique({ where: { slug } });
+    return w ? toSite(w) : null;
+  }
   const all = await listWebsites();
   return all.find((w) => w.slug === slug) ?? null;
 }
@@ -100,6 +179,22 @@ export async function uniqueSlug(base: string, excludeId?: string): Promise<stri
 }
 
 export async function saveWebsite(site: WebsiteRecord): Promise<WebsiteRecord> {
+  const db = await prisma();
+  if (db) {
+    const publishedAt = site.publishedAt ? new Date(site.publishedAt) : null;
+    await db.website.upsert({
+      where: { id: site.id },
+      update: {
+        name: site.name, slug: site.slug, templateId: site.templateId, status: site.status,
+        config: site.config as never, customDomain: site.customDomain ?? null, publishedAt,
+      },
+      create: {
+        id: site.id, userId: site.userId, name: site.name, slug: site.slug, templateId: site.templateId,
+        status: site.status, config: site.config as never, customDomain: site.customDomain ?? null, publishedAt,
+      },
+    });
+    return { ...site, updatedAt: new Date().toISOString() };
+  }
   const all = await listWebsites();
   const idx = all.findIndex((w) => w.id === site.id);
   if (idx >= 0) all[idx] = site;
@@ -109,6 +204,11 @@ export async function saveWebsite(site: WebsiteRecord): Promise<WebsiteRecord> {
 }
 
 export async function deleteWebsite(id: string): Promise<void> {
+  const db = await prisma();
+  if (db) {
+    await db.website.delete({ where: { id } }).catch(() => null);
+    return;
+  }
   const all = await listWebsites();
   await writeJson(
     SITES_FILE,

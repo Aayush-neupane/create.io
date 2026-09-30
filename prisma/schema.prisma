@@ -1,15 +1,13 @@
-// Prisma schema — production-ready relational model.
-// The MVP runtime uses a file-backed JSON store with the same shape
-// (see src/lib/db.ts) so it runs without a database server.
-// To switch to Postgres: set DATABASE_URL, run `prisma migrate dev`,
-// and replace db.ts with Prisma Client calls. Table names match below.
+// Production relational model (PostgreSQL via Neon serverless).
+// Local dev without DATABASE_URL keeps using the file-backed JSON store
+// in src/lib/db.ts, which mirrors these tables exactly.
 
 generator client {
-  provider = "sqlite"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -23,16 +21,16 @@ model User {
 }
 
 model Website {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   name         String
-  slug         String   @unique
+  slug         String    @unique
   templateId   String
-  status       String   @default("draft")
-  config       String   // versioned WebsiteConfig JSON
+  status       String    @default("draft")
+  config       Json // versioned WebsiteConfig JSON (theme, sections, pages, seo)
   customDomain String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   publishedAt  DateTime?
 }

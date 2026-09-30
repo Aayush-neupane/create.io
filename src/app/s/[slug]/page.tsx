@@ -47,7 +47,10 @@ export default async function PublishedPage({ params }: { params: Promise<{ slug
       />
       {cfg.analyticsId && <script async src={`https://www.googletagmanager.com/gtag/js?id=${cfg.analyticsId}`} />}
       <footer className="border-t border-neutral-100 bg-white px-6 py-4 text-center text-xs text-neutral-400">
-        Built with <a href="/" className="font-medium text-neutral-600 underline">create.io</a>
+        <a href="/" className="inline-flex items-center gap-1.5 font-medium text-neutral-600">
+          <img src="/logo.png" alt="" className="h-4 w-4 rounded-sm" />
+          Built with create.io
+        </a>
       </footer>
     </div>
   );

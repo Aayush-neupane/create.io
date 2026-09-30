@@ -31,7 +31,10 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#fafafa] px-6">
       <div className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-8">
-        <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">← Back</Link>
+        <div className="flex items-center justify-between">
+          <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">← Back</Link>
+          <img src="/logo.png" alt="create.io" className="h-8 w-8 rounded-md" />
+        </div>
         <h1 className="mt-4 text-2xl font-semibold tracking-tight">Welcome back</h1>
         <p className="mt-1 text-sm text-neutral-600">Log in to manage your websites.</p>
         <form onSubmit={submit} className="mt-6 space-y-4">

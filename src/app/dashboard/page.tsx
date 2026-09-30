@@ -16,7 +16,7 @@ export default async function DashboardPage() {
       <header className="border-b border-neutral-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-6 py-4">
           <Link href="/" className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-900 text-sm font-bold text-white">C</span>
+            <img src="/logo.png" alt="create.io" className="h-8 w-8 rounded-lg" />
             <span className="font-semibold">create.io</span>
           </Link>
           <nav className="ml-6 hidden gap-5 text-sm text-neutral-600 md:flex">

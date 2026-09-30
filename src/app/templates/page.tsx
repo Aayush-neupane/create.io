@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Navbar, Footer } from "@/components/layout/chrome";
+import { TemplateThumb } from "@/components/templates/Thumb";
 import { TEMPLATES } from "@/lib/templates";
 
 export default function TemplatesPage() {
@@ -51,18 +52,7 @@ export default function TemplatesPage() {
           <div key={t.id} className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
             <Link href={`/templates/${t.id}`}>
               <div className="aspect-[16/10] p-6 transition hover:opacity-95" style={{ background: t.thumbnailGradient }}>
-                <div className="h-full rounded-xl border border-black/5 bg-white/85 p-4 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="h-2 w-14 rounded bg-neutral-900/80" />
-                    <div className="flex gap-1">{[0, 1, 2].map((i) => <span key={i} className="h-1.5 w-6 rounded bg-neutral-900/10" />)}</div>
-                  </div>
-                  <div className="mt-4 h-4 w-3/4 rounded bg-neutral-900/10" />
-                  <div className="mt-2 h-4 w-1/2 rounded bg-neutral-900/10" />
-                  <div className="mt-4 flex gap-2">
-                    <div className="h-7 w-20 rounded-md" style={{ background: t.theme.primary }} />
-                    <div className="h-7 w-20 rounded-md border border-neutral-300" />
-                  </div>
-                </div>
+                <TemplateThumb t={t} />
               </div>
             </Link>
             <div className="p-5">

@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "create.io — Build a website without building it from scratch",
   description: "Choose a professionally designed template, add your content, customize the look, and publish your website in minutes.",
+  icons: { icon: "/logo.png", apple: "/logo.png" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -7,17 +7,17 @@ import {
 } from "@/components/sections/Sections";
 
 export const SECTION_META: Record<string, { label: string; variants: { id: string; label: string }[]; deletable: boolean }> = {
-  navbar: { label: "Navbar", variants: [{ id: "minimal", label: "Minimal" }, { id: "solid", label: "Solid" }, { id: "overlay", label: "Overlay" }], deletable: false },
-  hero: { label: "Hero", variants: [{ id: "split", label: "Split" }, { id: "centered", label: "Centered" }, { id: "minimal", label: "Minimal" }, { id: "image", label: "Image focused" }], deletable: false },
-  about: { label: "About", variants: [{ id: "simple", label: "Simple" }, { id: "split", label: "Split with image" }], deletable: true },
+  navbar: { label: "Navbar", variants: [{ id: "minimal", label: "Minimal" }, { id: "solid", label: "Solid" }, { id: "overlay", label: "Overlay" }, { id: "bold", label: "Bold bar" }, { id: "centered", label: "Centered" }], deletable: false },
+  hero: { label: "Hero", variants: [{ id: "split", label: "Split" }, { id: "centered", label: "Centered" }, { id: "minimal", label: "Minimal" }, { id: "image", label: "Image focused" }, { id: "poster", label: "Poster" }, { id: "editorial", label: "Editorial" }], deletable: false },
+  about: { label: "About", variants: [{ id: "simple", label: "Simple" }, { id: "split", label: "Split with image" }, { id: "editorial", label: "Editorial" }, { id: "card", label: "Card" }], deletable: true },
   skills: { label: "Skills", variants: [{ id: "bars", label: "Bars" }, { id: "simple", label: "Simple" }], deletable: true },
-  services: { label: "Services", variants: [{ id: "cards", label: "Cards" }, { id: "grid", label: "Grid" }], deletable: true },
-  projects: { label: "Projects", variants: [{ id: "grid", label: "Grid" }, { id: "featured", label: "Featured" }, { id: "list", label: "Minimal list" }], deletable: true },
+  services: { label: "Services", variants: [{ id: "cards", label: "Cards" }, { id: "grid", label: "Grid" }, { id: "list", label: "Numbered list" }, { id: "split", label: "Split dark" }], deletable: true },
+  projects: { label: "Projects", variants: [{ id: "grid", label: "Grid" }, { id: "featured", label: "Featured" }, { id: "list", label: "Minimal list" }, { id: "editorial", label: "Editorial rows" }], deletable: true },
   experience: { label: "Experience", variants: [{ id: "timeline", label: "Timeline" }, { id: "simple", label: "Simple" }], deletable: true },
   education: { label: "Education", variants: [{ id: "simple", label: "Simple" }], deletable: true },
   testimonials: { label: "Testimonials", variants: [{ id: "cards", label: "Cards" }, { id: "grid", label: "Grid" }, { id: "minimal", label: "Minimal" }, { id: "quote", label: "Quote" }], deletable: true },
   pricing: { label: "Pricing", variants: [{ id: "tiers", label: "Tiers" }], deletable: true },
-  gallery: { label: "Gallery", variants: [{ id: "grid", label: "Grid" }, { id: "masonry", label: "Masonry" }], deletable: true },
+  gallery: { label: "Gallery", variants: [{ id: "grid", label: "Grid" }, { id: "masonry", label: "Masonry" }, { id: "feature", label: "Feature dark" }], deletable: true },
   menu: { label: "Menu", variants: [{ id: "grouped", label: "Grouped" }], deletable: true },
   hours: { label: "Hours", variants: [{ id: "card", label: "Card" }], deletable: true },
   team: { label: "Team", variants: [{ id: "grid", label: "Grid" }], deletable: true },
@@ -25,7 +25,7 @@ export const SECTION_META: Record<string, { label: string; variants: { id: strin
   faq: { label: "FAQ", variants: [{ id: "accordion", label: "Accordion" }], deletable: true },
   cta: { label: "Call to action", variants: [{ id: "banner", label: "Banner" }], deletable: true },
   contact: { label: "Contact", variants: [{ id: "minimal", label: "Minimal" }, { id: "split", label: "Split" }], deletable: false },
-  footer: { label: "Footer", variants: [{ id: "simple", label: "Simple" }, { id: "columns", label: "Columns" }], deletable: false },
+  footer: { label: "Footer", variants: [{ id: "simple", label: "Simple" }, { id: "columns", label: "Columns" }, { id: "big", label: "Big type" }, { id: "minimal", label: "Minimal centered" }], deletable: false },
 };
 
 export function renderSection(s: SectionInstance, theme: ThemeConfig) {

@@ -24,7 +24,7 @@ export default async function TemplatePreviewPage({
     tpl.id,
     tpl.sections,
     { ...baseTheme(), ...tpl.theme },
-    { siteName: tpl.name, ownerName: "Alex Morgan", tagline: tpl.category === "Restaurant" ? "Wood-fired kitchen & natural wine" : "Product Designer & Developer", siteDescription: tpl.description },
+    { siteName: tpl.name, ownerName: "", tagline: "", siteDescription: tpl.description },
   );
 
   const width = device === "mobile" ? "max-w-[390px]" : device === "tablet" ? "max-w-[820px]" : "max-w-none";

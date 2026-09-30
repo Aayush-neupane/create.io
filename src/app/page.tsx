@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Navbar, Footer } from "@/components/layout/chrome";
+import { TemplateThumb } from "@/components/templates/Thumb";
 import { currentUser } from "@/lib/auth";
 import { TEMPLATES } from "@/lib/templates";
 
@@ -98,15 +99,7 @@ export default async function LandingPage() {
           {TEMPLATES.slice(0, 6).map((t) => (
             <Link key={t.id} href={`/templates/${t.id}`} className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:border-neutral-400">
               <div className="aspect-[16/10] p-6" style={{ background: t.thumbnailGradient }}>
-                <div className="h-full rounded-xl border border-black/5 bg-white/80 p-4 shadow-sm">
-                  <div className="h-2 w-16 rounded bg-neutral-900/80" />
-                  <div className="mt-3 h-4 w-3/4 rounded bg-neutral-900/10" />
-                  <div className="mt-2 h-4 w-1/2 rounded bg-neutral-900/10" />
-                  <div className="mt-4 flex gap-2">
-                    <div className="h-7 w-20 rounded-md bg-neutral-900" />
-                    <div className="h-7 w-20 rounded-md border border-neutral-300" />
-                  </div>
-                </div>
+                <TemplateThumb t={t} />
               </div>
               <div className="p-5">
                 <div className="flex items-center justify-between">

@@ -172,8 +172,8 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
     <div className="flex h-screen flex-col bg-[#fafafa]">
       {/* Top bar */}
       <header className="flex h-14 shrink-0 items-center gap-3 border-b border-neutral-200 bg-white px-4">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-neutral-900 text-xs font-bold text-white">C</span>
+        <Link href="/dashboard" className="flex items-center gap-2" aria-label="Back to dashboard">
+          <img src="/logo.png" alt="create.io" className="h-7 w-7 rounded-md" />
         </Link>
         <input
           value={config.siteName}

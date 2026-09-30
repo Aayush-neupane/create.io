@@ -138,10 +138,10 @@ export function Footer() {
           <Image
             src="/logo.png"
             alt="Aayush Neupane"
-            width={28}
-            height={28}
-            className="h-7 w-7 rounded-full border object-cover"
-            style={{ borderColor: "var(--line-2)" }}
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-full border object-cover"
+            style={{ borderColor: "var(--line-2)", filter: "invert(1)" }}
           />
           <span>
             Developed by <span className="underline-offset-4 hover:underline" style={{ color: "var(--ink)" }}>Aayush Neupane</span>

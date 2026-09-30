@@ -11,6 +11,22 @@ export default function LoginPage() {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
 
+  async function guest() {
+    setErr("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/guest", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not start the demo.");
+      router.push(data.websiteId ? `/builder/${data.websiteId}` : "/dashboard");
+      router.refresh();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
@@ -51,7 +67,15 @@ export default function LoginPage() {
             {loading ? "Logging in…" : "Log in"}
           </button>
         </form>
-        <p className="mt-5 text-center text-sm text-neutral-600">No account yet? <Link href="/signup" className="font-medium text-neutral-900 underline">Sign up</Link></p>
+        <div className="my-4 flex items-center gap-3 text-xs" style={{ color: "var(--ink-3)" }}>
+            <span className="h-px flex-1" style={{ background: "var(--line)" }} />
+            or
+            <span className="h-px flex-1" style={{ background: "var(--line)" }} />
+          </div>
+          <button onClick={guest} disabled={loading} className="btn-ghost w-full disabled:opacity-60">
+            {loading ? "Starting…" : "Continue as guest — no signup"}
+          </button>
+<p className="mt-5 text-center text-sm text-neutral-600">No account yet? <Link href="/signup" className="font-medium text-neutral-900 underline">Sign up</Link></p>
       </div>
     </div>
   );

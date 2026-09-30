@@ -16,6 +16,7 @@ model User {
   name         String
   email        String    @unique
   passwordHash String
+  isGuest      Boolean   @default(false)
   createdAt    DateTime  @default(now())
   websites     Website[]
 }

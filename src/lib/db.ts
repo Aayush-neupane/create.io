@@ -25,8 +25,8 @@ async function prisma(): Promise<Prisma | null> {
   return globalForPrisma.prisma;
 }
 
-function toUser(u: { id: string; name: string; email: string; passwordHash: string; createdAt: Date }): UserRecord {
-  return { id: u.id, name: u.name, email: u.email, passwordHash: u.passwordHash, createdAt: u.createdAt.toISOString() };
+function toUser(u: { id: string; name: string; email: string; passwordHash: string; isGuest: boolean; createdAt: Date }): UserRecord {
+  return { id: u.id, name: u.name, email: u.email, passwordHash: u.passwordHash, isGuest: u.isGuest, createdAt: u.createdAt.toISOString() };
 }
 
 function toSite(w: {
@@ -121,8 +121,8 @@ export async function saveUser(user: UserRecord): Promise<UserRecord> {
   if (db) {
     await db.user.upsert({
       where: { id: user.id },
-      update: { name: user.name, email: user.email, passwordHash: user.passwordHash },
-      create: { id: user.id, name: user.name, email: user.email, passwordHash: user.passwordHash },
+      update: { name: user.name, email: user.email, passwordHash: user.passwordHash, isGuest: user.isGuest ?? false },
+      create: { id: user.id, name: user.name, email: user.email, passwordHash: user.passwordHash, isGuest: user.isGuest ?? false },
     });
     return user;
   }

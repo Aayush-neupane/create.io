@@ -118,4 +118,6 @@ export interface UserRecord {
   email: string;
   passwordHash: string;
   createdAt: string;
+  /** One-time demo account — no password the user knows. */
+  isGuest?: boolean;
 }

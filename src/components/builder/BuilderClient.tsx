@@ -37,7 +37,7 @@ function move<T>(list: T[], i: number, dir: -1 | 1): T[] {
   return out;
 }
 
-export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord; initialTab?: string }) {
+export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteRecord; initialTab?: string; demo?: boolean }) {
   const router = useRouter();
   const [site, setSite] = useState<WebsiteRecord>(initial);
   const [config, setConfig] = useState<WebsiteConfig>(initial.config);
@@ -95,9 +95,9 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
 
-  // autosave (debounced)
+  // autosave (debounced; disabled in demo — nothing to save to)
   useEffect(() => {
-    if (saveState !== "dirty") return;
+    if (demo || saveState !== "dirty") return;
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => saveNow(), 1200);
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
@@ -105,6 +105,7 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
   }, [config]);
 
   async function saveNow(status?: "draft" | "published") {
+    if (demo) return;
     setSaveState("saving");
     setSaveMsg("");
     try {
@@ -235,15 +236,25 @@ export function BuilderClient({ initial, initialTab }: { initial: WebsiteRecord;
           ))}
         </div>
         <div className="ml-auto flex items-center gap-1.5">
+          {demo ? (
+            <span className="tag">Demo — edits stay in this tab</span>
+          ) : (
           <span className="mono-meta mr-1 hidden text-[11px] sm:inline" style={{ color: "var(--ink-3)" }}>
             {saveState === "saving" ? "saving…" : saveState === "dirty" ? "unsaved" : saveState === "error" ? "save failed" : "saved"}
           </span>
+          )}
           <span className={`h-2 w-2 rounded-full ${saveState === "saved" ? "bg-emerald-500" : saveState === "error" ? "bg-red-500" : "bg-amber-400"}`} />
           <button onClick={undo} disabled={past.current.length === 0} className="rounded-[9px] border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--line-2)" }} title="Undo (Ctrl+Z)">↩</button>
           <button onClick={redo} disabled={future.current.length === 0} className="rounded-[9px] border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--line-2)" }} title="Redo">↪</button>
-          <Link href={`/s/${site.slug}`} target="_blank" className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Preview</Link>
+          <Link href={demo ? `/templates/${site.templateId}` : `/s/${site.slug}`} target="_blank" className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Preview</Link>
+          {demo ? (
+            <Link href="/signup" className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Save</Link>
+          ) : (
           <button onClick={() => saveNow()} className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Save</button>
-          {site.status === "published" ? (
+          )}
+          {demo ? (
+            <Link href="/signup" className="btn-primary rounded-[9px] px-3 py-1.5 text-[13px]" style={{ height: 33 }}>Publish</Link>
+          ) : site.status === "published" ? (
             <button onClick={unpublish} className="rounded-[9px] px-3 py-1.5 text-[13px] font-medium" style={{ background: "var(--surface-2)" }}>Unpublish</button>
           ) : (
             <button onClick={publish} disabled={publishing || saveState === "saving"} className="btn-primary rounded-[9px] px-3 py-1.5 text-[13px] disabled:opacity-60" style={{ height: 33 }}>

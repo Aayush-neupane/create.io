@@ -4,9 +4,26 @@ import crypto from "crypto";
 import type { UserRecord, WebsiteConfig, WebsiteRecord } from "@/types/builder";
 
 // ─── Store selection ─────────────────────────────────────────────────────────
-// DATABASE_URL set → PostgreSQL (Neon serverless, works on Netlify/Vercel).
+// DATABASE_URL set → PostgreSQL (Neon serverless).
+// NETLIFY set (deployed functions) → Netlify Blobs, zero-config persistence.
 // Otherwise → local JSON files (zero-setup `npm run dev`).
-// Both stores expose the same functions; routes never branch.
+// All stores expose the same functions; routes never branch.
+
+type BlobStore = {
+  get: (key: string, opts?: { type: "json" }) => Promise<unknown>;
+  setJSON: (key: string, data: unknown) => Promise<void>;
+};
+
+async function blobStore(): Promise<BlobStore | null> {
+  if (!process.env.NETLIFY) return null;
+  try {
+    const { getStore } = await import("@netlify/blobs");
+    return getStore("create-io") as unknown as BlobStore;
+  } catch (e) {
+    console.error("[db:blobs-unavailable]", e);
+    return null;
+  }
+}
 
 type Prisma = import("@prisma/client").PrismaClient;
 
@@ -54,10 +71,22 @@ const USERS_FILE = path.join(DATA_DIR, "users.json");
 const SITES_FILE = path.join(DATA_DIR, "websites.json");
 
 async function ensureDir() {
+  if (process.env.NETLIFY) return; // blob store needs no directory
   await fs.mkdir(DATA_DIR, { recursive: true });
 }
 
 async function readJson<T>(file: string, fallback: T): Promise<T> {
+  const blobs = await blobStore();
+  if (blobs) {
+    try {
+      const key = file.split("/").pop() as string;
+      const val = (await blobs.get(key, { type: "json" })) as T | null;
+      return val ?? fallback;
+    } catch (e) {
+      console.error("[db:blob-read]", e);
+      return fallback;
+    }
+  }
   try {
     const raw = await fs.readFile(file, "utf-8");
     return JSON.parse(raw) as T;
@@ -67,6 +96,12 @@ async function readJson<T>(file: string, fallback: T): Promise<T> {
 }
 
 async function writeJson(file: string, data: unknown) {
+  const blobs = await blobStore();
+  if (blobs) {
+    const key = file.split("/").pop() as string;
+    await blobs.setJSON(key, data);
+    return;
+  }
   await ensureDir();
   const tmp = `${file}.${crypto.randomBytes(4).toString("hex")}.tmp`;
   await fs.writeFile(tmp, JSON.stringify(data, null, 2), "utf-8");

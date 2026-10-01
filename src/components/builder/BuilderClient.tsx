@@ -7,7 +7,7 @@ import type { PageConfig, SectionInstance, SectionType, ThemeConfig, WebsiteConf
 import { TemplateRenderer, SECTION_META } from "@/components/templates/Renderer";
 import { LogoTile } from "@/components/layout/chrome";
 import { isBespoke } from "@/templates";
-import { FONT_CHOICES, THEME_PRESETS, defaultSection, sanitizePagePath, sid } from "@/lib/website-defaults";
+import { FONT_CHOICES, THEME_PRESETS, defaultSection, normalizeConfig, sanitizePagePath, sid } from "@/lib/website-defaults";
 import { TextField, AreaField, ImageField, ListShell, ItemCard } from "./fields";
 
 type Tab = "content" | "sections" | "pages" | "design" | "seo" | "settings";
@@ -40,7 +40,16 @@ function move<T>(list: T[], i: number, dir: -1 | 1): T[] {
 export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteRecord; initialTab?: string; demo?: boolean }) {
   const router = useRouter();
   const [site, setSite] = useState<WebsiteRecord>(initial);
-  const [config, setConfig] = useState<WebsiteConfig>(initial.config);
+  // Demo accounts persist in this browser (localStorage) with full editing
+  // privileges — same builder, same controls as signed-in accounts.
+  const [config, setConfig] = useState<WebsiteConfig>(() => {
+    if (!demo || typeof window === "undefined") return initial.config;
+    try {
+      const raw = window.localStorage.getItem(`createio-demo-${initial.templateId}`);
+      if (raw) return normalizeConfig(JSON.parse(raw));
+    } catch { /* corrupted demo cache → fall through to seed */ }
+    return initial.config;
+  });
   const [tab, setTab] = useState<Tab>((initialTab as Tab) || "content");
   const [device, setDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [selectedId, setSelectedId] = useState<string | null>(
@@ -54,6 +63,10 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
   const past = useRef<WebsiteConfig[]>([]);
   const future = useRef<WebsiteConfig[]>([]);
   const [, force] = useState(0);
+  // Demo config loads from this browser only — defer first paint past
+  // hydration so server and client HTML always match.
+  const [mounted, setMounted] = useState(!demo);
+  useEffect(() => { if (demo) setMounted(true); }, [demo]);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const commit = useCallback((next: WebsiteConfig) => {
@@ -95,9 +108,9 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config]);
 
-  // autosave (debounced; disabled in demo — nothing to save to)
+  // autosave (debounced; demo writes to this browser instead of the server)
   useEffect(() => {
-    if (demo || saveState !== "dirty") return;
+    if (saveState !== "dirty") return;
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => saveNow(), 1200);
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
@@ -105,7 +118,14 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
   }, [config]);
 
   async function saveNow(status?: "draft" | "published") {
-    if (demo) return;
+    if (demo) {
+      try {
+        window.localStorage.setItem(`createio-demo-${site.templateId}`, JSON.stringify(config));
+      } catch { /* private mode / quota → keep in-memory state */ }
+      setSaveState("saved");
+      setSaveMsg("");
+      return;
+    }
     setSaveState("saving");
     setSaveMsg("");
     try {
@@ -216,6 +236,14 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     setTab("content");
   }
 
+  if (demo && !mounted) {
+    return (
+      <div className="flex h-screen items-center justify-center" style={{ background: "var(--paper)" }}>
+        <p className="mono-meta text-xs uppercase" style={{ letterSpacing: "0.14em", color: "var(--ink-3)" }}>Loading demo…</p>
+      </div>
+    );
+  }
+
   return (
     <div className="builder flex h-screen flex-col" style={{ background: "var(--paper)" }}>
       {/* Top bar */}
@@ -237,7 +265,15 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
         </div>
         <div className="ml-auto flex items-center gap-1.5">
           {demo ? (
-            <span className="tag">Demo — edits stay in this tab</span>
+            <span className="flex items-center gap-2">
+              <span className="tag">Demo — saved in this browser</span>
+              <button
+                onClick={() => { if (confirm("Reset the demo to the original template?")) { try { window.localStorage.removeItem(`createio-demo-${site.templateId}`); } catch {} window.location.reload(); } }}
+                className="mono-meta text-[11px] underline opacity-60"
+              >
+                Reset
+              </button>
+            </span>
           ) : (
           <span className="mono-meta mr-1 hidden text-[11px] sm:inline" style={{ color: "var(--ink-3)" }}>
             {saveState === "saving" ? "saving…" : saveState === "dirty" ? "unsaved" : saveState === "error" ? "save failed" : "saved"}
@@ -276,11 +312,11 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
             ))}
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-3">
-            {tab === "content" && <ContentPanel config={activeConfig} selected={selected} onSelect={setSelectedId} onPatch={patchSection} pageLabel={activePage ? activePage.title : "Home"} />}
+            {tab === "content" && <ContentPanel config={activeConfig} selected={selected} onSelect={setSelectedId} onPatch={patchSection} pageLabel={activePage ? activePage.title : "Home"} demo={demo} />}
             {tab === "sections" && <SectionsPanel config={activeConfig} selectedId={selectedId} onSelect={(id) => { setSelectedId(id); }} onToggle={toggleSection} onMove={reorderSection} onRemove={removeSection} onDuplicate={duplicateSection} onAdd={addSection} pageLabel={activePage ? activePage.title : "Home"} />}
             {tab === "pages" && <PagesPanel config={config} activePageId={activePageId} onSwitch={switchPage} onAdd={addPage} onRename={renamePage} onRemove={removePage} siteSlug={site.slug} />}
             {tab === "design" && <DesignPanel theme={config.theme} onPatch={patchTheme} onCustomCss={(v) => commit({ ...config, customCss: v })} customCss={config.customCss || ""} />}
-            {tab === "seo" && <SeoPanel config={config} onCommit={commit} />}
+            {tab === "seo" && <SeoPanel config={config} onCommit={commit} demo={demo} />}
             {tab === "settings" && <SettingsPanel site={site} config={config} onCommit={commit} onSite={setSite} />}
           </div>
         </aside>
@@ -309,7 +345,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-4">
             {selected ? (
-              <SectionInspector section={selected} theme={config.theme} templateId={site.templateId} onPatch={(fn) => patchSection(selected.id, fn)} onTheme={patchTheme} />
+              <SectionInspector section={selected} theme={config.theme} templateId={site.templateId} demo={demo} onPatch={(fn) => patchSection(selected.id, fn)} onTheme={patchTheme} />
             ) : (
               <p className="text-[13px] text-neutral-500">Click any section on the left, or pick one below.</p>
             )}
@@ -321,9 +357,9 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
 }
 
 // ─── LEFT: content ───
-function ContentPanel({ config, selected, onSelect, onPatch, pageLabel }: {
+function ContentPanel({ config, selected, onSelect, onPatch, pageLabel, demo }: {
   config: WebsiteConfig; selected: SectionInstance | null; onSelect: (id: string) => void;
-  onPatch: (id: string, fn: (s: SectionInstance) => SectionInstance) => void; pageLabel: string;
+  onPatch: (id: string, fn: (s: SectionInstance) => SectionInstance) => void; pageLabel: string; demo?: boolean;
 }) {
   return (
     <div className="space-y-2">
@@ -338,7 +374,7 @@ function ContentPanel({ config, selected, onSelect, onPatch, pageLabel }: {
       {selected && (
         <div className="mt-3 border-t border-neutral-100 pt-3">
           <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">Edit — {SECTION_META[selected.type]?.label}</p>
-          <SectionFields section={selected} onChange={(patch) => onPatch(selected.id, (s) => setC(s, patch))} onReplace={(c) => onPatch(selected.id, (s) => ({ ...s, content: c }))} />
+          <SectionFields demo={demo} section={selected} onChange={(patch) => onPatch(selected.id, (s) => setC(s, patch))} onReplace={(c) => onPatch(selected.id, (s) => ({ ...s, content: c }))} />
         </div>
       )}
     </div>
@@ -346,8 +382,8 @@ function ContentPanel({ config, selected, onSelect, onPatch, pageLabel }: {
 }
 
 // ─── Generic per-section fields ───
-export function SectionFields({ section, onChange, onReplace }: {
-  section: SectionInstance; onChange: (patch: Record<string, unknown>) => void; onReplace: (c: Record<string, unknown>) => void;
+export function SectionFields({ section, onChange, onReplace, demo }: {
+  section: SectionInstance; onChange: (patch: Record<string, unknown>) => void; onReplace: (c: Record<string, unknown>) => void; demo?: boolean;
 }) {
   const c = section.content as Record<string, unknown>;
   const str = (k: string) => (typeof c[k] === "string" ? (c[k] as string) : "");
@@ -387,7 +423,7 @@ export function SectionFields({ section, onChange, onReplace }: {
             <TextField label="Primary button" value={str("primaryCta")} onChange={(v) => onChange({ primaryCta: v })} />
             <TextField label="Secondary button" value={str("secondaryCta")} onChange={(v) => onChange({ secondaryCta: v })} />
           </div>
-          <ImageField label="Hero image" value={str("image")} onChange={(v) => onChange({ image: v })} />
+          <ImageField demo={demo} label="Hero image" value={str("image")} onChange={(v) => onChange({ image: v })} />
         </>
       )}
       {(section.type === "about") && (
@@ -395,7 +431,7 @@ export function SectionFields({ section, onChange, onReplace }: {
           <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
           <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
           <AreaField label="Body" value={str("body")} rows={4} onChange={(v) => onChange({ body: v })} />
-          <ImageField label="Image" value={str("image")} onChange={(v) => onChange({ image: v })} />
+          <ImageField demo={demo} label="Image" value={str("image")} onChange={(v) => onChange({ image: v })} />
         </>
       )}
       {section.type === "skills" && listEditor("skills", "Skills", "Skill", { name: "New skill", level: 80 },
@@ -415,7 +451,7 @@ export function SectionFields({ section, onChange, onReplace }: {
             (it, set) => (<>
               <TextField label="Name" value={String(it["title"] ?? "")} onChange={(v) => set({ title: v } as never)} />
               <AreaField label="Description" value={String(it["description"] ?? "")} onChange={(v) => set({ description: v } as never)} />
-              <ImageField label="Image" value={String(it["image"] ?? "")} onChange={(v) => set({ image: v } as never)} />
+              <ImageField demo={demo} label="Image" value={String(it["image"] ?? "")} onChange={(v) => set({ image: v } as never)} />
               <TextField label="Tags (comma separated)" value={(Array.isArray(it["tags"]) ? (it["tags"] as string[]).join(", ") : "")} onChange={(v) => set({ tags: v.split(",").map((s) => s.trim()).filter(Boolean) } as never)} />
               <div className="grid grid-cols-2 gap-2">
                 <TextField label="URL" value={String(it["url"] ?? "")} onChange={(v) => set({ url: v } as never)} />
@@ -435,7 +471,7 @@ export function SectionFields({ section, onChange, onReplace }: {
       {section.type === "gallery" && (
         <div className="space-y-2">
           {(Array.isArray(c["images"]) ? c["images"] as string[] : []).map((img, i) => (
-            <ImageField key={i} label={`Photo ${i + 1}`} value={img} onChange={(v) => { const next = [...(c["images"] as string[])]; next[i] = v; onChange({ images: next }); }} />
+            <ImageField demo={demo} key={i} label={`Photo ${i + 1}`} value={img} onChange={(v) => { const next = [...(c["images"] as string[])]; next[i] = v; onChange({ images: next }); }} />
           ))}
           <div className="flex gap-2">
             <button onClick={() => onChange({ images: [...(Array.isArray(c["images"]) ? c["images"] as string[] : []), ""] })} className="flex-1 rounded-lg border border-neutral-200 py-1.5 text-xs font-medium">+ Add photo</button>
@@ -444,7 +480,7 @@ export function SectionFields({ section, onChange, onReplace }: {
         </div>
       )}
       {section.type === "team" && listEditor("members", "Members", "Member", { name: "", role: "", photo: "", bio: "" },
-        (it, set) => (<><TextField label="Name" value={String(it["name"] ?? "")} onChange={(v) => set({ name: v } as never)} /><TextField label="Role" value={String(it["role"] ?? "")} onChange={(v) => set({ role: v } as never)} /><ImageField label="Photo" value={String(it["photo"] ?? "")} onChange={(v) => set({ photo: v } as never)} /><AreaField label="Bio" value={String(it["bio"] ?? "")} onChange={(v) => set({ bio: v } as never)} /></>))}
+        (it, set) => (<><TextField label="Name" value={String(it["name"] ?? "")} onChange={(v) => set({ name: v } as never)} /><TextField label="Role" value={String(it["role"] ?? "")} onChange={(v) => set({ role: v } as never)} /><ImageField demo={demo} label="Photo" value={String(it["photo"] ?? "")} onChange={(v) => set({ photo: v } as never)} /><AreaField label="Bio" value={String(it["bio"] ?? "")} onChange={(v) => set({ bio: v } as never)} /></>))}
       {section.type === "process" && listEditor("steps", "Steps", "Step", { title: "", description: "", icon: "" },
         (it, set) => (<><TextField label="Title" value={String(it["title"] ?? "")} onChange={(v) => set({ title: v } as never)} /><AreaField label="Description" value={String(it["description"] ?? "")} onChange={(v) => set({ description: v } as never)} /></>))}
       {section.type === "faq" && listEditor("items", "Questions", "Question", { q: "", a: "" },
@@ -652,15 +688,15 @@ function DesignPanel({ theme, onPatch, customCss, onCustomCss }: { theme: ThemeC
 }
 
 // ─── SEO ───
-function SeoPanel({ config, onCommit }: { config: WebsiteConfig; onCommit: (c: WebsiteConfig) => void }) {
+function SeoPanel({ config, onCommit, demo }: { config: WebsiteConfig; onCommit: (c: WebsiteConfig) => void; demo?: boolean }) {
   const seo = config.seo;
   const set = (p: Partial<typeof seo>) => onCommit({ ...config, seo: { ...seo, ...p } });
   return (
     <div className="space-y-3">
       <TextField label="SEO title" value={seo.title} onChange={(v) => set({ title: v })} />
       <AreaField label="SEO description" value={seo.description} onChange={(v) => set({ description: v })} />
-      <ImageField label="Social preview image" value={seo.socialImage} onChange={(v) => set({ socialImage: v })} />
-      <ImageField label="Favicon (small logo, square works best)" value={seo.favicon} onChange={(v) => set({ favicon: v })} />
+      <ImageField demo={demo} label="Social preview image" value={seo.socialImage} onChange={(v) => set({ socialImage: v })} />
+      <ImageField demo={demo} label="Favicon (small logo, square works best)" value={seo.favicon} onChange={(v) => set({ favicon: v })} />
       <TextField label="Language" value={seo.language} onChange={(v) => set({ language: v })} />
       <div className="rounded-lg bg-neutral-50 p-3 text-xs text-neutral-600">
         <p className="font-semibold text-neutral-800">Preview</p>
@@ -716,8 +752,8 @@ function SettingsPanel({ site, config, onCommit, onSite }: { site: WebsiteRecord
 }
 
 // ─── Right inspector ───
-function SectionInspector({ section, theme, templateId, onPatch, onTheme }: {
-  section: SectionInstance; theme: ThemeConfig; templateId: string; onPatch: (fn: (s: SectionInstance) => SectionInstance) => void; onTheme: (p: Partial<ThemeConfig>) => void;
+function SectionInspector({ section, theme, templateId, demo, onPatch, onTheme }: {
+  section: SectionInstance; theme: ThemeConfig; templateId: string; demo?: boolean; onPatch: (fn: (s: SectionInstance) => SectionInstance) => void; onTheme: (p: Partial<ThemeConfig>) => void;
 }) {
   void theme; void onTheme;
   const meta = SECTION_META[section.type];
@@ -746,7 +782,7 @@ function SectionInspector({ section, theme, templateId, onPatch, onTheme }: {
         </button>
       </label>
       <div className="border-t border-neutral-100 pt-3">
-        <SectionFields section={section} onChange={(patch) => onPatch((s) => setC(s, patch))} onReplace={(c) => onPatch((s) => ({ ...s, content: c }))} />
+        <SectionFields demo={demo} section={section} onChange={(patch) => onPatch((s) => setC(s, patch))} onReplace={(c) => onPatch((s) => ({ ...s, content: c }))} />
       </div>
     </div>
   );

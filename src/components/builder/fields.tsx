@@ -20,7 +20,7 @@ export function AreaField({ label, value, onChange, rows = 3 }: { label: string;
   );
 }
 
-export function ImageField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+export function ImageField({ label, value, onChange, demo }: { label: string; value: string; onChange: (v: string) => void; demo?: boolean }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
 
@@ -30,6 +30,18 @@ export function ImageField({ label, value, onChange }: { label: string; value: s
     setBusy(true);
     setErr("");
     try {
+      // Demo accounts have no server storage — embed images directly.
+      if (demo) {
+        if (f.size > 1_500_000) throw new Error("Keep demo images under 1.5MB — or sign up for full uploads.");
+        const dataUrl: string = await new Promise((resolve, reject) => {
+          const r = new FileReader();
+          r.onload = () => resolve(String(r.result));
+          r.onerror = () => reject(new Error("Could not read that file."));
+          r.readAsDataURL(f);
+        });
+        onChange(dataUrl);
+        return;
+      }
       const fd = new FormData();
       fd.append("file", f);
       const res = await fetch("/api/upload", { method: "POST", body: fd });

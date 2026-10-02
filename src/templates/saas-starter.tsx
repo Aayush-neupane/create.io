@@ -13,7 +13,7 @@ const Navbar: C = ({ content, theme, pages }) => {
   const links = withPages(content, pages);
   return (
     <div className="sticky top-3 z-30 px-4">
-      <nav className="mx-auto flex max-w-4xl items-center justify-between border bg-white/90 py-2.5 pl-5 pr-2.5 shadow-sm backdrop-blur" style={{ borderRadius: 999, borderColor: theme.surface }}>
+      <nav className="mx-auto flex max-w-4xl items-center justify-between border bg-white py-2.5 pl-5 pr-2.5 shadow-sm" style={{ borderRadius: 999, borderColor: theme.surface }}>
         <span className="flex items-center gap-2 text-sm font-bold" style={{ fontFamily: fontStack(theme.fontHeading) }}>
           <span className="flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-black text-white" style={{ background: theme.primary }}>◍</span>
           {str(content.logo, "Launchpad")}
@@ -175,7 +175,7 @@ const Cta: C = ({ content, theme }) => (
   <section className={sectionPad(theme)}>
     <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
       <div className="relative overflow-hidden px-8 py-16 text-center text-white" style={{ borderRadius: theme.radius * 1.6, background: theme.primary }}>
-        <div className="absolute inset-0 opacity-20" style={{ background: "radial-gradient(circle at 20% 20%, #fff 0, transparent 40%), radial-gradient(circle at 80% 90%, #fff 0, transparent 35%)" }} />
+        <div aria-hidden className="absolute inset-x-0 top-0 h-1.5" style={{ background: theme.accent }} />
         <h2 className="relative mx-auto max-w-xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.02em" }}>{str(content.title)}</h2>
         <p className="relative mx-auto mt-3 max-w-md text-sm opacity-80">{str(content.description)}</p>
         <a href="#contact" className="relative mt-7 inline-block rounded-full bg-white px-8 py-3.5 text-sm font-bold" style={{ color: theme.primary }}>{str(content.primaryCta, "Start free trial")}</a>

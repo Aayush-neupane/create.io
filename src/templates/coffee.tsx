@@ -13,7 +13,7 @@ type C = (props: BespokeProps) => React.ReactNode;
 const Navbar: C = ({ content, theme, pages }) => {
   const links = withPages(content, pages);
   return (
-    <nav className="sticky top-0 z-30 border-b" style={{ borderColor: theme.surface, background: `color-mix(in srgb, ${theme.background} 90%, transparent)`, backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" }}>
+    <nav className="sticky top-0 z-30 border-b" style={{ borderColor: theme.surface, background: theme.background }}>
       <div className={`mx-auto flex items-center justify-between px-6 py-4 ${containerWidth(theme)}`}>
         <span className="flex items-center gap-2.5">
           <span className="grid h-9 w-9 place-items-center rounded-full text-base" style={{ background: theme.primary, color: "#fff" }}>☕</span>
@@ -31,7 +31,8 @@ const Navbar: C = ({ content, theme, pages }) => {
 };
 
 const Hero: C = ({ content, theme }) => (
-  <section className="relative overflow-hidden" style={{ background: `linear-gradient(180deg, ${theme.surface}, ${theme.background})` }}>
+  <section className="relative overflow-hidden" style={{ background: theme.background }}>
+    <div aria-hidden className="absolute inset-x-0 top-0 h-1" style={{ background: theme.accent }} />
     <div className={`mx-auto grid items-center gap-10 px-6 pb-16 pt-16 md:grid-cols-2 md:pt-20 ${containerWidth(theme)}`}>
       <div>
         <p className="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold" style={{ borderColor: theme.accent, color: theme.accent }}>
@@ -144,7 +145,7 @@ const Gallery: C = ({ content, theme }) => {
             <figure key={i} className={`w-[78%] flex-none sm:w-[46%] md:w-auto ${i % 3 === 1 ? "md:mt-10" : ""}`}>
               <div className="img-zoom overflow-hidden border-4 border-white shadow-lg" style={{ borderRadius: theme.radius, aspectRatio: "4/5", background: theme.background }}>
                 {img ? <img src={img} alt={`Café ${i + 1}`} loading="lazy" decoding="async" className="h-full w-full object-cover" /> : (
-                  <div className="grid h-full min-h-64 place-items-center p-6 text-center" style={{ background: `linear-gradient(150deg, ${theme.background}, ${theme.surface})` }}>
+                  <div className="grid h-full min-h-64 place-items-center p-6 text-center" style={{ background: theme.surface }}>
                     <div>
                       <p className="text-3xl">☕</p>
                       <p className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading) }}>Table {i + 1}</p>
@@ -198,16 +199,16 @@ const Contact: C = ({ content, theme }) => (
           <p><span className="opacity-60">Write — </span><span className="font-semibold">{str(content.email)}</span></p>
         </div>
       </div>
-      <form action="#contact" className="space-y-3 border border-white/20 p-6 md:p-7" style={{ borderRadius: theme.radius * 1.4, background: "rgba(255,255,255,.06)" }}>
+      <form action="#contact" className="space-y-3 border p-6 md:p-7" style={{ borderRadius: theme.radius * 1.4, background: theme.background, borderColor: theme.surface }}>
         <p className="font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.22em", color: theme.accent }}>Reserve a table / order beans</p>
         <div className="grid gap-3 sm:grid-cols-2">
-          <input required name="name" placeholder="Your name" className="rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 text-sm text-white outline-none transition-all placeholder:text-white/50 focus:shadow-md" />
-          <input required name="phone" placeholder="Phone" className="rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 text-sm text-white outline-none transition-all placeholder:text-white/50 focus:shadow-md" />
+          <input required name="name" placeholder="Your name" className="rounded-lg border px-3 py-2.5 text-sm outline-none" style={{ borderColor: theme.surface, background: "#fff", color: theme.text }} />
+          <input required name="phone" placeholder="Phone" className="rounded-lg border px-3 py-2.5 text-sm outline-none" style={{ borderColor: theme.surface, background: "#fff", color: theme.text }} />
         </div>
-        <select name="topic" className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 text-sm text-white outline-none" defaultValue="Reserve a corner table">
+        <select name="topic" className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none" style={{ borderColor: theme.surface, background: "#fff", color: theme.text }} defaultValue="Reserve a corner table">
           {["Reserve a corner table", "Whole-bean subscription", "Catering an event", "Just saying hello"].map((o) => <option key={o} className="text-black">{o}</option>)}
         </select>
-        <textarea name="message" rows={3} placeholder="How many, when, decaf or regular…" className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 text-sm text-white outline-none transition-all placeholder:text-white/50 focus:shadow-md" />
+        <textarea name="message" rows={3} placeholder="How many, when, decaf or regular…" className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none" style={{ borderColor: theme.surface, background: "#fff", color: theme.text }} />
         <button className={`${btnRadius(theme)} t-btn w-full py-3 text-sm font-bold`} style={{ background: theme.accent, color: "#2b1d12" }}>Send to the counter</button>
       </form>
     </div>

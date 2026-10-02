@@ -13,7 +13,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Minimal",
     mode: "light",
     tier: "free",
-    thumbnailGradient: "linear-gradient(135deg,#fafafa,#e7e5e4)",
+    thumbnailGradient: "#f1efe9",
     theme: { ...t, primary: "#111111", background: "#ffffff", surface: "#f6f6f5", text: "#111111", muted: "#6b7280", accent: "#111111", fontHeading: "Inter", fontBody: "Inter", radius: 10 },
     sections: [
       { type: "navbar", variant: "minimal" },
@@ -35,7 +35,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Bold",
     mode: "dark",
     tier: "free",
-    thumbnailGradient: "linear-gradient(135deg,#0a0a0a,#3b2f2f)",
+    thumbnailGradient: "#141414",
     theme: { ...t, primary: "#18181b", secondary: "#a1a1aa", background: "#0c0c0c", surface: "#1c1c1f", text: "#fafafa", muted: "#a1a1aa", accent: "#e7e5e4", fontHeading: "Fraunces", fontBody: "Inter", radius: 4 },
     sections: [
       { type: "navbar", variant: "overlay" },
@@ -56,7 +56,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Corporate",
     mode: "light",
     tier: "free",
-    thumbnailGradient: "linear-gradient(135deg,#eff6ff,#dbeafe)",
+    thumbnailGradient: "#e3ecf5",
     theme: { ...t, primary: "#1e3a5f", secondary: "#475569", background: "#ffffff", surface: "#f1f5f9", text: "#0f172a", muted: "#64748b", accent: "#2563eb", fontHeading: "Plus Jakarta Sans", fontBody: "Inter", radius: 8 },
     sections: [
       { type: "navbar", variant: "solid" },
@@ -79,7 +79,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Warm",
     mode: "light",
     tier: "free",
-    thumbnailGradient: "linear-gradient(135deg,#fffbeb,#fed7aa)",
+    thumbnailGradient: "#f7e8d3",
     theme: { ...t, primary: "#7c2d12", secondary: "#9a3412", background: "#fffdf7", surface: "#fef3e8", text: "#292019", muted: "#8a7a6b", accent: "#ea580c", fontHeading: "Fraunces", fontBody: "Inter", radius: 12 },
     sections: [
       { type: "navbar", variant: "centered" },
@@ -102,7 +102,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Modern",
     mode: "light",
     tier: "premium",
-    thumbnailGradient: "linear-gradient(135deg,#f5f3ff,#ddd6fe)",
+    thumbnailGradient: "#e4e0f5",
     theme: { ...t, primary: "#111111", secondary: "#4b5563", background: "#ffffff", surface: "#f5f5f4", text: "#111111", muted: "#6b7280", accent: "#7c3aed", fontHeading: "Space Grotesk", fontBody: "Inter", radius: 14 },
     sections: [
       { type: "navbar", variant: "bold" },
@@ -125,7 +125,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Modern",
     mode: "light",
     tier: "premium",
-    thumbnailGradient: "linear-gradient(135deg,#ecfdf5,#d1fae5)",
+    thumbnailGradient: "#ddefe6",
     theme: { ...t, primary: "#064e3b", secondary: "#047857", background: "#ffffff", surface: "#ecfdf5", text: "#0b1f17", muted: "#5f7267", accent: "#10b981", fontHeading: "Plus Jakarta Sans", fontBody: "Inter", radius: 12 },
     sections: [
       { type: "navbar", variant: "solid" },
@@ -148,7 +148,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Ledger",
     mode: "light",
     tier: "free",
-    thumbnailGradient: "linear-gradient(135deg,#f0f7f2,#d7e8dc)",
+    thumbnailGradient: "#e2e9e0",
     theme: { ...t, primary: "#0f5132", secondary: "#3f6212", background: "#fdfcf8", surface: "#f0ede3", text: "#14231b", muted: "#6b7a6f", accent: "#c2410c", fontHeading: "Inter", fontBody: "Inter", radius: 10 },
     sections: [
       { type: "navbar", variant: "minimal" },
@@ -170,7 +170,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Festive",
     mode: "light",
     tier: "premium",
-    thumbnailGradient: "linear-gradient(135deg,#2e1065,#7c3aed)",
+    thumbnailGradient: "#2e1065",
     theme: { ...t, primary: "#2e1065", secondary: "#6d28d9", background: "#faf8ff", surface: "#efe9fb", text: "#1e1332", muted: "#7a7291", accent: "#d4a017", fontHeading: "Plus Jakarta Sans", fontBody: "Inter", radius: 12 },
     sections: [
       { type: "navbar", variant: "solid" },
@@ -194,7 +194,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Romantic",
     mode: "light",
     tier: "free",
-    thumbnailGradient: "linear-gradient(135deg,#fff1f2,#fecdd3)",
+    thumbnailGradient: "#f6dfe2",
     theme: { ...t, primary: "#7f1d2e", secondary: "#b76e79", background: "#fffdf9", surface: "#faf3ea", text: "#3d2229", muted: "#9a7f86", accent: "#e11d48", fontHeading: "Fraunces", fontBody: "Inter", radius: 14 },
     sections: [
       { type: "navbar", variant: "centered" },
@@ -218,8 +218,8 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Brutal",
     mode: "dark",
     tier: "free",
-    thumbnailGradient: "linear-gradient(135deg,#0b0d0c,#3a4413)",
-    theme: { ...t, primary: "#1a1f1a", secondary: "#9aa39a", background: "#0b0d0c", surface: "#161a15", text: "#f2f5ee", muted: "#9aa39a", accent: "#d7fd44", fontHeading: "Space Grotesk", fontBody: "Inter", radius: 4 },
+    thumbnailGradient: "#141412",
+    theme: { ...t, primary: "#1c1c19", secondary: "#9aa39a", background: "#121210", surface: "#1f1f1b", text: "#f2f5ee", muted: "#9aa39a", accent: "#e4572e", fontHeading: "Space Grotesk", fontBody: "Inter", radius: 4 },
     sections: [
       { type: "navbar", variant: "bold" },
       { type: "banner", variant: "dark" },
@@ -242,7 +242,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Craft",
     mode: "light",
     tier: "free",
-    thumbnailGradient: "linear-gradient(135deg,#faf6ef,#d9a05b)",
+    thumbnailGradient: "#efe0c8",
     theme: { ...t, primary: "#4a2c1a", secondary: "#a0714f", background: "#faf6ef", surface: "#f1e7d6", text: "#2b1d12", muted: "#8a7663", accent: "#c2703d", fontHeading: "Fraunces", fontBody: "Inter", radius: 12 },
     sections: [
       { type: "navbar", variant: "centered" },
@@ -264,7 +264,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Trust",
     mode: "light",
     tier: "free",
-    thumbnailGradient: "linear-gradient(135deg,#eef0e9,#1d3b2a)",
+    thumbnailGradient: "#dde0d2",
     theme: { ...t, primary: "#1d3b2a", secondary: "#5c6e60", background: "#fbfaf7", surface: "#eef0e9", text: "#14201a", muted: "#6b7568", accent: "#b98a2f", fontHeading: "Plus Jakarta Sans", fontBody: "Inter", radius: 10 },
     sections: [
       { type: "navbar", variant: "solid" },
@@ -287,8 +287,8 @@ export const TEMPLATES: TemplateDefinition[] = [
     style: "Gloss",
     mode: "dark",
     tier: "free",
-    thumbnailGradient: "linear-gradient(135deg,#070b12,#0e7490)",
-    theme: { ...t, primary: "#0b3b5e", secondary: "#7d93ab", background: "#070b12", surface: "#101825", text: "#eaf1f8", muted: "#8b98a9", accent: "#22d3ee", fontHeading: "Space Grotesk", fontBody: "Inter", radius: 10 },
+    thumbnailGradient: "#1a222b",
+    theme: { ...t, primary: "#232a31", secondary: "#9aa7b4", background: "#14171c", surface: "#1f262e", text: "#eef2f6", muted: "#9aa7b4", accent: "#e0a32e", fontHeading: "Space Grotesk", fontBody: "Inter", radius: 10 },
     sections: [
       { type: "navbar", variant: "bold" },
       { type: "banner", variant: "dark" },

@@ -99,7 +99,7 @@ const Process: C = ({ content, theme }) => {
         <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(content.title)}</h2>
         <ol className="mt-8 grid gap-px overflow-hidden border border-white/20 md:grid-cols-4" style={{ borderRadius: theme.radius }}>
           {steps.map((st, i) => (
-            <li key={i} className="bg-white/[0.06] p-6">
+            <li key={i} className="p-6" style={{ background: "#2a4a73" }}>
               <p className="font-mono text-xs opacity-60">Phase {i + 1}</p>
               <h3 className="mt-2 font-semibold">{st.title}</h3>
               <p className="mt-1.5 text-[13px] leading-relaxed opacity-70">{st.description}</p>

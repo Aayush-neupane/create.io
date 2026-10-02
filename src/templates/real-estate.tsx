@@ -51,7 +51,7 @@ const Hero: C = ({ content, theme }) => (
       </div>
       <div className="overflow-hidden border shadow-2xl" style={{ borderRadius: theme.radius * 1.6, borderColor: theme.surface, background: theme.surface }}>
         {str(content.image) ? <img src={str(content.image)} alt={str(content.title)} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover" /> : (
-          <div className="grid aspect-[4/3] place-items-center p-8 text-center" style={{ background: `linear-gradient(150deg, ${theme.primary}, #0e241a)` }}>
+          <div className="grid aspect-[4/3] place-items-center p-8 text-center" style={{ background: theme.primary }}>
             <div>
               <p className="font-mono text-[11px] uppercase" style={{ letterSpacing: "0.26em", color: theme.accent }}>Featured · Budhanilkantha</p>
               <p className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "1.7rem", fontWeight: 750, color: "#fff" }}>4BHK with valley view</p>
@@ -87,14 +87,14 @@ const Gallery: C = ({ content, theme }) => {
             <article key={i} className="group w-[82%] flex-none overflow-hidden border bg-white sm:w-[48%] md:w-auto" style={{ borderRadius: theme.radius, borderColor: theme.background }}>
               <div className="img-zoom relative aspect-[4/3]" style={{ background: theme.background }}>
                 {img ? <img src={img} alt={`Listing ${i + 1}`} loading="lazy" decoding="async" className="h-full w-full object-cover" /> : (
-                  <div className="grid h-full min-h-48 place-items-center p-6 text-center" style={{ background: `linear-gradient(150deg, ${theme.primary}, #0e241a)` }}>
+                  <div className="grid h-full min-h-48 place-items-center p-6 text-center" style={{ background: theme.primary }}>
                     <div>
                       <p className="font-mono text-[10px] uppercase" style={{ letterSpacing: "0.24em", color: theme.accent }}>Listing nº {String(i + 1).padStart(2, "0")}</p>
                       <p className="mt-1 font-mono font-bold" style={{ color: "#fff" }}>{["4BHK · Budhanilkantha", "3BHK · Jhamsikhel", "Plot · Dhapakhel", "2BHK · Sitapaila", "5BHK · Lazimpat", "Land · Machhegaun"][i % 6]}</p>
                     </div>
                   </div>
                 )}
-                <span className="absolute left-3 top-3 rounded-sm bg-black/70 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-white">New</span>
+                <span className="absolute left-3 top-3 rounded-sm bg-black px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-white">New</span>
               </div>
               <div className="flex items-center justify-between gap-2 p-4">
                 <p className="text-sm font-bold" style={{ color: theme.primary }}>{["Rs. 4.2 cr", "Rs. 2.8 cr", "Rs. 1.6 cr", "Rs. 95L", "Rs. 6.5 cr", "Rs. 85L"][i % 6]}</p>
@@ -160,7 +160,7 @@ const Testimonials: C = ({ content, theme }) => {
         <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 750 }}>{str(content.title)}</h2>
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           {items.map((t0, i) => (
-            <figure key={i} className="flex flex-col border border-white/15 p-6 transition-transform duration-300 hover:-translate-y-1" style={{ borderRadius: theme.radius, background: "rgba(255,255,255,.04)" }}>
+            <figure key={i} className="flex flex-col border border-white/15 p-6 transition-transform duration-300 hover:-translate-y-1" style={{ borderRadius: theme.radius, background: "#22392c" }}>
               <span aria-hidden style={{ color: theme.accent, fontSize: "1.6rem", lineHeight: 1 }}>“</span>
               <blockquote className="flex-1 text-[15px] leading-relaxed opacity-90">{t0.message}</blockquote>
               <figcaption className="mt-5 border-t border-white/15 pt-4">
@@ -218,16 +218,16 @@ const Contact: C = ({ content, theme }) => (
           <p><span className="font-mono text-xs uppercase tracking-widest" style={{ color: theme.muted }}>Email — </span><span className="font-semibold">{str(content.email)}</span></p>
         </div>
       </div>
-      <form action="#contact" className="space-y-3 border border-white/10 p-7 md:p-8" style={{ borderRadius: theme.radius * 1.4, background: theme.primary, color: "#fff" }}>
+      <form action="#contact" className="space-y-3 border p-7 md:p-8" style={{ borderRadius: theme.radius * 1.4, background: theme.primary, borderColor: theme.primary, color: "#fff" }}>
         <p className="font-mono text-[11px] font-bold uppercase" style={{ letterSpacing: "0.22em", color: theme.accent }}>Request a callback</p>
         <div className="grid gap-3 sm:grid-cols-2">
-          <input required name="name" placeholder="Your name" className="rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 text-sm text-white outline-none transition-all placeholder:text-white/50 focus:shadow-md" />
-          <input required name="phone" placeholder="Phone" className="rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 text-sm text-white outline-none transition-all placeholder:text-white/50 focus:shadow-md" />
+          <input required name="name" placeholder="Your name" className="rounded-lg border px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/50" style={{ borderColor: "#2e4a38", background: "#14281d" }} />
+          <input required name="phone" placeholder="Phone" className="rounded-lg border px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/50" style={{ borderColor: "#2e4a38", background: "#14281d" }} />
         </div>
-        <select name="interest" className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 text-sm text-white outline-none" defaultValue="Buying a home">
+        <select name="interest" className="w-full rounded-lg border px-3 py-2.5 text-sm text-white outline-none" style={{ borderColor: "#2e4a38", background: "#14281d" }} defaultValue="Buying a home">
           {["Buying a home", "Buying land", "Renting", "Selling with Haven"].map((o) => <option key={o} className="text-black">{o}</option>)}
         </select>
-        <div className="flex items-center gap-3 rounded-lg border border-white/20 bg-white/10 px-3 py-2.5">
+        <div className="flex items-center gap-3 rounded-lg border px-3 py-2.5" style={{ borderColor: "#2e4a38", background: "#14281d" }}>
           <span className="font-mono text-xs uppercase tracking-widest opacity-70">Budget</span>
           <input name="budget" type="range" min={20} max={500} defaultValue={120} aria-label="Budget in lakhs" className="w-full accent-[#b98a2f]" />
           <span className="font-mono text-xs font-bold">Rs. 1.2cr+</span>

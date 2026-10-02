@@ -44,7 +44,7 @@ const Hero: C = ({ content, theme }) => {
           </div>
         </div>
         {stats.length > 0 && (
-          <dl className="mt-12 grid grid-cols-3 gap-px overflow-hidden rounded-2xl bg-white/15">
+          <dl className="mt-12 grid grid-cols-3 gap-px overflow-hidden rounded-2xl" style={{ background: "#2c2c31" }}>
             {stats.map((st, i) => (
               <div key={i} className="p-5" style={{ background: theme.primary }}>
                 <dt className="text-3xl font-bold" style={{ fontFamily: fontStack(theme.fontHeading) }}>{st.value}</dt>
@@ -100,7 +100,7 @@ const Projects: C = ({ content, theme }) => {
                 {p.image ? <img src={p.image} alt={p.title} className="absolute inset-0 h-full w-full object-cover" /> : (
                   <EmptyArt theme={theme} glyph={String(i + 1).padStart(2, "0")} caption={arr<string>(p.tags)[0] || "Case work"} className="absolute inset-0" />
                 )}
-                <span className="absolute left-4 top-4 rounded-full bg-black/50 px-2.5 py-1 font-mono text-[10px] text-white">{arr<string>(p.tags)[0] || "Case"}</span>
+                <span className="absolute left-4 top-4 rounded-full bg-black px-2.5 py-1 font-mono text-[10px] text-white">{arr<string>(p.tags)[0] || "Case"}</span>
               </div>
               <div className="flex flex-col justify-center border p-7" style={{ borderRadius: theme.radius * 1.3, borderColor: theme.surface }}>
                 <h3 className="text-2xl font-bold tracking-tight" style={{ fontFamily: fontStack(theme.fontHeading) }}>{p.title}</h3>
@@ -169,7 +169,7 @@ const Testimonials: C = ({ content, theme }) => {
         <p className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: theme.accent }}>★★★★★ {str(content.heading, "Client proof")}</p>
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {items.map((t0, i) => (
-            <figure key={i} className={`border border-white/15 p-6 ${i === 1 ? "md:-rotate-1" : i === 2 ? "md:rotate-1" : ""}`} style={{ borderRadius: theme.radius * 1.2, background: "rgba(255,255,255,0.05)" }}>
+            <figure key={i} className={`border border-white/15 p-6 ${i === 1 ? "md:-rotate-1" : i === 2 ? "md:rotate-1" : ""}`} style={{ borderRadius: theme.radius * 1.2, background: "#1b1b1f" }}>
               <blockquote className="text-sm leading-relaxed">“{t0.message}”</blockquote>
               <figcaption className="mt-4 text-[13px]"><span className="font-bold">{t0.name}</span><br /><span className="opacity-60">{t0.role}, {t0.company}</span></figcaption>
             </figure>

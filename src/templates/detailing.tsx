@@ -30,10 +30,10 @@ const SPOTS = [
 const Navbar: C = ({ content, theme, pages }) => {
   const links = withPages(content, pages);
   return (
-    <nav className="sticky top-0 z-30 border-b border-white/10" style={{ background: `color-mix(in srgb, ${theme.background} 88%, transparent)`, backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" }}>
+    <nav className="sticky top-0 z-30 border-b border-white/10" style={{ background: theme.background }}>
       <div className={`mx-auto flex items-center justify-between px-6 py-3.5 ${containerWidth(theme)}`}>
         <span className="flex items-center gap-2.5">
-          <span className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-full text-base font-black" style={{ background: `linear-gradient(140deg, ${theme.accent}, ${theme.primary})`, color: "#04121f" }}>✦</span>
+          <span className="grid h-9 w-9 place-items-center rounded-full text-base font-black" style={{ background: theme.accent, color: "#04121f" }}>✦</span>
           <span className="flex flex-col leading-none">
             <span style={{ fontFamily: fontStack(theme.fontHeading), fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-0.01em" }}>{str(content.logo, "Chamak")}</span>
             <span className="font-mono text-[10px] uppercase" style={{ letterSpacing: "0.24em", color: theme.accent }}>Mobile detailing</span>
@@ -51,7 +51,8 @@ const Navbar: C = ({ content, theme, pages }) => {
 };
 
 const Hero: C = ({ content, theme }) => (
-  <section className="relative overflow-hidden" style={{ background: `radial-gradient(90% 70% at 80% 0%, color-mix(in srgb, ${theme.accent} 18%, transparent), transparent 60%), ${theme.background}` }}>
+  <section className="relative overflow-hidden" style={{ background: theme.background }}>
+    <div aria-hidden className="absolute inset-x-0 top-0 h-1" style={{ background: theme.accent }} />
     <div className={`mx-auto px-6 pb-12 pt-16 md:pb-16 md:pt-24 ${containerWidth(theme)}`}>
       <p className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3.5 py-1.5 font-mono text-[11px] font-bold uppercase" style={{ letterSpacing: "0.2em", color: theme.accent }}>
         <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: theme.accent }} />{str(content.eyebrow, "We come to your driveway")}
@@ -66,7 +67,7 @@ const Hero: C = ({ content, theme }) => (
       </div>
       {str(content.subtitle) && <p className="mono-meta mt-6 text-xs" style={{ color: theme.muted }}>{str(content.subtitle)}</p>}
     </div>
-    <div className="overflow-hidden border-y border-white/10 py-2.5" style={{ background: "rgba(255,255,255,.02)" }} aria-hidden>
+    <div className="overflow-hidden border-y border-white/10 py-2.5" style={{ background: theme.surface }} aria-hidden>
       <p className="whitespace-nowrap font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>Wash · Clay · Polish · Seal · Wash · Clay · Polish · Seal · Wash · Clay · Polish · Seal</p>
     </div>
   </section>
@@ -94,7 +95,7 @@ const Gallery: C = ({ content, theme }) => {
                 {i === 0 && (
                   <span aria-hidden className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full border-2 font-black" style={{ borderColor: theme.accent, color: theme.accent }}>✓</span>
                 )}
-                <span className="absolute bottom-3 left-3 rounded-sm bg-black/70 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-white">Frame {String(i + 1).padStart(2, "0")}</span>
+                <span className="absolute bottom-3 left-3 rounded-sm bg-black px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-white">Frame {String(i + 1).padStart(2, "0")}</span>
               </div>
               <figcaption className="mt-2 font-mono text-[11px]" style={{ color: theme.muted }}>{SPOTS[i % SPOTS.length]}</figcaption>
             </figure>
@@ -120,22 +121,22 @@ const Contact: C = ({ content, theme }) => (
         <p className="mt-5 font-mono text-sm font-bold" style={{ color: theme.accent }}>{str(content.phone)}</p>
         <p className="text-sm" style={{ color: theme.muted }}>{str(content.email)} · {str(content.location)}</p>
       </div>
-      <form action="#contact" className="space-y-3 border border-white/10 bg-white/[0.03] p-6 md:p-7" style={{ borderRadius: theme.radius * 1.4 }}>
+      <form action="#contact" className="space-y-3 border border-white/10 p-6 md:p-7" style={{ borderRadius: theme.radius * 1.4, background: theme.background }}>
         <div className="grid gap-3 sm:grid-cols-2">
-          <input required name="name" placeholder="Your name" className="rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none transition-all placeholder:text-neutral-400 focus:shadow-md" />
-          <input required name="phone" placeholder="Phone number" className="rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none transition-all placeholder:text-neutral-400 focus:shadow-md" />
+          <input required name="name" placeholder="Your name" className="rounded-lg border border-white/15 px-3 py-2.5 text-sm text-white outline-none placeholder:text-neutral-400" style={{ background: theme.surface }} />
+          <input required name="phone" placeholder="Phone number" className="rounded-lg border border-white/15 px-3 py-2.5 text-sm text-white outline-none placeholder:text-neutral-400" style={{ background: theme.surface }} />
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <select name="vehicle" className="rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none" defaultValue="Sedan">
+          <select name="vehicle" className="rounded-lg border border-white/15 px-3 py-2.5 text-sm text-white outline-none" style={{ background: theme.surface }} defaultValue="Sedan">
             {["Hatchback", "Sedan", "SUV / 4WD", "Pickup", "Bike"].map((v) => <option key={v} className="text-black">{v}</option>)}
           </select>
-          <select name="package" className="rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none" defaultValue="Full Spa">
+          <select name="package" className="rounded-lg border border-white/15 px-3 py-2.5 text-sm text-white outline-none" style={{ background: theme.surface }} defaultValue="Full Spa">
             {["Express Wash", "Full Spa", "Ceramic Shield"].map((v) => <option key={v} className="text-black">{v}</option>)}
           </select>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <input required name="date" type="date" aria-label="Preferred date" className="rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark]" />
-          <input required name="location" placeholder="Where should we come?" className="rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white outline-none transition-all placeholder:text-neutral-400 focus:shadow-md" />
+          <input required name="date" type="date" aria-label="Preferred date" className="rounded-lg border border-white/15 px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark]" style={{ background: theme.surface }} />
+          <input required name="location" placeholder="Where should we come?" className="rounded-lg border border-white/15 px-3 py-2.5 text-sm text-white outline-none placeholder:text-neutral-400" style={{ background: theme.surface }} />
         </div>
         <button className="t-btn w-full rounded-full py-3 text-sm font-black uppercase tracking-wide" style={{ background: theme.accent, color: "#04121f" }}>Request booking</button>
         <p className="text-center font-mono text-[11px]" style={{ color: theme.muted }}>We confirm on WhatsApp within 2 hours</p>
@@ -154,11 +155,11 @@ const Banner: C = ({ content, theme }) => (
 const Stats: C = ({ content, theme }) => {
   const items = arr<{ value: string; label: string }>(content.items);
   return (
-    <section className="border-y border-white/10" style={{ background: "rgba(255,255,255,.02)" }}>
+    <section className="border-y border-white/10" style={{ background: theme.surface }}>
       <dl className={`mx-auto grid grid-cols-2 px-6 py-8 md:grid-cols-4 ${containerWidth(theme)}`}>
         {items.map((st, i) => (
           <div key={i} className="px-5 max-md:[&:nth-child(n+3)]:mt-6">
-            <dt className="font-mono tabular-nums" style={{ fontSize: "1.9rem", fontWeight: 800, color: theme.accent, textShadow: `0 0 24px color-mix(in srgb, ${theme.accent} 55%, transparent)` }}>{st.value}</dt>
+            <dt className="font-mono tabular-nums" style={{ fontSize: "1.9rem", fontWeight: 800, color: theme.accent }}>{st.value}</dt>
             <dd className="mt-1 font-mono text-[10px] font-bold uppercase tracking-widest" style={{ color: theme.muted }}><span style={{ color: theme.accent }}>[ </span>{st.label}<span style={{ color: theme.accent }}> ]</span></dd>
           </div>
         ))}
@@ -200,7 +201,7 @@ const Pricing: C = ({ content, theme }) => {
         <h2 className="mt-2 text-center uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title)}</h2>
         <div className="mx-auto mt-10 grid max-w-4xl gap-4 md:grid-cols-3">
           {items.map((p, i) => (
-            <div key={i} className="relative border p-7 transition-transform duration-300 hover:-translate-y-1" style={{ borderRadius: theme.radius, borderColor: p.featured ? theme.accent : "rgba(255,255,255,.12)", background: p.featured ? `linear-gradient(160deg, color-mix(in srgb, ${theme.accent} 22%, ${theme.background}), ${theme.background})` : theme.background, boxShadow: p.featured ? `0 0 44px -12px color-mix(in srgb, ${theme.accent} 60%, transparent)` : undefined }}>
+            <div key={i} className="relative border p-7 transition-transform duration-300 hover:-translate-y-1" style={{ borderRadius: theme.radius, borderColor: p.featured ? theme.accent : "rgba(255,255,255,.12)", borderWidth: p.featured ? 2 : 1, background: theme.background }}>
               {p.featured && <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 font-mono text-[10px] font-black uppercase tracking-widest" style={{ background: theme.accent, color: "#04121f" }}>Most booked</span>}
               <h3 className="font-mono text-xs font-black uppercase tracking-widest" style={{ color: p.featured ? theme.accent : theme.muted }}>{p.name}</h3>
               <p className="mt-2 font-mono font-black tabular-nums" style={{ fontSize: "1.9rem" }}>{p.price}</p>
@@ -221,9 +222,9 @@ const Process: C = ({ content, theme }) => {
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.22em", color: theme.accent }}>{str(content.heading, "How it works")}</p>
         <h2 className="mt-2 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title)}</h2>
-        <ol className="mt-8 grid gap-px overflow-hidden border border-white/10 md:grid-cols-4" style={{ borderRadius: theme.radius, background: "rgba(255,255,255,.08)" }}>
+        <ol className="mt-8 grid gap-px overflow-hidden border border-white/10 md:grid-cols-4" style={{ borderRadius: theme.radius, background: theme.surface }}>
           {steps.map((st, i) => (
-            <li key={i} className="group p-6 transition-colors duration-300 hover:bg-white/[0.04]" style={{ background: theme.surface }}>
+            <li key={i} className="group p-6" style={{ background: theme.background }}>
               <p className="font-mono text-xs font-black" style={{ color: theme.accent }}>STEP_{String(i + 1).padStart(2, "0")}</p>
               <h3 className="mt-3 font-bold" style={{ fontFamily: fontStack(theme.fontHeading) }}>{st.title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed" style={{ color: theme.muted }}>{st.description}</p>
@@ -273,7 +274,7 @@ const Faq: C = ({ content, theme }) => {
         <h2 className="mt-2 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title)}</h2>
         <div className="mt-8 overflow-hidden border border-white/10" style={{ borderRadius: theme.radius }}>
           {items.map((f, i) => (
-            <details key={i} className="group border-b border-white/10 bg-white/[0.02] last:border-0 open:bg-white/[0.05]">
+            <details key={i} className="group border-b border-white/10 last:border-0" style={{ background: theme.surface }}>
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 font-bold [&::-webkit-details-marker]:hidden">
                 <span><span className="mr-3 font-mono text-xs" style={{ color: theme.accent }}>Q{i + 1}</span>{f.q}</span>
                 <span aria-hidden className="font-mono text-lg transition-transform duration-300 group-open:rotate-45" style={{ color: theme.accent }}>+</span>
@@ -290,7 +291,7 @@ const Faq: C = ({ content, theme }) => {
 const Cta: C = ({ content, theme }) => (
   <section className={sectionPad(theme)}>
     <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
-      <div className="relative overflow-hidden px-8 py-14 text-center md:py-16" style={{ borderRadius: theme.radius * 1.6, background: `linear-gradient(140deg, ${theme.primary}, #04121f 75%)`, border: `1px solid color-mix(in srgb, ${theme.accent} 45%, transparent)`, boxShadow: `0 0 70px -22px color-mix(in srgb, ${theme.accent} 65%, transparent)` }}>
+      <div className="relative overflow-hidden px-8 py-14 text-center md:py-16" style={{ borderRadius: theme.radius * 1.6, background: theme.primary, border: `1px solid ${theme.surface}` }}>
         <p className="font-mono text-[11px] font-black uppercase" style={{ letterSpacing: "0.26em", color: theme.accent }}>● Slots fill by Thursday</p>
         <h2 className="mx-auto mt-3 max-w-2xl uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 800, lineHeight: 1 }}>{str(content.title)}</h2>
         {str(content.description) && <p className="mx-auto mt-4 max-w-xl text-sm" style={{ color: theme.muted }}>{str(content.description)}</p>}

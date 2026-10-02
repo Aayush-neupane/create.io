@@ -70,26 +70,26 @@ export function arr<T>(v: unknown): T[] {
   return Array.isArray(v) ? (v as T[]) : [];
 }
 
-/** Art-directed stand-in for empty image slots — layered gradient, etched
- *  lines, oversized glyph. Sites look finished before a single upload. */
+/** Flat stand-in for empty image slots — solid tint, oversized glyph, caption.
+ *  Sites look finished before a single upload, with zero gradients. */
 export function EmptyArt({ theme, glyph, caption, className = "", style }: {
   theme: ThemeConfig; glyph: string; caption?: string; className?: string; style?: React.CSSProperties;
 }) {
   return (
     <div
-      className={`relative flex h-full w-full flex-col items-center justify-center gap-2 overflow-hidden ${className}`}
+      className={`relative flex h-full w-full flex-col items-center justify-center gap-2 overflow-hidden border border-dashed ${className}`}
       style={{
-        background: `radial-gradient(120% 110% at 18% 0%, color-mix(in srgb, ${theme.accent} 32%, transparent), transparent 55%), linear-gradient(155deg, color-mix(in srgb, ${theme.primary} 94%, ${theme.background}), color-mix(in srgb, ${theme.primary} 68%, ${theme.surface}))`,
-        color: "#fff",
+        background: theme.surface,
+        color: theme.muted,
+        borderColor: theme.muted,
         ...style,
       }}
     >
-      <div className="absolute inset-0" style={{ backgroundImage: "repeating-linear-gradient(-45deg, rgba(255,255,255,.9) 0 1px, transparent 1px 10px)", opacity: 0.1 }} aria-hidden />
-      <span aria-hidden style={{ fontFamily: fontStack(theme.fontHeading), fontWeight: 800, fontSize: "clamp(2.6rem, 7vw, 5rem)", lineHeight: 1, letterSpacing: "-0.04em", opacity: 0.92 }}>
+      <span aria-hidden style={{ fontFamily: fontStack(theme.fontHeading), fontWeight: 800, fontSize: "clamp(2.6rem, 7vw, 5rem)", lineHeight: 1, letterSpacing: "-0.04em", opacity: 0.9 }}>
         {glyph}
       </span>
       {caption && (
-        <span className="relative font-mono text-[10px] uppercase" style={{ letterSpacing: "0.22em", opacity: 0.65 }}>
+        <span className="relative font-mono text-[10px] uppercase" style={{ letterSpacing: "0.22em", opacity: 0.8 }}>
           {caption}
         </span>
       )}
@@ -116,7 +116,7 @@ export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: 
       <nav className="sticky top-0 z-30" style={{ background: theme.primary, color: "#fff" }}>
         <div className={`mx-auto flex items-center justify-between px-6 py-3.5 ${containerWidth(theme)}`}>
           <span className="flex items-center gap-2.5" style={{ fontFamily: fontStack(theme.fontHeading), fontWeight: 800, letterSpacing: "-0.02em" }}>
-            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white/15 text-sm font-black">{str(c.logo, "S").slice(0, 1)}</span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white text-sm font-black" style={{ color: theme.primary }}>{str(c.logo, "S").slice(0, 1)}</span>
             {str(c.logo, "Studio")}
           </span>
           <div className="hidden gap-7 text-[13px] font-medium md:flex">
@@ -132,7 +132,7 @@ export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: 
   }
   if (s.variant === "centered") {
     return (
-      <nav className="sticky top-0 z-30 border-b" style={{ borderColor: theme.surface, background: `color-mix(in srgb, ${theme.background} 88%, transparent)`, backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" }}>
+      <nav className="sticky top-0 z-30 border-b" style={{ borderColor: theme.surface, background: theme.background }}>
         <div className={`mx-auto px-6 pb-3 pt-5 text-center ${containerWidth(theme)}`}>
           <p className="text-[11px] font-semibold uppercase" style={{ color: theme.muted, letterSpacing: "0.3em" }}>{str(c.logo, "Studio")}</p>
           <div className="mt-1 flex items-center justify-center" style={{ color: theme.muted }}>
@@ -148,7 +148,7 @@ export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: 
     );
   }
   return (
-    <nav className="sticky top-0 z-30 border-b" style={{ borderColor: theme.surface, background: s.variant === "solid" ? theme.surface : `color-mix(in srgb, ${theme.background} 88%, transparent)`, backdropFilter: s.variant === "solid" ? undefined : "blur(14px)", WebkitBackdropFilter: s.variant === "solid" ? undefined : "blur(14px)" }}>
+    <nav className="sticky top-0 z-30 border-b" style={{ borderColor: theme.surface, background: s.variant === "solid" ? theme.surface : theme.background }}>
       <div className={`mx-auto flex items-center justify-between px-6 py-4 ${containerWidth(theme)}`}>
         <span style={{ fontFamily: fontStack(theme.fontHeading), fontWeight: 700 }}>{str(c.logo, "Studio")}</span>
         <div className="hidden gap-6 text-sm md:flex" style={{ color: theme.muted }}>
@@ -212,8 +212,7 @@ export function HeroSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
   }
   if (s.variant === "image") {
     return (
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${theme.surface}, ${theme.background})` }} />
+      <section className="relative overflow-hidden" style={{ background: theme.surface }}>
         <div className={`relative mx-auto px-6 pb-16 pt-24 text-center md:pt-32 ${containerWidth(theme)}`}>
           {str(c.eyebrow) && <Eyebrow theme={theme}>{str(c.eyebrow)}</Eyebrow>}
           <h1 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(3.25rem * ${theme.headingScale})`, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.02 }}>

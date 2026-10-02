@@ -13,7 +13,7 @@ type C = (props: BespokeProps) => React.ReactNode;
 const Navbar: C = ({ content, theme, pages }) => {
   const links = withPages(content, pages);
   return (
-    <nav className="sticky top-0 z-30 border-b border-white/10" style={{ background: `color-mix(in srgb, ${theme.background} 88%, transparent)`, backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" }}>
+    <nav className="sticky top-0 z-30 border-b border-white/10" style={{ background: theme.background }}>
       <div className={`mx-auto flex items-center justify-between px-6 py-3.5 ${containerWidth(theme)}`}>
         <span className="flex items-center gap-2 font-black uppercase" style={{ fontFamily: fontStack(theme.fontHeading), letterSpacing: "0.02em" }}>
           <span className="grid h-8 w-8 place-items-center rounded-sm text-sm font-black" style={{ background: theme.accent, color: "#0b0d0c" }}>F</span>
@@ -112,7 +112,7 @@ const Team: C = ({ content, theme }) => {
                     <span className="font-black uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "4rem", color: theme.accent }}>{m.name.slice(0, 1) || "F"}</span>
                   </div>
                 )}
-                <span className="absolute left-4 top-4 rounded-sm bg-black/70 px-2 py-1 font-mono text-[11px] font-black" style={{ color: theme.accent }}>{String(i + 1).padStart(2, "0")}</span>
+                <span className="absolute left-4 top-4 rounded-sm bg-black px-2 py-1 font-mono text-[11px] font-black" style={{ color: theme.accent }}>{String(i + 1).padStart(2, "0")}</span>
               </div>
               <div className="p-5">
                 <h3 className="font-black uppercase" style={{ fontFamily: fontStack(theme.fontHeading) }}>{m.name}</h3>
@@ -144,7 +144,7 @@ const Gallery: C = ({ content, theme }) => {
                   <span className="font-black" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "3rem", color: theme.accent }}>{String(i + 1).padStart(2, "0")}</span>
                 </div>
               )}
-              <span className="absolute bottom-2 left-2 rounded-sm bg-black/70 px-1.5 py-0.5 font-mono text-[10px] font-black" style={{ color: theme.accent }}>{String(i + 1).padStart(2, "0")}</span>
+              <span className="absolute bottom-2 left-2 rounded-sm bg-black px-1.5 py-0.5 font-mono text-[10px] font-black" style={{ color: theme.accent }}>{String(i + 1).padStart(2, "0")}</span>
             </div>
           ))}
         </div>

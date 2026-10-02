@@ -30,7 +30,6 @@ export default async function LandingPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden pb-4 pt-16 md:pt-24">
-        <div className="blueprint pointer-events-none absolute inset-0" aria-hidden />
         <div className="relative mx-auto grid max-w-7xl justify-items-center gap-6 px-6 text-center">
           <Link href="/templates" className="pill group">
             <span className="tag">New</span>
@@ -57,7 +56,7 @@ export default async function LandingPage() {
           <ul className="mt-4 flex flex-wrap justify-center gap-2">
             {["portfolio", "business", "restaurant", "agency", "saas", "photography"].map((s) => (
               <li key={s} className="mono-meta inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)" }}>
-                <i className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--grad)" }} />{s}
+                <i className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--accent)" }} />{s}
               </li>
             ))}
           </ul>
@@ -325,18 +324,17 @@ export default async function LandingPage() {
 
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
-        <div className="card relative grid justify-items-center gap-[18px] overflow-hidden px-6 py-[92px] text-center" data-reveal style={{ borderRadius: 36 }}>
-          <div className="drift pointer-events-none absolute inset-0" style={{ background: "radial-gradient(60% 120% at 12% 0%, rgba(79,70,229,.16), transparent 60%), radial-gradient(60% 120% at 88% 100%, rgba(147,51,234,.14), transparent 60%)" }} aria-hidden />
-          <p className="eyebrow relative">No code · No canvas · No kidding</p>
+        <div className="relative grid justify-items-center gap-[18px] overflow-hidden px-6 py-[92px] text-center" data-reveal style={{ borderRadius: 36, background: "var(--ink)", color: "#f4f3ef" }}>
+          <p className="eyebrow relative" style={{ color: "#b9b4ff" }}>No code · No canvas · No kidding</p>
           <h2 className="relative max-w-2xl font-semibold" style={{ fontSize: "clamp(38px, 6vw, 72px)", lineHeight: 1, letterSpacing: "-0.055em" }}>
             Your website is <span className="serif-accent">waiting.</span>
           </h2>
-          <p className="relative max-w-[620px]" style={{ color: "var(--ink-2)" }}>
+          <p className="relative max-w-[620px]" style={{ color: "#b9b8c2" }}>
             Pick a finished site and publish your first page today.
           </p>
           <div className="relative mt-2.5 flex flex-wrap justify-center gap-3">
-            <Link href="/new" className="btn-primary" style={{ height: 52, padding: "0 26px", fontSize: 15 }}>Start building</Link>
-            <Link href="/templates" className="btn-ghost" style={{ height: 52, padding: "0 26px", fontSize: 15 }}>Browse sites</Link>
+            <Link href="/new" className="btn-primary" style={{ height: 52, padding: "0 26px", fontSize: 15, background: "#f4f3ef", color: "var(--ink)" }}>Start building</Link>
+            <Link href="/templates" className="btn-ghost" style={{ height: 52, padding: "0 26px", fontSize: 15, background: "transparent", color: "#f4f3ef", borderColor: "rgba(244,243,239,.3)" }}>Browse sites</Link>
           </div>
         </div>
       </section>

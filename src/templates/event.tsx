@@ -128,7 +128,7 @@ const Tickets: C = ({ content, theme }) => {
         <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "Pick your ticket")}</h2>
         <div className="mx-auto mt-8 grid max-w-4xl gap-4 md:grid-cols-3">
           {items.map((p, i) => (
-            <div key={i} className="relative border border-dashed border-white/40 bg-white/[0.07] p-6" style={{ borderRadius: theme.radius }}>
+            <div key={i} className="relative border border-dashed p-6" style={{ borderRadius: theme.radius, borderColor: theme.accent, background: "#3a1d71" }}>
               <span className="absolute -left-2.5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full" style={{ background: theme.primary }} />
               <span className="absolute -right-2.5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full" style={{ background: theme.primary }} />
               <h3 className="font-mono text-xs uppercase" style={{ letterSpacing: "0.2em", color: theme.accent }}>{p.name}</h3>

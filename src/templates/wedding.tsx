@@ -13,7 +13,7 @@ type C = (props: BespokeProps) => React.ReactNode;
 const Navbar: C = ({ content, theme, pages }) => {
   const links = withPages(content, pages);
   return (
-    <nav className="sticky top-0 z-30 border-b" style={{ borderColor: theme.surface, background: `color-mix(in srgb, ${theme.background} 90%, transparent)`, backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" }}>
+    <nav className="sticky top-0 z-30 border-b" style={{ borderColor: theme.surface, background: theme.background }}>
       <div className={`mx-auto px-6 pb-4 pt-5 text-center ${containerWidth(theme)}`}>
         <p className="italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "1.5rem", fontWeight: 600 }}>{str(content.logo, "A & R")}</p>
         <div className="mt-1.5 flex items-center justify-center gap-2" style={{ color: theme.accent }}>

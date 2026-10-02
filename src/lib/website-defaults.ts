@@ -336,8 +336,22 @@ export function sanitizeSections(raw: unknown): SectionInstance[] {
     enabled: s?.enabled !== false,
     ...(s?.band === true ? { band: true as const } : {}),
     ...(sanitizeThemeOverride(s?.themeOverride) ? { themeOverride: sanitizeThemeOverride(s?.themeOverride) } : {}),
+    ...(sanitizeElementZoom(s?.elementZoom) ? { elementZoom: sanitizeElementZoom(s?.elementZoom) } : {}),
     content: ((s?.content ?? {}) as Record<string, unknown>) ?? {},
   }));
+}
+
+/** Keep per-element zoom factors finite, bounded and few. */
+export function sanitizeElementZoom(raw: unknown): Record<string, number> | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const out: Record<string, number> = {};
+  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof k !== "string" || !/^[a-zA-Z0-9_.]+$/.test(k)) continue;
+    if (typeof v !== "number" || !Number.isFinite(v)) continue;
+    out[k] = Math.min(2, Math.max(0.5, Math.round(v * 100) / 100));
+    if (Object.keys(out).length >= 24) break;
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
 }
 
 export function sanitizePagePath(raw: unknown): string {

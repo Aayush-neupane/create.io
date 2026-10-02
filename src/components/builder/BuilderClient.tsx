@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { ReactNode } from "react";
+import type { MouseEvent as RMouseEvent, ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { PageConfig, SectionInstance, SectionType, ThemeConfig, WebsiteConfig, WebsiteRecord } from "@/types/builder";
@@ -11,6 +11,7 @@ import { isBespoke } from "@/templates";
 import { FONT_CHOICES, THEME_PRESETS, defaultSection, normalizeConfig, sanitizePagePath, sid } from "@/lib/website-defaults";
 import { getTemplate } from "@/lib/templates";
 import { TextField, AreaField, ImageField, ListShell, ItemCard, FieldGroup, summaryOf } from "./fields";
+import { describeTag, tagSectionElements } from "./elements";
 
 type Tab = "content" | "sections" | "pages" | "design" | "seo" | "settings";
 type SaveState = "saved" | "saving" | "dirty" | "error";
@@ -58,6 +59,11 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
   );
   const [dragId, setDragId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
+  // Element mode: pick single buttons / headers / text / photos on the canvas.
+  const [elMode, setElMode] = useState(false);
+  const [elSel, setElSel] = useState<{ sectionId: string; key: string; x: number; y: number } | null>(null);
+  const hotRef = useRef<Element | null>(null);
+  const itemDragRef = useRef<string | null>(null);
   const [saveState, setSaveState] = useState<SaveState>("saved");
   const [saveMsg, setSaveMsg] = useState("");
   const [publishing, setPublishing] = useState(false);
@@ -116,12 +122,15 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
       if (mod && e.key.toLowerCase() === "z" && !e.shiftKey) { e.preventDefault(); undo(); }
       else if (mod && (e.key.toLowerCase() === "y" || (e.key.toLowerCase() === "z" && e.shiftKey))) { e.preventDefault(); redo(); }
       else if (mod && e.key.toLowerCase() === "s") { e.preventDefault(); saveNow(); }
-      else if (e.key === "Escape") { setSelectedId(null); }
+      else if (e.key === "Escape") {
+        if (elSel) setElSel(null);
+        else setSelectedId(null);
+      }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config]);
+  }, [config, elSel]);
 
   // autosave (debounced; demo writes to this browser instead of the server)
   useEffect(() => {
@@ -226,6 +235,78 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     document.querySelector(`[data-section-id="${selectedId}"]`)?.scrollIntoView({ block: "nearest" });
   }, [selectedId]);
 
+  // Element mode: tag the selected section's editable nodes, wire list-item
+  // dragging, and clean everything up on change/unmount.
+  useEffect(() => {
+    if (!elMode) return;
+    const sel = activeSections.find((s) => s.id === selectedId);
+    if (!sel) return;
+    const root = document.querySelector(`[data-section-id="${sel.id}"]`);
+    if (!root) return;
+    const cleanupTags = tagSectionElements(root, sel);
+    const listeners: (() => void)[] = [];
+    root.querySelectorAll("[data-el]").forEach((el) => {
+      const raw = el.getAttribute("data-el") || "";
+      const m = raw.match(/^.+:[a-zA-Z0-9_.]+:(\d+)$/);
+      if (!m) return;
+      const to = Number(m[1]);
+      const keyMatch = raw.slice(sel.id.length + 1).match(/^(.+):(\d+)$/);
+      if (!keyMatch) return;
+      const html = el as HTMLElement;
+      html.draggable = true;
+      const start = (e: DragEvent) => {
+        e.stopPropagation();
+        try { e.dataTransfer?.setData("text/plain", `${sel.id}|${keyMatch[1]}|${keyMatch[2]}`); } catch {}
+        if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
+        itemDragRef.current = `${sel.id}|${keyMatch[1]}|${keyMatch[2]}`;
+      };
+      const over = (e: DragEvent) => {
+        const cur = itemDragRef.current;
+        if (!cur) return;
+        const [cs, ca, cf] = cur.split("|");
+        if (cs !== sel.id || ca !== keyMatch[1] || Number(cf) === to) return;
+        e.preventDefault();
+        if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+        html.classList.add("el-drop");
+      };
+      const leave = () => html.classList.remove("el-drop");
+      const drop = (e: DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        html.classList.remove("el-drop");
+        const cur = itemDragRef.current;
+        itemDragRef.current = null;
+        if (!cur) return;
+        const [cs, ca, cf] = cur.split("|");
+        if (cs !== sel.id || ca !== keyMatch[1] || Number(cf) === to) return;
+        moveListItem(sel.id, ca, Number(cf), to);
+      };
+      const end = () => {
+        itemDragRef.current = null;
+        root.querySelectorAll(".el-drop").forEach((x) => x.classList.remove("el-drop"));
+      };
+      el.addEventListener("dragstart", start as EventListener);
+      el.addEventListener("dragover", over as EventListener);
+      el.addEventListener("dragleave", leave as EventListener);
+      el.addEventListener("drop", drop as EventListener);
+      el.addEventListener("dragend", end as EventListener);
+      listeners.push(() => {
+        el.removeEventListener("dragstart", start as EventListener);
+        el.removeEventListener("dragover", over as EventListener);
+        el.removeEventListener("dragleave", leave as EventListener);
+        el.removeEventListener("drop", drop as EventListener);
+        el.removeEventListener("dragend", end as EventListener);
+        html.draggable = false;
+      });
+    });
+    return () => {
+      listeners.forEach((fn) => fn());
+      cleanupTags();
+      if (hotRef.current) { hotRef.current.classList.remove("el-hot"); hotRef.current = null; }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [elMode, selectedId, config]);
+
   const activePage = useMemo(() => (config.pages ?? []).find((p) => p.id === activePageId) ?? null, [config, activePageId]);
   const activeSections = activePage ? activePage.sections : config.sections;
   const activeConfig: WebsiteConfig = useMemo(() => ({ ...config, sections: activeSections }), [config, activeSections]);
@@ -289,6 +370,17 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
       return next;
     });
   }
+  function moveListItem(sectionId: string, arrayKey: string, from: number, to: number) {
+    patchSection(sectionId, (s) => {
+      const raw = (s.content as Record<string, unknown>)[arrayKey];
+      if (!Array.isArray(raw)) return s;
+      const arr = [...raw];
+      if (from < 0 || from >= arr.length || to < 0 || to > arr.length) return s;
+      const [it] = arr.splice(from, 1);
+      arr.splice(to, 0, it);
+      return setC(s, { [arrayKey]: arr });
+    });
+  }
   function toggleSection(id: string) {
     patchSection(id, (s) => ({ ...s, enabled: !s.enabled }));
   }
@@ -301,6 +393,52 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     setOverId(null);
   }
   function onDndEnd() { setDragId(null); setOverId(null); }
+  // ── element mode: hover highlight + click-to-edit on canvas ──
+  function handleElHover(e: RMouseEvent) {
+    if (!elMode) return;
+    const t = (e.target as Element).closest?.("[data-el]") ?? null;
+    if (hotRef.current === t) return;
+    hotRef.current?.classList.remove("el-hot");
+    hotRef.current = t;
+    t?.classList.add("el-hot");
+  }
+  function handleElClick(e: RMouseEvent) {
+    if (!elMode) return;
+    // Builder chrome (selection bar, popover) is not canvas content.
+    if ((e.target as Element).closest?.(".builder-bar, .builder-pop")) return;
+    const t = (e.target as Element).closest?.("[data-el]");
+    if (!t) { setElSel(null); return; }
+    const raw = t.getAttribute("data-el") || "";
+    const [sidPart, ...rest] = raw.split(":");
+    const sec = activeSections.find((s) => s.id === sidPart);
+    const desc = sec ? describeTag(sec, rest.join(":")) : null;
+    if (!sec || !desc) { setElSel(null); return; }
+    setElSel({ sectionId: sec.id, key: rest.join(":"), x: e.clientX, y: e.clientY });
+  }
+  function setElField(sectionId: string, key: string, value: string) {
+    patchSection(sectionId, (s) => setC(s, { [key]: value }));
+  }
+  function setElItemField(sectionId: string, arrayKey: string, index: number, fkey: string, value: unknown) {
+    patchSection(sectionId, (s) => {
+      const raw = (s.content as Record<string, unknown>)[arrayKey];
+      if (!Array.isArray(raw) || !raw[index]) return s;
+      const next = raw.map((it, j) => {
+        if (j !== index || typeof it !== "object" || it === null) return it;
+        return { ...(it as Record<string, unknown>), [fkey]: value };
+      });
+      return setC(s, { [arrayKey]: next });
+    });
+  }
+  function stepElZoom(sectionId: string, key: string, dir: -1 | 1) {
+    patchSection(sectionId, (s) => {
+      const cur = s.elementZoom?.[key] ?? 1;
+      const next = Math.min(2, Math.max(0.5, Math.round((cur + dir * 0.1) * 100) / 100));
+      const zoom = { ...(s.elementZoom ?? {}) };
+      if (next === 1) delete zoom[key];
+      else zoom[key] = next;
+      return { ...s, ...(Object.keys(zoom).length > 0 ? { elementZoom: zoom } : { elementZoom: undefined }) };
+    });
+  }
   // ── docked selection bar: variant / text size / spacing without the panel ──
   const SPACING_ORDER = ["compact", "comfortable", "spacious"] as const;
   function patchOverride(patch: Record<string, unknown>) {
@@ -455,8 +593,8 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
 
         {/* Preview */}
         <main className="flex min-w-0 flex-1 flex-col" style={{ background: "var(--paper-2)" }}>
-          <div className="flex-1 overflow-auto p-4 md:p-6">
-            {selected && <SelectionBar selected={selected} siteTheme={config.theme} onVariant={cycleVariant} onText={stepText} onSpacing={cycleSpacing} onToggle={() => toggleSection(selected.id)} onDelete={() => removeSection(selected.id)} />}
+          <div className="flex-1 overflow-auto p-4 md:p-6" onMouseOver={handleElHover} onClickCapture={handleElClick}>
+            {selected && <SelectionBar selected={selected} siteTheme={config.theme} elMode={elMode} onToggleEl={() => { setElMode((v) => !v); setElSel(null); }} onVariant={cycleVariant} onText={stepText} onSpacing={cycleSpacing} onToggle={() => toggleSection(selected.id)} onDelete={() => removeSection(selected.id)} />}
             <div className={`relative mx-auto overflow-hidden rounded-2xl border bg-white transition-all ${previewWidth}`} style={{ borderColor: "var(--line-2)", boxShadow: "0 30px 80px -40px rgba(23,23,27,.35)" }}>
               {!selected && (
                 <p className="mono-meta absolute left-1/2 top-3 z-30 -translate-x-1/2 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-semibold" style={{ background: "var(--ink)", color: "#fff" }}>
@@ -505,6 +643,25 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
           </div>
         </aside>
       </div>
+      {elSel && (() => {
+        const sec = activeSections.find((s) => s.id === elSel.sectionId);
+        if (!sec || sec.id !== selectedId) return null;
+        const desc = describeTag(sec, elSel.key);
+        if (!desc) return null;
+        return (
+          <ElPopover
+            section={sec}
+            desc={desc}
+            tagKey={elSel.key}
+            demo={demo}
+            pos={{ x: elSel.x, y: elSel.y }}
+            onClose={() => setElSel(null)}
+            onField={(k, v) => setElField(sec.id, k, v)}
+            onItemField={(ak, i, fk, v) => setElItemField(sec.id, ak, i, fk, v)}
+            onZoom={(dir) => stepElZoom(sec.id, elSel.key, dir)}
+          />
+        );
+      })()}
     </div>
   );
 }
@@ -518,8 +675,9 @@ function BarBtn({ title, onClick, children }: { title: string; onClick: () => vo
   );
 }
 
-function SelectionBar({ selected, siteTheme, onVariant, onText, onSpacing, onToggle, onDelete }: {
+function SelectionBar({ selected, siteTheme, elMode, onToggleEl, onVariant, onText, onSpacing, onToggle, onDelete }: {
   selected: SectionInstance; siteTheme: ThemeConfig;
+  elMode: boolean; onToggleEl: () => void;
   onVariant: (dir: -1 | 1) => void; onText: (dir: -1 | 1) => void;
   onSpacing: () => void; onToggle: () => void; onDelete: () => void;
 }) {
@@ -529,11 +687,15 @@ function SelectionBar({ selected, siteTheme, onVariant, onText, onSpacing, onTog
   const effSpacing = (selected.themeOverride?.sectionSpacing as string | undefined) ?? siteTheme.sectionSpacing;
   const deletable = SECTION_META[selected.type]?.deletable;
   return (
-    <div className="sticky top-2 z-30 mx-auto mb-3 w-fit max-w-full">
+    <div className="builder-bar sticky top-2 z-30 mx-auto mb-3 w-fit max-w-full">
       <div className="flex flex-wrap items-center justify-center gap-0.5 rounded-full py-1.5 pl-3 pr-1.5 shadow-xl" style={{ background: "var(--ink)" }}>
         <span className="mono-meta px-1 text-[11px] font-bold uppercase text-white" style={{ letterSpacing: "0.1em" }}>
           {SECTION_META[selected.type]?.label ?? selected.type}
         </span>
+        <span aria-hidden className="mx-1 h-4 w-px bg-white/20" />
+        <BarBtn title={elMode ? "Exit element mode" : "Edit single buttons, headers, text and photos on the canvas"} onClick={onToggleEl}>
+          <span className={`mono-meta rounded-full px-2 py-0.5 text-[11px] font-bold ${elMode ? "bg-white text-black" : "text-white/85"}`}>◉ Elements</span>
+        </BarBtn>
         <span aria-hidden className="mx-1 h-4 w-px bg-white/20" />
         {variants.length > 1 && (
           <>
@@ -559,6 +721,103 @@ function SelectionBar({ selected, siteTheme, onVariant, onText, onSpacing, onTog
             <span className="text-[13px] font-bold text-red-300">✕</span>
           </BarBtn>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Floating element editor: edit one button / header / text / photo ───
+function ElPopover({ section, desc, tagKey, demo, pos, onClose, onField, onItemField, onZoom }: {
+  section: SectionInstance;
+  desc: NonNullable<ReturnType<typeof describeTag>>;
+  tagKey: string;
+  demo?: boolean;
+  pos: { x: number; y: number };
+  onClose: () => void;
+  onField: (key: string, value: string) => void;
+  onItemField: (arrayKey: string, index: number, fkey: string, value: unknown) => void;
+  onZoom: (dir: -1 | 1) => void;
+}) {
+  const W = 300;
+  const vw = typeof window !== "undefined" ? window.innerWidth : 1200;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+  const left = Math.max(8, Math.min(pos.x - 40, vw - W - 8));
+  const top = Math.max(8, Math.min(pos.y + 14, vh - 430));
+  const content = (section.content ?? {}) as Record<string, unknown>;
+  const zoom = section.elementZoom?.[tagKey] ?? 1;
+  const isItem = desc.kind === "item";
+  const item = isItem && desc.arrayKey !== undefined && desc.index !== undefined
+    ? ((content[desc.arrayKey] as unknown[])?.[desc.index] as Record<string, unknown> | undefined)
+    : undefined;
+  const itemObj = item && typeof item === "object" ? item : null;
+  const itemStrings = itemObj
+    ? Object.entries(itemObj).filter(([k, v]) => typeof v === "string" && k !== "id").slice(0, 6)
+    : [];
+  const itemImgKey = itemObj ? Object.keys(itemObj).find((k) => (k === "photo" || k === "image") && typeof itemObj[k] === "string") : undefined;
+  const itemBools = itemObj ? Object.entries(itemObj).filter(([, v]) => typeof v === "boolean").slice(0, 2) : [];
+  const LONG = new Set(["message", "description", "bio", "a", "body"]);
+  return (
+    <div
+      className="builder-pop fixed z-50 overflow-hidden rounded-2xl border bg-white shadow-2xl"
+      style={{ left, top, width: W, borderColor: "var(--line-2)", boxShadow: "0 24px 70px -20px rgba(23,23,27,.45)" }}
+    >
+      <div className="flex items-center gap-2 border-b px-3 py-2" style={{ borderColor: "var(--line)", background: "var(--paper)" }}>
+        <span className="mono-meta text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.1em", color: "var(--accent-text)" }}>
+          {desc.label}
+        </span>
+        {isItem && <span className="mono-meta text-[10px]" style={{ color: "var(--ink-3)" }}>· drag card to move</span>}
+        <button onClick={onClose} aria-label="Close editor" className="ml-auto grid h-6 w-6 place-items-center rounded-full text-xs transition-colors hover:bg-black/[0.06]" style={{ color: "var(--ink-3)" }}>✕</button>
+      </div>
+      <div className="max-h-[330px] space-y-3 overflow-y-auto p-3">
+        {!isItem && desc.kind !== "image" && (
+          <label className="block">
+            <span className="mb-1 block text-xs font-medium text-neutral-700">{desc.kind === "button" ? "Button label" : desc.label}</span>
+            {desc.kind === "textarea" ? (
+              <textarea value={String(content[tagKey] ?? "")} onChange={(e) => onField(tagKey, e.target.value)} rows={3} className="w-full resize-y rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px] leading-relaxed focus:border-neutral-900 focus:outline-none" />
+            ) : (
+              <input value={String(content[tagKey] ?? "")} onChange={(e) => onField(tagKey, e.target.value)} className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px] focus:border-neutral-900 focus:outline-none" />
+            )}
+          </label>
+        )}
+        {!isItem && desc.kind === "button" && desc.linkKey && (
+          <label className="block">
+            <span className="mb-1 block text-xs font-medium text-neutral-700">Button link</span>
+            <input value={String(content[desc.linkKey] ?? "")} onChange={(e) => onField(desc.linkKey as string, e.target.value)} placeholder="#contact" className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 font-mono text-xs focus:border-neutral-900 focus:outline-none" />
+          </label>
+        )}
+        {!isItem && desc.kind === "image" && (
+          <ImageField demo={demo} label={desc.label} value={String(content[tagKey] ?? "")} onChange={(v) => onField(tagKey, v)} />
+        )}
+        {isItem && itemStrings.map(([k, v]) => (
+          <label key={k} className="block">
+            <span className="mb-1 block text-xs font-medium capitalize text-neutral-700">{k === "q" ? "Question" : k}</span>
+            {LONG.has(k) || String(v).length > 80 ? (
+              <textarea value={String(v)} onChange={(e) => desc.arrayKey !== undefined && desc.index !== undefined && onItemField(desc.arrayKey, desc.index, k, e.target.value)} rows={2} className="w-full resize-y rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px] leading-relaxed focus:border-neutral-900 focus:outline-none" />
+            ) : (
+              <input value={String(v)} onChange={(e) => desc.arrayKey !== undefined && desc.index !== undefined && onItemField(desc.arrayKey, desc.index, k, e.target.value)} className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px] focus:border-neutral-900 focus:outline-none" />
+            )}
+          </label>
+        ))}
+        {isItem && itemImgKey && desc.arrayKey !== undefined && desc.index !== undefined && (
+          <ImageField demo={demo} label="Photo" value={String(itemObj?.[itemImgKey] ?? "")} onChange={(v) => onItemField(desc.arrayKey as string, desc.index as number, itemImgKey, v)} />
+        )}
+        {isItem && itemBools.map(([k, v]) => (
+          <label key={k} className="flex items-center gap-2 text-xs font-medium text-neutral-600">
+            <input type="checkbox" checked={Boolean(v)} onChange={(e) => desc.arrayKey !== undefined && desc.index !== undefined && onItemField(desc.arrayKey, desc.index, k, e.target.checked)} className="h-4 w-4 accent-neutral-900" />
+            <span className="capitalize">{k}</span>
+          </label>
+        ))}
+        {!isItem && (
+          <div className="flex items-center justify-between rounded-lg border border-neutral-200 px-2.5 py-1.5">
+            <span className="text-xs font-medium text-neutral-600">Size</span>
+            <span className="flex items-center gap-1">
+              <button onClick={() => onZoom(-1)} title="Smaller" className="rounded-md border border-neutral-200 px-2 py-0.5 text-xs font-bold transition-colors hover:border-neutral-900">A−</button>
+              <span className="mono-meta w-11 text-center text-[11px]">{Math.round(zoom * 100)}%</span>
+              <button onClick={() => onZoom(1)} title="Larger" className="rounded-md border border-neutral-200 px-2 py-0.5 text-xs font-bold transition-colors hover:border-neutral-900">A+</button>
+            </span>
+          </div>
+        )}
+        {desc.hint && <p className="text-[11px] leading-snug text-neutral-400">{desc.hint}</p>}
       </div>
     </div>
   );

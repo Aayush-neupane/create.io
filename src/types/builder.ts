@@ -39,6 +39,9 @@ export interface SectionInstance {
   /** Per-section overrides — only this section changes, the rest of
    *  the site keeps the site theme. Any subset of keys; all optional. */
   themeOverride?: Partial<Pick<ThemeConfig, "primary" | "background" | "surface" | "text" | "muted" | "accent" | "headingScale" | "sectionSpacing">>;
+  /** Per-element resize factors, keyed by content field (e.g. "title" → 1.2).
+   *  Applied as CSS zoom on the tagged element — layout-aware scaling. */
+  elementZoom?: Record<string, number>;
   content: SectionContent;
 }
 

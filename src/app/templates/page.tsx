@@ -6,6 +6,23 @@ import { Navbar, Footer } from "@/components/layout/chrome";
 import { LiveCard } from "@/components/templates/LiveCard";
 import { TEMPLATES } from "@/lib/templates";
 
+/** Sidebar dot per category — borrows each kind's own template color. */
+const KIND_DOTS: Record<string, string> = {
+  Portfolio: "#111111",
+  Photography: "#78716c",
+  Business: "#2563eb",
+  Restaurant: "#ea580c",
+  Agency: "#7c3aed",
+  SaaS: "#10b981",
+  Freelancer: "#c2410c",
+  Event: "#d4a017",
+  Wedding: "#e11d48",
+  Fitness: "#e4572e",
+  "Café": "#c2703d",
+  "Real Estate": "#b98a2f",
+  Automotive: "#e0a32e",
+};
+
 export default function TemplatesPage() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
@@ -91,6 +108,11 @@ export default function TemplatesPage() {
                 className="flex items-center gap-2.5 rounded-[10px] px-2.5 py-2 text-left text-sm transition-colors hover:bg-black/[0.045]"
                 style={cat === c ? { background: "var(--accent-soft)", color: "var(--accent-text)", fontWeight: 600 } : { color: "var(--ink-2)" }}
               >
+                {c === "All" ? (
+                  <i className="h-2 w-2 rounded-full" style={{ background: "var(--ink-3)" }} />
+                ) : (
+                  <i className="h-2 w-2 rounded-full" style={{ background: KIND_DOTS[c] ?? "var(--accent)" }} />
+                )}
                 {c}
                 <span className="mono-meta ml-auto text-xs" style={{ color: cat === c ? "inherit" : "var(--ink-3)" }}>{counts[c] ?? 0}</span>
               </button>

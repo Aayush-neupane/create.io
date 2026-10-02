@@ -20,13 +20,13 @@ const PRINCIPLES = [
   { icon: "✦", t: "Zero code", d: "Structured editing keeps every site professional. Undo, autosave, SEO included." },
 ];
 
-/** Flat supporting tints — decorative surfaces only. Buttons, links and
+/** Flat supporting hues — decorative surfaces only. Buttons, links and
  *  eyebrows stay on the single indigo brand accent. */
 const TINTS = [
-  { bg: "#fbe7d7", fg: "#9a3412" }, // clay
-  { bg: "#dde9e2", fg: "#2d6a4f" }, // sage
-  { bg: "#f3e7c8", fg: "#8a6414" }, // gold
-  { bg: "#e7e9fb", fg: "#4338ca" }, // indigo
+  { bg: "#fbe7d7", fg: "#9a3412", solid: "#9a3412" }, // clay
+  { bg: "#dde9e2", fg: "#2d6a4f", solid: "#2d6a4f" }, // sage
+  { bg: "#f3e7c8", fg: "#8a6414", solid: "#8a6414" }, // gold
+  { bg: "#e7e9fb", fg: "#4338ca", solid: "#4338ca" }, // indigo
 ];
 
 /** Category dot colors borrow each library template's own accent. */
@@ -62,7 +62,7 @@ export default async function LandingPage() {
       <Reveal>
 
       {/* Hero */}
-      <section className="relative overflow-hidden pb-4 pt-16 md:pt-24">
+      <section className="relative overflow-hidden pb-4 pt-16 md:pt-24" style={{ background: "var(--paper)", borderBottom: "1px solid var(--line)" }}>
         <div className="blueprint pointer-events-none absolute inset-0" aria-hidden />
         <div className="relative mx-auto grid max-w-7xl justify-items-center gap-6 px-6 text-center">
           <Link href="/templates" className="pill group">
@@ -175,15 +175,15 @@ export default async function LandingPage() {
       {/* Social proof strip */}
       <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 72 }}>
         <p className="mono-meta text-center text-[11px] uppercase" style={{ letterSpacing: "0.16em", color: "var(--ink-3)" }}>
-          Powering new sites from Kathmandu to Pokhara
+          Powering new sites from Mechi to Mahakali
         </p>
         <div className="marquee mt-5" role="presentation">
           <ul className="marquee-track">
             {["freelancers", "trekking guides", "thakali kitchens", "saas startups", "photographers", "consultants", "event planners"].map((s, i) => (
-              <li key={s} className="flex-none rounded-full px-3.5 py-1.5 text-[13px]" style={{ background: TINTS[i % TINTS.length].bg, color: TINTS[i % TINTS.length].fg }}>{s}</li>
+              <li key={s} className="flex-none rounded-full px-4 py-1.5 text-[13px] font-semibold text-white" style={{ background: TINTS[i % TINTS.length].solid }}>{s}</li>
             ))}
             {["freelancers", "trekking guides", "thakali kitchens", "saas startups", "photographers", "consultants", "event planners"].map((s, i) => (
-              <li key={`dup-${s}`} aria-hidden className="flex-none rounded-full px-3.5 py-1.5 text-[13px]" style={{ background: TINTS[i % TINTS.length].bg, color: TINTS[i % TINTS.length].fg }}>{s}</li>
+              <li key={`dup-${s}`} aria-hidden className="flex-none rounded-full px-4 py-1.5 text-[13px] font-semibold text-white" style={{ background: TINTS[i % TINTS.length].solid }}>{s}</li>
             ))}
           </ul>
         </div>
@@ -229,8 +229,8 @@ export default async function LandingPage() {
         <SecHead index="02" eyebrow="Process" title="Live in four moves" />
         <ol className="grid gap-3.5 md:grid-cols-4">
           {STEPS.map((s, i) => (
-            <li key={s.n} className="card card-hover grid content-start gap-2.5 p-[26px]" data-reveal style={{ transitionDelay: `${i * 80}ms` }}>
-              <span className="icon-tile mb-2.5 transition-transform duration-300 hover:-rotate-12 hover:scale-110" style={{ width: 46, height: 46, borderRadius: 15, background: TINTS[i % TINTS.length].bg, color: TINTS[i % TINTS.length].fg }}>{s.n.slice(1)}</span>
+            <li key={s.n} className="card-hover grid content-start gap-2.5 overflow-hidden rounded-[20px] border p-[26px]" data-reveal style={{ transitionDelay: `${i * 80}ms`, background: TINTS[i % TINTS.length].bg, borderColor: TINTS[i % TINTS.length].bg }}>
+              <span className="mb-2.5 grid place-items-center bg-white font-mono text-sm font-bold transition-transform duration-300 hover:-rotate-12 hover:scale-110" style={{ width: 46, height: 46, borderRadius: 15, color: TINTS[i % TINTS.length].fg }}>{s.n.slice(1)}</span>
               <h3 className="text-[17px] font-semibold">{s.t}</h3>
               <p className="text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{s.d}</p>
             </li>
@@ -297,7 +297,7 @@ export default async function LandingPage() {
           ].map(([m, n, r], i) => (
             <figure key={n} data-reveal style={{ transitionDelay: `${i * 90}ms` }} className="card card-hover flex flex-col p-[26px]">
               <span aria-hidden className="text-sm tracking-[0.2em]" style={{ color: "var(--accent)" }}>★★★★★</span>
-              <span className="serif-accent mt-1 text-3xl" aria-hidden>“</span>
+              <span className="serif-accent mt-1 text-3xl" aria-hidden style={{ color: TINTS[(i + 1) % TINTS.length].solid }}>“</span>
               <blockquote className="flex-1 text-[15px] leading-relaxed">{m}</blockquote>
               <figcaption className="mt-5 border-t pt-4 text-sm" style={{ borderColor: "var(--line)" }}>
                 <span className="font-semibold">{n}</span><br />
@@ -314,8 +314,8 @@ export default async function LandingPage() {
         <SecHead index="05" eyebrow="Why it works" title={<>Opinionated, <span className="serif-accent">on purpose.</span></>} />
         <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
           {PRINCIPLES.map((p, i) => (
-            <div key={p.t} data-reveal style={{ transitionDelay: `${i * 70}ms` }} className="card card-hover grid content-start gap-2.5 p-[26px]">
-              <span className="icon-tile mb-2.5 transition-transform duration-300 hover:-rotate-12 hover:scale-110" aria-hidden style={{ background: TINTS[(i + 2) % TINTS.length].bg, color: TINTS[(i + 2) % TINTS.length].fg }}>{p.icon}</span>
+            <div key={p.t} data-reveal style={{ transitionDelay: `${i * 70}ms`, background: TINTS[(i + 2) % TINTS.length].bg, borderColor: TINTS[(i + 2) % TINTS.length].bg }} className="card-hover grid content-start gap-2.5 overflow-hidden rounded-[20px] border p-[26px]">
+              <span className="mb-2.5 grid place-items-center bg-white text-lg transition-transform duration-300 hover:-rotate-12 hover:scale-110" style={{ width: 46, height: 46, borderRadius: 15, color: TINTS[(i + 2) % TINTS.length].fg }} aria-hidden>{p.icon}</span>
               <h3 className="text-[17px] font-semibold">{p.t}</h3>
               <p className="text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{p.d}</p>
             </div>

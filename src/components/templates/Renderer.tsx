@@ -162,6 +162,9 @@ export function TemplateRenderer({ config, templateId, slug, pagePath, selectedI
             </span>
           )}
           {renderSection(s, config.theme, templateId, pages)}
+          {s.elementZoom && Object.keys(s.elementZoom).length > 0 && (
+            <style>{Object.entries(s.elementZoom).map(([k, v]) => `[data-el="${s.id}:${k}"]{zoom:${v};}`).join("")}</style>
+          )}
         </div>
       ))}
       {hidden.length > 0 && (

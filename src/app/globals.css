@@ -370,6 +370,10 @@ details[open] .faq-a { grid-template-rows: 1fr; }
 .builder-selectable.drop-before { box-shadow: inset 0 3px 0 var(--accent); }
 .builder-selectable.is-dragging { opacity: 0.45; }
 
+/* element mode: hovered editable node + list-item drop target */
+.el-hot { outline: 2px dashed var(--accent) !important; outline-offset: 2px; cursor: pointer; }
+.el-drop { outline: 2px solid var(--accent) !important; outline-offset: -2px; }
+
 /* ─── builder surface reskin: map generic neutrals onto paper tokens ─── */
 .builder .border-neutral-200 { border-color: var(--line); }
 .builder .border-neutral-100 { border-color: var(--line); }

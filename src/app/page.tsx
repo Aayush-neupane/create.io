@@ -30,10 +30,10 @@ export default async function LandingPage() {
       <section className="relative overflow-hidden pb-4 pt-16 md:pt-24">
         <div className="blueprint pointer-events-none absolute inset-0" aria-hidden />
         <div className="relative mx-auto grid max-w-7xl justify-items-center gap-6 px-6 text-center">
-          <Link href="/templates" className="pill">
+          <Link href="/templates" className="pill group">
             <span className="tag">New</span>
             6 predesigned sites — browse them live
-            <span aria-hidden>→</span>
+            <span aria-hidden className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
           </Link>
           <h1 className="max-w-4xl font-bold" style={{ fontSize: "clamp(46px, 8vw, 96px)", lineHeight: 0.96 }}>
             Whole websites,
@@ -65,28 +65,28 @@ export default async function LandingPage() {
               ["50+", "predesigned sections"],
               ["0", "lines of code"],
             ].map(([v, l], i) => (
-              <div key={l} className="grid gap-0.5 px-7 py-1" style={{ borderLeft: i ? "1px solid var(--line-2)" : "none" }}>
-                <dd className="order-first text-[26px] font-semibold" style={{ letterSpacing: "-0.045em" }}>{v}</dd>
-                <dt className="mono-meta text-[11px] uppercase" style={{ letterSpacing: "0.1em", color: "var(--ink-3)" }}>{l}</dt>
+              <div key={l} className="flex flex-col gap-0.5 px-7 py-1" style={{ borderLeft: i ? "1px solid var(--line-2)" : "none" }}>
+                <dt className="mono-meta order-last text-[11px] uppercase" style={{ letterSpacing: "0.1em", color: "var(--ink-3)" }}>{l}</dt>
+                <dd className="text-[26px] font-semibold" style={{ letterSpacing: "-0.045em" }}>{v}</dd>
               </div>
             ))}
           </dl>
         </div>
 
         {/* Browser-window showcase */}
-        <div className="relative mx-auto mt-14 max-w-5xl px-6">
-          <div className="card relative overflow-hidden text-left" style={{ borderRadius: "28px 28px 0 0", borderBottom: 0 }}>
+        <div className="relative mx-auto mt-14 max-w-5xl px-6" data-reveal>
+          <div className="card card-hover relative overflow-hidden text-left" style={{ borderRadius: "28px 28px 0 0", borderBottom: 0 }}>
             <div className="flex h-12 items-center gap-3.5 border-b px-5" style={{ borderColor: "var(--line)" }}>
               <span className="flex gap-[7px]">
-                <i className="h-[11px] w-[11px] rounded-full" style={{ background: "var(--surface-2)", border: "1px solid var(--line-2)" }} />
-                <i className="h-[11px] w-[11px] rounded-full" style={{ background: "var(--surface-2)", border: "1px solid var(--line-2)" }} />
-                <i className="h-[11px] w-[11px] rounded-full" style={{ background: "var(--surface-2)", border: "1px solid var(--line-2)" }} />
+                <i className="h-[11px] w-[11px] rounded-full" style={{ background: "#ff5f57", border: "1px solid rgba(0,0,0,.12)" }} />
+                <i className="h-[11px] w-[11px] rounded-full" style={{ background: "#febc2e", border: "1px solid rgba(0,0,0,.12)" }} />
+                <i className="h-[11px] w-[11px] rounded-full" style={{ background: "#28c840", border: "1px solid rgba(0,0,0,.12)" }} />
               </span>
               <span className="mono-meta mx-auto hidden rounded-full px-4 py-1 text-xs sm:inline" style={{ background: "var(--paper-2)", color: "var(--ink-3)" }}>
                 create.io / builder
               </span>
               <span className="flex items-center gap-2 text-xs" style={{ color: "var(--ink-3)" }}>
-                <i className="h-[7px] w-[7px] rounded-full bg-emerald-500" /> Live
+                <i className="pulse-dot h-[7px] w-[7px] rounded-full bg-emerald-500 text-emerald-500" /> Live
               </span>
             </div>
             <div className="grid md:grid-cols-[210px_1fr_210px]">
@@ -136,11 +136,16 @@ export default async function LandingPage() {
         <p className="mono-meta text-center text-[11px] uppercase" style={{ letterSpacing: "0.16em", color: "var(--ink-3)" }}>
           Powering new sites from Kathmandu to Pokhara
         </p>
-        <ul className="mt-5 flex flex-wrap justify-center gap-2">
-          {["freelancers", "trekking guides", "thakali kitchens", "saas startups", "photographers", "consultants", "event planners"].map((s) => (
-            <li key={s} className="rounded-full border px-3.5 py-1.5 text-[13px]" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)", background: "var(--surface)" }}>{s}</li>
-          ))}
-        </ul>
+        <div className="marquee mt-5" role="presentation">
+          <ul className="marquee-track">
+            {["freelancers", "trekking guides", "thakali kitchens", "saas startups", "photographers", "consultants", "event planners"].map((s) => (
+              <li key={s} className="flex-none rounded-full border px-3.5 py-1.5 text-[13px]" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)", background: "var(--surface)" }}>{s}</li>
+            ))}
+            {["freelancers", "trekking guides", "thakali kitchens", "saas startups", "photographers", "consultants", "event planners"].map((s) => (
+              <li key={`dup-${s}`} aria-hidden className="flex-none rounded-full border px-3.5 py-1.5 text-[13px]" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)", background: "var(--surface)" }}>{s}</li>
+            ))}
+          </ul>
+        </div>
       </section>
 
       {/* Site kits */}
@@ -155,11 +160,14 @@ export default async function LandingPage() {
           </p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {TEMPLATES.map((t) => (
-            <div key={t.id} className="card card-hover group relative flex flex-col overflow-hidden">
+          {TEMPLATES.map((t, i) => (
+            <div key={t.id} data-reveal style={{ transitionDelay: `${Math.min(i, 5) * 70}ms` }} className="card card-hover group relative flex flex-col overflow-hidden">
               <div className="relative aspect-[16/10] overflow-hidden" style={{ borderBottom: "1px solid var(--line)" }}>
                 <LiveCard templateId={t.id} />
                 <Link href={`/templates/${t.id}`} aria-label={`Open ${t.name}`} className="absolute inset-0" />
+                <span className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 justify-center bg-gradient-to-t from-black/45 to-transparent pb-3 pt-8 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <span className="rounded-full bg-white/95 px-4 py-1.5 text-[13px] font-semibold text-neutral-900 shadow-lg">Open live preview →</span>
+                </span>
               </div>
               <div className="flex items-center gap-3.5 border-t p-[18px_20px]" style={{ borderColor: "var(--line)" }}>
                 <span className="grid h-10 w-10 flex-none place-items-center rounded-[13px] text-sm font-bold text-white" style={{ background: t.theme.primary }} aria-hidden>
@@ -182,15 +190,15 @@ export default async function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section id="how" className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
+      <section id="how" className="mx-auto max-w-7xl scroll-mt-24 px-6" style={{ paddingTop: 120 }}>
         <div className="mb-10 grid justify-items-center gap-4 text-center">
           <p className="eyebrow">Process</p>
           <h2 className="max-w-xl text-4xl font-semibold md:text-5xl">Live in four moves</h2>
         </div>
         <ol className="grid gap-3.5 md:grid-cols-4">
-          {STEPS.map((s) => (
-            <li key={s.n} className="card card-hover grid content-start gap-2.5 p-[26px]" data-reveal>
-              <span className="icon-tile mb-2.5" style={{ width: 46, height: 46, borderRadius: 15 }}>{s.n.slice(1)}</span>
+          {STEPS.map((s, i) => (
+            <li key={s.n} className="card card-hover grid content-start gap-2.5 p-[26px]" data-reveal style={{ transitionDelay: `${i * 80}ms` }}>
+              <span className="icon-tile mb-2.5 transition-transform duration-300 hover:-rotate-12 hover:scale-110" style={{ width: 46, height: 46, borderRadius: 15 }}>{s.n.slice(1)}</span>
               <h3 className="text-[17px] font-semibold">{s.t}</h3>
               <p className="text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{s.d}</p>
             </li>
@@ -200,7 +208,7 @@ export default async function LandingPage() {
 
       {/* Builder deep-dive */}
       <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
-        <div className="card grid gap-10 overflow-hidden p-8 md:grid-cols-2 md:p-12">
+        <div className="card grid gap-10 overflow-hidden p-8 md:grid-cols-2 md:p-12" data-reveal>
           <div>
             <p className="eyebrow">The builder</p>
             <h2 className="mt-3 max-w-md text-4xl font-semibold md:text-5xl">
@@ -256,9 +264,10 @@ export default async function LandingPage() {
             ["I published my trekking site between two bus rides to Pokhara. Bookings came before I got home.", "Binod Thapa", "Guide, Himalayan Trails"],
             ["Clients think I hired an agency in Jhamsikhel. It was me, on a Sunday, with chiya.", "Sabina Karki", "Designer, Lalitpur"],
             ["Our momo menu finally looks as good as it tastes. Weekend covers are up.", "Tashi Sherpa", "Owner, Lakeside Kitchen"],
-          ].map(([m, n, r]) => (
-            <figure key={n} className="card card-hover flex flex-col p-[26px]">
-              <span className="serif-accent text-3xl" aria-hidden>“</span>
+          ].map(([m, n, r], i) => (
+            <figure key={n} data-reveal style={{ transitionDelay: `${i * 90}ms` }} className="card card-hover flex flex-col p-[26px]">
+              <span aria-hidden className="text-sm tracking-[0.2em]" style={{ color: "#e8a33d" }}>★★★★★</span>
+              <span className="serif-accent mt-1 text-3xl" aria-hidden>“</span>
               <blockquote className="flex-1 text-[15px] leading-relaxed">{m}</blockquote>
               <figcaption className="mt-5 border-t pt-4 text-sm" style={{ borderColor: "var(--line)" }}>
                 <span className="font-semibold">{n}</span><br />
@@ -270,15 +279,15 @@ export default async function LandingPage() {
       </section>
 
       {/* Principles */}
-      <section id="features" className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
+      <section id="features" className="mx-auto max-w-7xl scroll-mt-24 px-6" style={{ paddingTop: 120 }}>
         <div className="mb-10 grid justify-items-center gap-4 text-center">
           <p className="eyebrow">Why it works</p>
           <h2 className="max-w-xl text-4xl font-semibold md:text-5xl">Opinionated, <span className="serif-accent">on purpose.</span></h2>
         </div>
         <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
-          {PRINCIPLES.map((p) => (
-            <div key={p.t} className="card card-hover grid content-start gap-2.5 p-[26px]">
-              <span className="icon-tile mb-2.5" aria-hidden>{p.icon}</span>
+          {PRINCIPLES.map((p, i) => (
+            <div key={p.t} data-reveal style={{ transitionDelay: `${i * 70}ms` }} className="card card-hover grid content-start gap-2.5 p-[26px]">
+              <span className="icon-tile mb-2.5 transition-transform duration-300 hover:-rotate-12 hover:scale-110" aria-hidden>{p.icon}</span>
               <h3 className="text-[17px] font-semibold">{p.t}</h3>
               <p className="text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{p.d}</p>
             </div>
@@ -305,8 +314,8 @@ export default async function LandingPage() {
             ["I run a shop in Asan, not a startup. Will this work?", "That is exactly who it is for. Menus, hours, price lists and contact pages are first-class."],
           ].map(([q, a]) => (
             <details key={q} className="group py-5">
-              <summary className="cursor-pointer list-none font-semibold" style={{ letterSpacing: "-0.015em" }}>{q}<span className="float-right opacity-40 transition group-open:rotate-45">＋</span></summary>
-              <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{a}</p>
+              <summary className="cursor-pointer list-none font-semibold transition-colors hover:text-black [&::-webkit-details-marker]:hidden" style={{ letterSpacing: "-0.015em" }}>{q}<span className="float-right opacity-40 transition-transform duration-300 group-open:rotate-45">＋</span></summary>
+              <div className="faq-a"><div><p className="pt-2 text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{a}</p></div></div>
             </details>
           ))}
         </div>
@@ -314,8 +323,8 @@ export default async function LandingPage() {
 
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
-        <div className="card relative grid justify-items-center gap-[18px] overflow-hidden px-6 py-[92px] text-center" style={{ borderRadius: 36 }}>
-          <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(60% 120% at 12% 0%, rgba(79,70,229,.16), transparent 60%), radial-gradient(60% 120% at 88% 100%, rgba(147,51,234,.14), transparent 60%)" }} aria-hidden />
+        <div className="card relative grid justify-items-center gap-[18px] overflow-hidden px-6 py-[92px] text-center" data-reveal style={{ borderRadius: 36 }}>
+          <div className="drift pointer-events-none absolute inset-0" style={{ background: "radial-gradient(60% 120% at 12% 0%, rgba(79,70,229,.16), transparent 60%), radial-gradient(60% 120% at 88% 100%, rgba(147,51,234,.14), transparent 60%)" }} aria-hidden />
           <p className="eyebrow relative">No code · No canvas · No kidding</p>
           <h2 className="relative max-w-2xl font-semibold" style={{ fontSize: "clamp(38px, 6vw, 72px)", lineHeight: 1, letterSpacing: "-0.055em" }}>
             Your website is <span className="serif-accent">waiting.</span>

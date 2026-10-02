@@ -49,7 +49,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className={`${sans.variable} ${serif.variable} ${mono.variable} ${inter.variable} ${fraunces.variable} ${grotesk.variable} min-h-full`}>{children}</body>
+      <body className={`${sans.variable} ${serif.variable} ${mono.variable} ${inter.variable} ${fraunces.variable} ${grotesk.variable} min-h-full`}><div id="top" className="min-h-full">{children}</div></body>
     </html>
   );
 }

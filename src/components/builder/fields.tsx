@@ -6,7 +6,7 @@ export function TextField({ label, value, onChange, placeholder }: { label: stri
   return (
     <label className="block">
       <span className="mb-1 block text-xs font-medium text-neutral-600">{label}</span>
-      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px] focus:border-neutral-900 focus:outline-none" />
+      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px] transition-colors focus:border-neutral-900 focus:outline-none" />
     </label>
   );
 }
@@ -15,7 +15,7 @@ export function AreaField({ label, value, onChange, rows = 3 }: { label: string;
   return (
     <label className="block">
       <span className="mb-1 block text-xs font-medium text-neutral-600">{label}</span>
-      <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={rows} className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px] focus:border-neutral-900 focus:outline-none" />
+      <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={rows} className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px] transition-colors focus:border-neutral-900 focus:outline-none" />
     </label>
   );
 }
@@ -67,12 +67,12 @@ export function ImageField({ label, value, onChange, demo }: { label: string; va
           </div>
         </div>
       ) : (
-        <label className="block cursor-pointer rounded-lg border border-dashed border-neutral-300 bg-white px-3 py-4 text-center text-xs text-neutral-500 hover:border-neutral-500">
+        <label className="block cursor-pointer rounded-lg border border-dashed border-neutral-300 bg-white px-3 py-4 text-center text-xs text-neutral-500 transition-colors hover:border-neutral-500 hover:bg-neutral-50">
           {busy ? "Uploading…" : "Click to upload image"}
           <input type="file" accept="image/*" className="hidden" onChange={pick} />
         </label>
       )}
-      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder="…or paste image URL" className="mt-1.5 w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-xs text-neutral-500 focus:outline-none" />
+      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder="…or paste image URL" className="mt-1.5 w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-xs text-neutral-500 transition-colors focus:border-neutral-900 focus:outline-none" />
       {err && <p className="mt-1 text-xs text-red-600">{err}</p>}
     </div>
   );

@@ -352,7 +352,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
             {saveState === "saving" ? "saving…" : saveState === "dirty" ? "unsaved" : saveState === "error" ? "save failed" : "saved"}
           </span>
           )}
-          <span className={`h-2 w-2 rounded-full ${saveState === "saved" ? "bg-emerald-500" : saveState === "error" ? "bg-red-500" : "bg-amber-400"}`} />
+          <span className={`h-2 w-2 rounded-full ${saveState === "saved" ? "bg-emerald-500" : saveState === "error" ? "bg-red-500" : "bg-amber-400 animate-pulse"}`} title={saveState === "saving" ? "saving…" : saveState === "dirty" ? "unsaved changes" : saveState === "error" ? "save failed" : "all changes saved"} />
           <button onClick={undo} disabled={past.current.length === 0} className="rounded-[9px] border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--line-2)" }} title="Undo (Ctrl+Z)">↩</button>
           <button onClick={redo} disabled={future.current.length === 0} className="rounded-[9px] border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--line-2)" }} title="Redo">↪</button>
           <Link href={demo ? `/templates/${site.templateId}` : `/s/${site.slug}`} target="_blank" className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Preview</Link>
@@ -379,12 +379,12 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
         <aside className="flex w-64 shrink-0 flex-col border-r bg-white" style={{ borderColor: "var(--line)" }}>
           <div className="flex border-b" style={{ borderColor: "var(--line)" }}>
             {TABS.map((t) => (
-              <button key={t.id} onClick={() => setTab(t.id)} className="mono-meta flex-1 px-1 py-2.5 text-[10.5px] font-semibold uppercase" style={tab === t.id ? { color: "var(--accent-text)", boxShadow: "inset 0 -2px 0 var(--accent)" } : { color: "var(--ink-3)" }}>
+              <button key={t.id} onClick={() => setTab(t.id)} aria-current={tab === t.id ? "page" : undefined} className="mono-meta flex-1 px-1 py-2.5 text-[10.5px] font-semibold uppercase transition-colors hover:text-neutral-900" style={tab === t.id ? { color: "var(--accent-text)", boxShadow: "inset 0 -2px 0 var(--accent)" } : { color: "var(--ink-3)" }}>
                 {t.label}
               </button>
             ))}
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto p-3">
+          <div key={tab} className="tab-in min-h-0 flex-1 overflow-y-auto p-3">
             {tab === "content" && <ContentPanel config={activeConfig} selected={selected} onSelect={setSelectedId} onPatch={patchSection} pageLabel={activePage ? activePage.title : "Home"} demo={demo} />}
             {tab === "sections" && <SectionsPanel config={activeConfig} selectedId={selectedId} onSelect={(id) => { setSelectedId(id); }} onToggle={toggleSection} onMove={reorderSection} onRemove={removeSection} onDuplicate={duplicateSection} onAdd={addSection} onReorder={reorderSectionTo} pageLabel={activePage ? activePage.title : "Home"} />}
             {tab === "pages" && <PagesPanel config={config} activePageId={activePageId} onSwitch={switchPage} onAdd={addPage} onRename={renamePage} onRemove={removePage} siteSlug={site.slug} />}

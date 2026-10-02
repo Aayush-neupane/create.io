@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export function LogoTile({ size = 28 }: { size?: number }) {
   return (
@@ -30,14 +33,23 @@ const NAV = [
 ];
 
 export function Navbar({ user }: { user?: { name: string } | null }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   return (
     <header
-      className="sticky top-0 z-40"
+      className="sticky top-0 z-40 transition-shadow duration-300"
       style={{
         background: "color-mix(in srgb, var(--paper) 78%, transparent)",
         backdropFilter: "blur(18px) saturate(1.4)",
         WebkitBackdropFilter: "blur(18px) saturate(1.4)",
         borderBottom: "1px solid var(--line)",
+        boxShadow: scrolled ? "0 12px 32px -20px rgba(23,23,27,.35)" : "none",
       }}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-7 px-6">
@@ -49,14 +61,14 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
             <Link
               key={n.href}
               href={n.href}
-              className="rounded-[9px] px-3 py-[7px] text-sm transition-colors"
+              className="rounded-[9px] px-3 py-[7px] text-sm transition-colors hover:bg-black/[0.045]"
               style={{ color: "var(--ink-2)" }}
             >
               {n.label}
             </Link>
           ))}
           {user && (
-            <Link href="/dashboard" className="rounded-[9px] px-3 py-[7px] text-sm font-medium" style={{ color: "var(--ink)" }}>
+            <Link href="/dashboard" className="rounded-[9px] px-3 py-[7px] text-sm font-medium transition-colors hover:bg-black/[0.045]" style={{ color: "var(--ink)" }}>
               Dashboard
             </Link>
           )}
@@ -67,7 +79,7 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
               <span className="mono-meta mr-1 hidden text-xs lg:inline" style={{ color: "var(--ink-3)" }}>
                 {user.name}
               </span>
-              <Link href="/new" className="btn-primary" style={{ height: 36, fontSize: 13 }}>
+              <Link href="/new" className="btn-primary hidden sm:inline-flex" style={{ height: 36, fontSize: 13 }}>
                 New website
               </Link>
             </>
@@ -75,17 +87,63 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
             <>
               <Link
                 href="/login"
-                className="rounded-[9px] px-3 py-2 text-sm font-medium transition-colors"
+                className="hidden rounded-[9px] px-3 py-2 text-sm font-medium transition-colors hover:bg-black/[0.045] sm:inline"
                 style={{ color: "var(--ink-2)" }}
               >
                 Log in
               </Link>
-              <Link href="/new" className="btn-primary" style={{ height: 36, fontSize: 13 }}>
+              <Link href="/new" className="btn-primary hidden sm:inline-flex" style={{ height: 36, fontSize: 13 }}>
                 Start building
               </Link>
             </>
           )}
+          <button
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-label={open ? "Close menu" : "Open menu"}
+            className="grid h-9 w-9 place-items-center rounded-[9px] transition-colors hover:bg-black/[0.045] md:hidden"
+            style={{ color: "var(--ink)" }}
+          >
+            <span aria-hidden className="relative block h-3.5 w-4">
+              <i className="absolute inset-x-0 top-0 h-[1.8px] rounded bg-current transition-all duration-300" style={{ transform: open ? "translateY(7px) rotate(45deg)" : "none" }} />
+              <i className="absolute inset-x-0 top-[7px] h-[1.8px] rounded bg-current transition-opacity duration-200" style={{ opacity: open ? 0 : 1 }} />
+              <i className="absolute inset-x-0 bottom-0 h-[1.8px] rounded bg-current transition-all duration-300" style={{ transform: open ? "translateY(-7px) rotate(-45deg)" : "none" }} />
+            </span>
+          </button>
         </div>
+      </div>
+      <div className={`grid overflow-hidden transition-[grid-template-rows] duration-300 ease-out md:hidden ${open ? "[grid-template-rows:1fr]" : "[grid-template-rows:0fr]"}`}>
+        <nav className="min-h-0 overflow-hidden">
+          <div className="space-y-0.5 border-t px-6 py-3" style={{ borderColor: "var(--line)" }}>
+            {[...NAV, ...(user ? [{ href: "/dashboard", label: "Dashboard" }] : [])].map((n) => (
+              <Link
+                key={n.href}
+                href={n.href}
+                onClick={() => setOpen(false)}
+                className="block rounded-[9px] px-3 py-2.5 text-[15px] font-medium transition-colors hover:bg-black/[0.045]"
+                style={{ color: "var(--ink)" }}
+              >
+                {n.label}
+              </Link>
+            ))}
+            <div className="flex gap-2 py-2">
+              {user ? (
+                <Link href="/new" onClick={() => setOpen(false)} className="btn-primary flex-1" style={{ height: 42 }}>
+                  New website
+                </Link>
+              ) : (
+                <>
+                  <Link href="/login" onClick={() => setOpen(false)} className="btn-ghost flex-1" style={{ height: 42 }}>
+                    Log in
+                  </Link>
+                  <Link href="/new" onClick={() => setOpen(false)} className="btn-primary flex-1" style={{ height: 42 }}>
+                    Start building
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </nav>
       </div>
     </header>
   );
@@ -122,9 +180,14 @@ export function Footer() {
           </div>
         ))}
       </div>
-      <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3 px-6 pb-6 pt-5 text-[13px]" style={{ borderTop: "1px solid var(--line)", color: "var(--ink-3)" }}>
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 pb-6 pt-5 text-[13px]" style={{ borderTop: "1px solid var(--line)", color: "var(--ink-3)" }}>
         <span>© 2026 create.io — No code · No canvas · No kidding.</span>
-        <span className="mono-meta text-xs">paper · jakarta · newsreader · mono</span>
+        <span className="flex items-center gap-4">
+          <span className="mono-meta hidden text-xs sm:inline">paper · jakarta · newsreader · mono</span>
+          <a href="#top" className="inline-flex items-center gap-1 rounded-md font-medium transition-all hover:-translate-y-0.5 hover:text-neutral-900" style={{ color: "var(--ink-2)" }}>
+            Back to top <span aria-hidden>↑</span>
+          </a>
+        </span>
       </div>
       <div className="mx-auto max-w-7xl px-6 pb-9">
         <a

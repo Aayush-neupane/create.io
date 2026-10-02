@@ -31,15 +31,21 @@ export default function TemplatesPage() {
         {/* Sidebar */}
         <aside className="hidden w-[236px] shrink-0 md:block">
           <div className="sticky grid gap-2 overflow-auto" style={{ top: 88, maxHeight: "calc(100vh - 112px)", paddingBottom: 20 }}>
-            <div className="mb-2 flex h-[46px] items-center gap-2.5 rounded-[13px] border px-3.5" style={{ borderColor: "var(--line-2)", background: "var(--surface)", color: "var(--ink-3)" }}>
+            <div className="mb-2 flex h-[46px] items-center gap-2.5 rounded-[13px] border px-3.5 transition-colors focus-within:border-neutral-400" style={{ borderColor: "var(--line-2)", background: "var(--surface)", color: "var(--ink-3)" }}>
               <span aria-hidden>⌕</span>
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search sites…"
+                aria-label="Search templates"
                 className="w-full bg-transparent text-sm outline-none"
                 style={{ color: "var(--ink)" }}
               />
+              {q && (
+                <button onClick={() => setQ("")} aria-label="Clear search" className="grid h-6 w-6 flex-none place-items-center rounded-full text-sm transition-colors hover:bg-black/[0.06]" style={{ color: "var(--ink-3)" }}>
+                  ✕
+                </button>
+              )}
             </div>
             <h4 className="mono-meta mb-1 ml-2.5 mt-2 text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.14em", color: "var(--ink-3)" }}>Kind</h4>
             {cats.map((c) => (
@@ -47,7 +53,7 @@ export default function TemplatesPage() {
                 key={c}
                 onClick={() => setCat(c)}
                 aria-current={cat === c ? "page" : undefined}
-                className="flex items-center gap-2.5 rounded-[10px] px-2.5 py-2 text-left text-sm transition-colors"
+                className="flex items-center gap-2.5 rounded-[10px] px-2.5 py-2 text-left text-sm transition-colors hover:bg-black/[0.045]"
                 style={cat === c ? { background: "var(--accent-soft)", color: "var(--accent-text)", fontWeight: 600 } : { color: "var(--ink-2)" }}
               >
                 {c}
@@ -59,7 +65,7 @@ export default function TemplatesPage() {
               <button
                 key={p}
                 onClick={() => setTier(p)}
-                className="rounded-[10px] px-2.5 py-2 text-left text-sm transition-colors"
+                className="rounded-[10px] px-2.5 py-2 text-left text-sm transition-colors hover:bg-black/[0.045]"
                 style={tier === p ? { background: "var(--accent-soft)", color: "var(--accent-text)", fontWeight: 600 } : { color: "var(--ink-2)" }}
               >
                 {p === "All" ? "All plans" : p}
@@ -82,11 +88,16 @@ export default function TemplatesPage() {
                 Live renders — what you see is the actual template, components and copy included.
               </p>
             </div>
-            <div className="flex h-[46px] items-center gap-2.5 rounded-[13px] border px-3.5 md:hidden" style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}>
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search sites…" className="w-full bg-transparent text-sm outline-none" />
+            <div className="flex h-[46px] items-center gap-2.5 rounded-[13px] border px-3.5 transition-colors focus-within:border-neutral-400 md:hidden" style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}>
+              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search sites…" aria-label="Search templates" className="w-full bg-transparent text-sm outline-none" />
+              {q && (
+                <button onClick={() => setQ("")} aria-label="Clear search" className="grid h-6 w-6 flex-none place-items-center rounded-full text-sm transition-colors hover:bg-black/[0.06]" style={{ color: "var(--ink-3)" }}>
+                  ✕
+                </button>
+              )}
             </div>
           </div>
-          <div className="mb-5 flex gap-2 overflow-x-auto pb-1 md:hidden">
+          <div className="no-bar snap-row mb-5 flex gap-2 overflow-x-auto pb-1 md:hidden">
             {cats.map((c) => (
               <button
                 key={c}
@@ -99,12 +110,18 @@ export default function TemplatesPage() {
             ))}
           </div>
 
+          <p aria-live="polite" className="mono-meta mb-4 text-xs" style={{ color: "var(--ink-3)" }}>
+            {list.length === 1 ? "1 site" : `${list.length} sites`}{q && <> for “{q}”</>}
+          </p>
           <div className="grid gap-[18px] sm:grid-cols-2">
             {list.map((t) => (
-              <article key={t.id} className="card group flex min-w-0 flex-col overflow-hidden">
+              <article key={t.id} className="card card-hover group flex min-w-0 flex-col overflow-hidden">
                 <div className="relative aspect-[16/10] overflow-hidden" style={{ borderBottom: "1px solid var(--line)" }}>
                   <LiveCard templateId={t.id} />
                   <Link href={`/templates/${t.id}`} aria-label={`Open ${t.name}`} className="absolute inset-0" />
+                  <span className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 justify-center bg-gradient-to-t from-black/45 to-transparent pb-3 pt-8 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                    <span className="rounded-full bg-white/95 px-4 py-1.5 text-[13px] font-semibold text-neutral-900 shadow-lg">Open full preview →</span>
+                  </span>
                 </div>
                 <div className="flex items-center gap-3 px-[18px] py-[13px]">
                   <div className="min-w-0">

@@ -12,6 +12,7 @@ const STAGE_H = 2600;
 export function LiveCard({ templateId }: { templateId: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.3);
+  const [ready, setReady] = useState(false);
 
   const cfg = useMemo(() => {
     const tpl = getTemplate(templateId);
@@ -26,7 +27,10 @@ export function LiveCard({ templateId }: { templateId: string }) {
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const update = () => setScale(el.clientWidth / STAGE_W);
+    const update = () => {
+      setScale(el.clientWidth / STAGE_W);
+      setReady(true);
+    };
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
@@ -34,7 +38,7 @@ export function LiveCard({ templateId }: { templateId: string }) {
   }, []);
 
   return (
-    <div ref={ref} className="relative h-full w-full overflow-hidden bg-white">
+    <div ref={ref} className="relative h-full w-full overflow-hidden bg-white transition-opacity duration-500" style={{ opacity: ready ? 1 : 0 }}>
       <div
         className="pointer-events-none absolute left-0 top-0 origin-top-left select-none"
         style={{ width: STAGE_W, height: STAGE_H, transform: `scale(${scale})` }}

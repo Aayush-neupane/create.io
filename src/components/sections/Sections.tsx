@@ -5,7 +5,7 @@ export function fontStack(name: string): string {
 }
 
 export function sectionShell(theme: ThemeConfig, extra?: string): React.CSSProperties & { className?: string } {
-  return {} as never;
+  return { backgroundColor: theme.surface, color: theme.text, borderRadius: theme.radius, className: extra };
 }
 
 export function wrapStyle(theme: ThemeConfig): React.CSSProperties {
@@ -55,7 +55,7 @@ export function H({ theme, children, className = "" }: { theme: ThemeConfig; chi
 
 export function Eyebrow({ theme, children }: { theme: ThemeConfig; children: React.ReactNode }) {
   return (
-    <p className="mb-3 flex items-center gap-2 font-mono text-xs font-medium uppercase" style={{ letterSpacing: "0.14em", color: theme.accent }}>
+    <p className="mb-3 flex items-center gap-2 font-mono text-xs font-medium uppercase" style={{ letterSpacing: "0.14em", color: theme.secondary || theme.accent }}>
       <span aria-hidden style={{ width: 18, height: 1, background: "currentColor", opacity: 0.7 }} />
       {children}
     </p>
@@ -636,13 +636,19 @@ export function TestimonialsSection({ s, theme }: { s: SectionInstance; theme: T
   const c = s.content as Record<string, unknown>;
   const items = arr<{ name: string; role: string; company: string; message: string; photo: string }>(c.items);
   if (s.variant === "quote") {
-    const t0 = items[0];
-    if (!t0) return null;
+    if (items.length === 0) return null;
     return (
       <section className={sectionPad(theme)}>
         <div className={`mx-auto px-6 text-center ${containerWidth(theme)}`}>
-          <blockquote className="mx-auto max-w-3xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.75rem * ${theme.headingScale})`, lineHeight: 1.3 }}>“{t0.message}”</blockquote>
-          <p className="mt-6 text-sm" style={{ color: theme.muted }}>{t0.name} — {t0.role}, {t0.company}</p>
+          {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
+          <H theme={theme}>{str(c.title, "Testimonials")}</H>
+          <div className="mx-auto mt-8 max-w-3xl space-y-10">{items.map((t0, qi) => (
+            <figure key={qi}>
+              {t0.photo ? <img src={t0.photo} alt={t0.name} className="mx-auto h-14 w-14 rounded-full object-cover" /> : null}
+              <blockquote className="mx-auto max-w-3xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.75rem * ${theme.headingScale})`, lineHeight: 1.3 }}>“{t0.message}”</blockquote>
+              <p className="mt-6 text-sm" style={{ color: theme.muted }}>{t0.name} — {t0.role}, {t0.company}</p>
+            </figure>
+          ))}</div>
         </div>
       </section>
     );
@@ -670,6 +676,7 @@ export function TestimonialsSection({ s, theme }: { s: SectionInstance; theme: T
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           {items.map((t0, i) => (
             <figure key={i} className="p-6" style={{ borderRadius: theme.radius, background: theme.background }}>
+              {t0.photo ? <img src={t0.photo} alt={t0.name} className="mb-3 h-11 w-11 rounded-full object-cover" /> : null}
               <blockquote className="text-sm leading-relaxed">“{t0.message}”</blockquote>
               <figcaption className="mt-4 text-sm"><span className="font-semibold">{t0.name}</span><span style={{ color: theme.muted }}> · {t0.role}, {t0.company}</span></figcaption>
             </figure>
@@ -722,7 +729,7 @@ export function GallerySection({ s, theme }: { s: SectionInstance; theme: ThemeC
           </div>
           <div className="mt-8 grid gap-3 md:grid-cols-3">
             <div className="md:col-span-2 md:row-span-2">{cell(first, 0, "aspect-[16/10] h-full min-h-72")}</div>
-            {rest.slice(0, 4).map((img, i) => cell(img, i + 1))}
+            {rest.map((img, i) => cell(img, i + 1))}
           </div>
         </div>
       </section>
@@ -938,7 +945,7 @@ export function ContactSection({ s, theme }: { s: SectionInstance; theme: ThemeC
 
 export function FooterSection({ s, theme, pages }: { s: SectionInstance; theme: ThemeConfig; pages?: { title: string; href: string }[] }) {
   const c = s.content as Record<string, unknown>;
-  void pages;
+  const siteLinks = (pages ?? []).slice(0, 6);
   if (s.variant === "big") {
     return (
       <footer className="px-6 pb-8 pt-16" style={{ background: theme.primary, color: "#fff" }}>
@@ -949,9 +956,11 @@ export function FooterSection({ s, theme, pages }: { s: SectionInstance; theme: 
           <div className="mt-8 flex flex-col gap-3 border-t border-white/20 pt-6 md:flex-row md:items-center md:justify-between">
             <p className="text-xs opacity-70">{str(c.copyright, "© 2026 All rights reserved.")}</p>
             <div className="flex gap-5 text-sm">
-              <a href="#about" className="opacity-80 hover:opacity-100">About</a>
-              <a href="#work" className="opacity-80 hover:opacity-100">Work</a>
-              <a href="#contact" className="opacity-80 hover:opacity-100">Contact</a>
+              {siteLinks.length > 0 ? siteLinks.map((p) => <a key={p.href} href={p.href} className="opacity-80 hover:opacity-100">{p.title}</a>) : (<>
+                <a href="#about" className="opacity-80 hover:opacity-100">About</a>
+                <a href="#work" className="opacity-80 hover:opacity-100">Work</a>
+                <a href="#contact" className="opacity-80 hover:opacity-100">Contact</a>
+              </>)}
             </div>
           </div>
         </div>
@@ -977,9 +986,11 @@ export function FooterSection({ s, theme, pages }: { s: SectionInstance; theme: 
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: theme.muted }}>Sitemap</p>
             <div className="mt-3 flex flex-col gap-2 text-sm">
-              <a href="#about" className="hover:opacity-70">About</a>
-              <a href="#work" className="hover:opacity-70">Work</a>
-              <a href="#contact" className="hover:opacity-70">Contact</a>
+              {siteLinks.length > 0 ? siteLinks.map((p) => <a key={p.href} href={p.href} className="hover:opacity-70">{p.title}</a>) : (<>
+                <a href="#about" className="hover:opacity-70">About</a>
+                <a href="#work" className="hover:opacity-70">Work</a>
+                <a href="#contact" className="hover:opacity-70">Contact</a>
+              </>)}
             </div>
           </div>
           <div>
@@ -1002,9 +1013,11 @@ export function FooterSection({ s, theme, pages }: { s: SectionInstance; theme: 
           <p className="mt-1 text-xs" style={{ color: theme.muted }}>{str(c.copyright, "© 2026 All rights reserved.")}</p>
         </div>
         <div className="flex gap-4 text-sm" style={{ color: theme.muted }}>
-          <a href="#about" className="hover:opacity-70">About</a>
-          <a href="#work" className="hover:opacity-70">Work</a>
-          <a href="#contact" className="hover:opacity-70">Contact</a>
+          {siteLinks.length > 0 ? siteLinks.map((p) => <a key={p.href} href={p.href} className="hover:opacity-70">{p.title}</a>) : (<>
+            <a href="#about" className="hover:opacity-70">About</a>
+            <a href="#work" className="hover:opacity-70">Work</a>
+            <a href="#contact" className="hover:opacity-70">Contact</a>
+          </>)}
         </div>
       </div>
     </footer>

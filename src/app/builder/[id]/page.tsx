@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
 import { findWebsiteById } from "@/lib/db";
 import { normalizeConfig } from "@/lib/website-defaults";
@@ -16,6 +16,7 @@ export default async function BuilderPage({
   const { id } = await params;
   const sp = await searchParams;
   const site = await findWebsiteById(id);
-  if (!site || site.userId !== user.id) redirect("/dashboard");
+  if (!site) notFound();
+  if (site.userId !== user.id) redirect("/dashboard");
   return <BuilderClient initial={{ ...site, config: normalizeConfig(site.config) }} initialTab={sp.tab} />;
 }

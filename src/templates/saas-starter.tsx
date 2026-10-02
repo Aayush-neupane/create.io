@@ -2,7 +2,7 @@
  * Launchpad SaaS — bespoke predesigned library.
  * Launch system: floating pill nav, product frame hero, logo cloud, checklist pricing.
  */
-import type { SectionType, ThemeConfig } from "@/types/builder";
+import type { SectionType } from "@/types/builder";
 import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";

@@ -6,7 +6,13 @@ import { findUserById } from "./db";
 const COOKIE = "create_io_session";
 
 function secret(): Uint8Array {
-  const s = process.env.AUTH_SECRET || "dev-secret-change-me-create-io-32chars!!";
+  const s = process.env.AUTH_SECRET;
+  if (!s) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("AUTH_SECRET is not set. Set a long random value in your environment.");
+    }
+    return new TextEncoder().encode("dev-secret-change-me-create-io-32chars!!");
+  }
   return new TextEncoder().encode(s);
 }
 

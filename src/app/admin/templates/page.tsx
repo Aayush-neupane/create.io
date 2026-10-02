@@ -7,6 +7,12 @@ import { SECTION_META } from "@/components/templates/Renderer";
 export default async function AdminTemplatesPage() {
   const user = await currentUser();
   if (!user) redirect("/login");
+  const allow = (process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || "")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+  const isAdmin = allow.length > 0 && allow.includes(user.email.toLowerCase());
+  if (!isAdmin) redirect("/dashboard");
   return (
     <div className="min-h-screen bg-[#fafafa]">
       <header className="border-b border-neutral-200 bg-white">

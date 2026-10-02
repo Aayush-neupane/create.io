@@ -215,10 +215,12 @@ export function baseTheme(): ThemeConfig {
 
 export function personalize(content: Record<string, unknown>, owner: string, tagline: string): Record<string, unknown> {
   const out = { ...content };
-  if (owner && typeof out["title"] === "string" && (out["title"] as string).length < 60) {
-    // keep template titles; only patch hero/nav-ish fields handled by caller
+  if (owner && typeof out["subtitle"] === "string" && !(out["subtitle"] as string).trim()) {
+    out["subtitle"] = owner;
   }
-  void tagline;
+  if (tagline && typeof out["description"] === "string" && !(out["description"] as string).trim()) {
+    out["description"] = tagline;
+  }
   return out;
 }
 

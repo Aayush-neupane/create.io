@@ -2,14 +2,19 @@ import { NextResponse } from "next/server";
 import { currentUser } from "@/lib/auth";
 import { websitesForUser, saveWebsite, newId, uniqueSlug } from "@/lib/db";
 import { createWebsiteSchema, safeError } from "@/lib/validation";
-import { getTemplate } from "@/lib/templates";
+import { TEMPLATES } from "@/lib/templates";
 import { buildConfigFromTemplate, baseTheme } from "@/lib/website-defaults";
 
 export async function GET() {
-  const user = await currentUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const sites = await websitesForUser(user.id);
-  return NextResponse.json({ websites: sites });
+  try {
+    const user = await currentUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const sites = await websitesForUser(user.id);
+    return NextResponse.json({ websites: sites });
+  } catch (e) {
+    console.error("[api:websites GET]", e);
+    return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
@@ -18,7 +23,8 @@ export async function POST(req: Request) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const body = await req.json();
     const data = createWebsiteSchema.parse(body);
-    const tpl = getTemplate(data.templateId);
+    const tpl = TEMPLATES.find((t) => t.id === data.templateId);
+    if (!tpl) return NextResponse.json({ error: "Unknown template." }, { status: 400 });
     const theme = { ...baseTheme(), ...tpl.theme };
     const owner = data.ownerName || "";
     const config = buildConfigFromTemplate(

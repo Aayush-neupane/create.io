@@ -2,7 +2,7 @@
  * Ember & Oak — bespoke predesigned library.
  * Hearth system: centered crest masthead, dotted menu leaders, reservation cards.
  */
-import type { SectionType, ThemeConfig } from "@/types/builder";
+import type { SectionType } from "@/types/builder";
 import { fontStack, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";

@@ -10,8 +10,10 @@ const TYPES = ["Portfolio", "Personal", "Business", "Restaurant", "Freelancer", 
 function Flow() {
   const router = useRouter();
   const sp = useSearchParams();
-  const [step, setStep] = useState(sp.get("template") ? 2 : 1);
-  const [templateId, setTemplateId] = useState(sp.get("template") || "minimal-portfolio");
+  const initialTemplate = sp.get("template");
+  const validInitial = initialTemplate && TEMPLATES.some((t) => t.id === initialTemplate) ? initialTemplate : null;
+  const [step, setStep] = useState(validInitial ? 2 : 1);
+  const [templateId, setTemplateId] = useState(validInitial || "minimal-portfolio");
   const [siteType, setSiteType] = useState("Portfolio");
   const [name, setName] = useState("");
   const [ownerName, setOwnerName] = useState("");
@@ -22,15 +24,16 @@ function Flow() {
   async function create() {
     setErr("");
     if (!name.trim()) { setErr("Give your website a name."); return; }
+    if (!TEMPLATES.some((t) => t.id === templateId)) { setErr("Pick a valid template."); setStep(1); return; }
     setLoading(true);
     try {
       const res = await fetch("/api/websites", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, templateId, siteType, ownerName, tagline }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Could not create website.");
-      router.push(`/builder/${data.website.id}`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error((data as { error?: string }).error || "Could not create website.");
+      router.push(`/builder/${(data as { website: { id: string } }).website.id}`);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
@@ -41,13 +44,13 @@ function Flow() {
   return (
     <div className="mx-auto w-full max-w-3xl rounded-2xl border border-neutral-200 bg-white p-8">
       <div className="mb-6 flex items-center gap-2 text-xs font-medium text-neutral-500">
-        {[1, 2, 3].map((n) => (
+        {[1, 2].map((n) => (
           <span key={n} className="flex items-center gap-2">
             <span className={`flex h-6 w-6 items-center justify-center rounded-full ${step >= n ? "bg-neutral-900 text-white" : "bg-neutral-100"}`}>{n}</span>
-            {n < 3 && <span className="h-px w-8 bg-neutral-200" />}
+            {n < 2 && <span className="h-px w-8 bg-neutral-200" />}
           </span>
         ))}
-        <span className="ml-2">{step === 1 ? "Choose template" : step === 2 ? "Website type & info" : "Create"}</span>
+        <span className="ml-2">{step === 1 ? "Choose template" : "Website type & info"}</span>
       </div>
 
       {step === 1 && (

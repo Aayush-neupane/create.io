@@ -74,10 +74,9 @@ export function renderSection(s: SectionInstance, theme: ThemeConfig, templateId
   }
 }
 
-export function TemplateRenderer({ config, templateId, slug, pagePath, previewDevice }: {
-  config: WebsiteConfig; templateId?: string; slug?: string; pagePath?: string; previewDevice?: "desktop" | "tablet" | "mobile";
+export function TemplateRenderer({ config, templateId, slug, pagePath }: {
+  config: WebsiteConfig; templateId?: string; slug?: string; pagePath?: string;
 }) {
-  void previewDevice;
   const active = pagePath ? (config.pages ?? []).find((p) => p.path === pagePath) : undefined;
   const sections = active ? active.sections : config.sections;
   const pages = navPages(config, slug);

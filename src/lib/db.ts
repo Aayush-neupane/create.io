@@ -90,7 +90,16 @@ async function readJson<T>(file: string, fallback: T): Promise<T> {
   try {
     const raw = await fs.readFile(file, "utf-8");
     return JSON.parse(raw) as T;
-  } catch {
+  } catch (e) {
+    // ENOENT (first run) → quiet fallback. Corrupt JSON → back up + log so
+    // we never silently pretend the database is empty.
+    const code = (e as NodeJS.ErrnoException)?.code;
+    if (code !== "ENOENT") {
+      console.error(`[db:json-corrupt] ${file}`, e);
+      try {
+        await fs.copyFile(file, `${file}.corrupt-${Date.now()}.bak`);
+      } catch { /* backup is best-effort */ }
+    }
     return fallback;
   }
 }
@@ -178,6 +187,10 @@ export async function listWebsites(): Promise<WebsiteRecord[]> {
 }
 
 export async function websitesForUser(userId: string): Promise<WebsiteRecord[]> {
+  const db = await prisma();
+  if (db) {
+    return (await db.website.findMany({ where: { userId }, orderBy: { updatedAt: "desc" } })).map(toSite);
+  }
   const all = await listWebsites();
   return all
     .filter((w) => w.userId === userId)
@@ -241,7 +254,14 @@ export async function saveWebsite(site: WebsiteRecord): Promise<WebsiteRecord> {
 export async function deleteWebsite(id: string): Promise<void> {
   const db = await prisma();
   if (db) {
-    await db.website.delete({ where: { id } }).catch(() => null);
+    try {
+      await db.website.delete({ where: { id } });
+    } catch (e) {
+      // Prisma P2025 = already gone → treat as success. Anything else is a
+      // real outage and must surface so routes return 500, not false ok:true.
+      const code = (e as { code?: string })?.code;
+      if (code !== "P2025") throw e;
+    }
     return;
   }
   const all = await listWebsites();

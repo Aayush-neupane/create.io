@@ -2,7 +2,7 @@
  * Solo — bespoke predesigned library for freelancers.
  * Rate-card system: mono labels, tabular numbers, availability ledger.
  */
-import type { SectionType, ThemeConfig } from "@/types/builder";
+import type { SectionType } from "@/types/builder";
 import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";

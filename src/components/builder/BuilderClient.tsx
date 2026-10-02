@@ -22,20 +22,19 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "settings", label: "Settings" },
 ];
 
-function get<T>(obj: Record<string, unknown>, key: string, fb: T): T {
-  const v = obj[key];
-  return (v === undefined ? fb : v) as T;
-}
 function setC(s: SectionInstance, patch: Record<string, unknown>): SectionInstance {
   return { ...s, content: { ...s.content, ...patch } };
 }
 function move<T>(list: T[], i: number, dir: -1 | 1): T[] {
+  if (i < 0 || i >= list.length) return list;
   const j = i + dir;
   if (j < 0 || j >= list.length) return list;
   const out = [...list];
   [out[i], out[j]] = [out[j], out[i]];
   return out;
 }
+
+const VALID_TABS: Tab[] = ["content", "sections", "pages", "design", "seo", "settings"];
 
 export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteRecord; initialTab?: string; demo?: boolean }) {
   const router = useRouter();
@@ -50,7 +49,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     } catch { /* corrupted demo cache → fall through to seed */ }
     return initial.config;
   });
-  const [tab, setTab] = useState<Tab>((initialTab as Tab) || "content");
+  const [tab, setTab] = useState<Tab>(VALID_TABS.includes(initialTab as Tab) ? (initialTab as Tab) : "content");
   const [device, setDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [selectedId, setSelectedId] = useState<string | null>(
     Array.isArray(initial.config?.sections) ? (initial.config.sections[1]?.id ?? initial.config.sections[0]?.id ?? null) : null,
@@ -66,12 +65,23 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
   // Demo config loads from this browser only — defer first paint past
   // hydration so server and client HTML always match.
   const [mounted, setMounted] = useState(!demo);
-  useEffect(() => { if (demo) setMounted(true); }, [demo]);
+  useEffect(() => {
+    if (!demo || mounted) return;
+    const t = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(t);
+  }, [demo, mounted]);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveNowRef = useRef<(status?: "draft" | "published") => Promise<void>>(async () => {});
 
   const commit = useCallback((next: WebsiteConfig) => {
     past.current.push(config);
-    if (past.current.length > 60) past.current.shift();
+    // Cap history and shed oldest entries faster when configs are huge
+    // (e.g. embedded demo images) to avoid 100s-of-MB memory retention.
+    while (past.current.length > 30) past.current.shift();
+    try {
+      const size = JSON.stringify(next).length;
+      if (size > 2_000_000) while (past.current.length > 10) past.current.shift();
+    } catch { /* size check is best-effort */ }
     future.current = [];
     setConfig(next);
     setSaveState("dirty");
@@ -121,9 +131,14 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     if (demo) {
       try {
         window.localStorage.setItem(`createio-demo-${site.templateId}`, JSON.stringify(config));
-      } catch { /* private mode / quota → keep in-memory state */ }
-      setSaveState("saved");
-      setSaveMsg("");
+        setSaveState("saved");
+        setSaveMsg("");
+      } catch {
+        // Quota / private mode: keep in-memory edits but warn loudly — a
+        // reload would otherwise silently revert to the seed template.
+        setSaveState("error");
+        setSaveMsg("This browser is out of storage, so demo changes are only kept in memory for now. Sign up to save them permanently, or remove large images.");
+      }
       return;
     }
     setSaveState("saving");
@@ -145,14 +160,60 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
 
   async function publish() {
     setPublishing(true);
-    await saveNow("published");
-    setPublishing(false);
-    router.refresh();
+    try {
+      if (demo) return;
+      setSaveState("saving");
+      setSaveMsg("");
+      const res = await fetch(`/api/websites/${site.id}`, {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: config.siteName, config, status: "published" }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error((data as { error?: string }).error || "Could not publish.");
+      setSite((data as { website: WebsiteRecord }).website);
+      setSaveState("saved");
+      router.refresh();
+    } catch (e) {
+      setSaveState("error");
+      setSaveMsg(e instanceof Error ? e.message : "Could not publish. Your changes are still available locally.");
+    } finally {
+      setPublishing(false);
+    }
   }
 
   async function unpublish() {
     await saveNow("draft");
   }
+
+  // Keep a ref to the latest save so guards/flush don't close over stale state.
+  saveNowRef.current = saveNow;
+
+  // Warn before losing unsaved work (tab close / reload).
+  useEffect(() => {
+    function onBeforeUnload(e: BeforeUnloadEvent) {
+      if (saveState === "dirty" || saveState === "saving" || saveState === "error") {
+        e.preventDefault();
+      }
+    }
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [saveState]);
+
+  // Flush a pending autosave when unmounting (e.g. in-app navigation) so the
+  // last <1200ms of edits aren't silently dropped.
+  const flushOnUnmount = useRef(false);
+  useEffect(() => {
+    flushOnUnmount.current = saveState === "dirty";
+  }, [saveState]);
+  useEffect(() => {
+    return () => {
+      if (saveTimer.current) {
+        clearTimeout(saveTimer.current);
+        saveTimer.current = null;
+        if (flushOnUnmount.current) void saveNowRef.current();
+      }
+    };
+  }, []);
 
   const activePage = useMemo(() => (config.pages ?? []).find((p) => p.id === activePageId) ?? null, [config, activePageId]);
   const activeSections = activePage ? activePage.sections : config.sections;
@@ -204,6 +265,18 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
   }
   function reorderSection(id: string, dir: -1 | 1) {
     setActiveSections((list) => move(list, list.findIndex((s) => s.id === id), dir));
+  }
+  function reorderSectionTo(fromId: string, toId: string) {
+    if (fromId === toId) return;
+    setActiveSections((list) => {
+      const from = list.findIndex((s) => s.id === fromId);
+      const to = list.findIndex((s) => s.id === toId);
+      if (from < 0 || to < 0) return list;
+      const next = [...list];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+      return next;
+    });
   }
   function toggleSection(id: string) {
     patchSection(id, (s) => ({ ...s, enabled: !s.enabled }));
@@ -313,7 +386,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-3">
             {tab === "content" && <ContentPanel config={activeConfig} selected={selected} onSelect={setSelectedId} onPatch={patchSection} pageLabel={activePage ? activePage.title : "Home"} demo={demo} />}
-            {tab === "sections" && <SectionsPanel config={activeConfig} selectedId={selectedId} onSelect={(id) => { setSelectedId(id); }} onToggle={toggleSection} onMove={reorderSection} onRemove={removeSection} onDuplicate={duplicateSection} onAdd={addSection} pageLabel={activePage ? activePage.title : "Home"} />}
+            {tab === "sections" && <SectionsPanel config={activeConfig} selectedId={selectedId} onSelect={(id) => { setSelectedId(id); }} onToggle={toggleSection} onMove={reorderSection} onRemove={removeSection} onDuplicate={duplicateSection} onAdd={addSection} onReorder={reorderSectionTo} pageLabel={activePage ? activePage.title : "Home"} />}
             {tab === "pages" && <PagesPanel config={config} activePageId={activePageId} onSwitch={switchPage} onAdd={addPage} onRename={renamePage} onRemove={removePage} siteSlug={site.slug} />}
             {tab === "design" && <DesignPanel theme={config.theme} onPatch={patchTheme} onCustomCss={(v) => commit({ ...config, customCss: v })} customCss={config.customCss || ""} />}
             {tab === "seo" && <SeoPanel config={config} onCommit={commit} demo={demo} />}
@@ -345,7 +418,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-4">
             {selected ? (
-              <SectionInspector section={selected} theme={config.theme} templateId={site.templateId} demo={demo} onPatch={(fn) => patchSection(selected.id, fn)} onTheme={patchTheme} />
+              <SectionInspector section={selected} templateId={site.templateId} demo={demo} onPatch={(fn) => patchSection(selected.id, fn)} />
             ) : (
               <p className="text-[13px] text-neutral-500">Click any section on the left, or pick one below.</p>
             )}
@@ -411,6 +484,8 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
         <>
           <TextField label="Logo text" value={str("logo")} onChange={(v) => onChange({ logo: v })} />
           <TextField label="Button text" value={str("cta")} onChange={(v) => onChange({ cta: v })} />
+          {listEditor("links", "Nav links", "Link", { label: "New", href: "#about" },
+            (it, set) => (<div className="grid grid-cols-2 gap-2"><TextField label="Label" value={String(it["label"] ?? "")} onChange={(v) => set({ label: v } as never)} /><TextField label="Link" value={String(it["href"] ?? "")} onChange={(v) => set({ href: v } as never)} /></div>))}
         </>
       )}
       {(section.type === "hero") && (
@@ -424,6 +499,8 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
             <TextField label="Secondary button" value={str("secondaryCta")} onChange={(v) => onChange({ secondaryCta: v })} />
           </div>
           <ImageField demo={demo} label="Hero image" value={str("image")} onChange={(v) => onChange({ image: v })} />
+          {listEditor("stats", "Stats", "Stat", { value: "", label: "" },
+            (it, set) => (<div className="grid grid-cols-2 gap-2"><TextField label="Value" value={String(it["value"] ?? "")} onChange={(v) => set({ value: v } as never)} /><TextField label="Label" value={String(it["label"] ?? "")} onChange={(v) => set({ label: v } as never)} /></div>))}
         </>
       )}
       {(section.type === "about") && (
@@ -432,12 +509,20 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
           <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
           <AreaField label="Body" value={str("body")} rows={4} onChange={(v) => onChange({ body: v })} />
           <ImageField demo={demo} label="Image" value={str("image")} onChange={(v) => onChange({ image: v })} />
+          <AreaField label="Checklist (one per line)" value={(Array.isArray(c["bullets"]) ? (c["bullets"] as string[]).join("\n") : "")} rows={3} onChange={(v) => onChange({ bullets: v.split("\n").map((s) => s.trim()).filter(Boolean) })} />
         </>
       )}
-      {section.type === "skills" && listEditor("skills", "Skills", "Skill", { name: "New skill", level: 80 },
-        (it, set) => (<><TextField label="Name" value={String(it["name"] ?? "")} onChange={(v) => set({ name: v } as Partial<typeof it>)} /><TextField label="Level (0–100)" value={String(it["level"] ?? "")} onChange={(v) => set({ level: Number(v) || 0 } as Partial<typeof it>)} /></>))}
+      {section.type === "skills" && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          {listEditor("skills", "Skills", "Skill", { name: "New skill", level: 80 },
+            (it, set) => (<><TextField label="Name" value={String(it["name"] ?? "")} onChange={(v) => set({ name: v } as Partial<typeof it>)} /><TextField label="Level (0–100)" value={String(it["level"] ?? "")} onChange={(v) => { const n = Math.max(0, Math.min(100, Number(v) || 0)); set({ level: n } as Partial<typeof it>); }} /></>))}
+        </>
+      )}
       {section.type === "services" && (
         <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
           <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
           <AreaField label="Description" value={str("description")} onChange={(v) => onChange({ description: v })} />
           {listEditor("items", "Services", "Service", { title: "New service", description: "", icon: "sparkles", price: "" },
@@ -446,7 +531,9 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
       )}
       {section.type === "projects" && (
         <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
           <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          <AreaField label="Description" value={str("description")} onChange={(v) => onChange({ description: v })} />
           {listEditor("items", "Projects", "Project", { title: "New project", description: "", image: "", tags: [], url: "#", github: "#" },
             (it, set) => (<>
               <TextField label="Name" value={String(it["title"] ?? "")} onChange={(v) => set({ title: v } as never)} />
@@ -457,36 +544,92 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
                 <TextField label="URL" value={String(it["url"] ?? "")} onChange={(v) => set({ url: v } as never)} />
                 <TextField label="GitHub" value={String(it["github"] ?? "")} onChange={(v) => set({ github: v } as never)} />
               </div>
+              <p className="text-[11px] text-neutral-400">GitHub shows in list/editorial variants only.</p>
             </>))}
         </>
       )}
-      {section.type === "experience" && listEditor("items", "Roles", "Role", { company: "", role: "", start: "", end: "", description: "" },
-        (it, set) => (<><div className="grid grid-cols-2 gap-2"><TextField label="Company" value={String(it["company"] ?? "")} onChange={(v) => set({ company: v } as never)} /><TextField label="Position" value={String(it["role"] ?? "")} onChange={(v) => set({ role: v } as never)} /></div><div className="grid grid-cols-2 gap-2"><TextField label="Start" value={String(it["start"] ?? "")} onChange={(v) => set({ start: v } as never)} /><TextField label="End" value={String(it["end"] ?? "")} onChange={(v) => set({ end: v } as never)} /></div><AreaField label="Description" value={String(it["description"] ?? "")} onChange={(v) => set({ description: v } as never)} /></>))}
-      {section.type === "education" && listEditor("items", "Education", "Entry", { school: "", degree: "", start: "", end: "", description: "" },
-        (it, set) => (<><TextField label="Institution" value={String(it["school"] ?? "")} onChange={(v) => set({ school: v } as never)} /><TextField label="Degree" value={String(it["degree"] ?? "")} onChange={(v) => set({ degree: v } as never)} /><div className="grid grid-cols-2 gap-2"><TextField label="Start year" value={String(it["start"] ?? "")} onChange={(v) => set({ start: v } as never)} /><TextField label="End year" value={String(it["end"] ?? "")} onChange={(v) => set({ end: v } as never)} /></div></>))}
-      {section.type === "testimonials" && listEditor("items", "Testimonials", "Quote", { name: "", role: "", company: "", message: "", photo: "" },
-        (it, set) => (<><AreaField label="Message" value={String(it["message"] ?? "")} onChange={(v) => set({ message: v } as never)} /><div className="grid grid-cols-2 gap-2"><TextField label="Name" value={String(it["name"] ?? "")} onChange={(v) => set({ name: v } as never)} /><TextField label="Company" value={String(it["company"] ?? "")} onChange={(v) => set({ company: v } as never)} /></div><TextField label="Role" value={String(it["role"] ?? "")} onChange={(v) => set({ role: v } as never)} /></>))}
-      {section.type === "pricing" && listEditor("items", "Plans", "Plan", { name: "New plan", price: "$0", period: "one-time", description: "", features: [], featured: false },
-        (it, set) => (<><div className="grid grid-cols-2 gap-2"><TextField label="Name" value={String(it["name"] ?? "")} onChange={(v) => set({ name: v } as never)} /><TextField label="Price" value={String(it["price"] ?? "")} onChange={(v) => set({ price: v } as never)} /></div><TextField label="Features (comma separated)" value={(Array.isArray(it["features"]) ? (it["features"] as string[]).join(", ") : "")} onChange={(v) => set({ features: v.split(",").map((s) => s.trim()).filter(Boolean) } as never)} /></>))}
+      {section.type === "experience" && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          {listEditor("items", "Roles", "Role", { company: "", role: "", start: "", end: "", description: "" },
+            (it, set) => (<><div className="grid grid-cols-2 gap-2"><TextField label="Company" value={String(it["company"] ?? "")} onChange={(v) => set({ company: v } as never)} /><TextField label="Position" value={String(it["role"] ?? "")} onChange={(v) => set({ role: v } as never)} /></div><div className="grid grid-cols-2 gap-2"><TextField label="Start" value={String(it["start"] ?? "")} onChange={(v) => set({ start: v } as never)} /><TextField label="End" value={String(it["end"] ?? "")} onChange={(v) => set({ end: v } as never)} /></div><AreaField label="Description" value={String(it["description"] ?? "")} onChange={(v) => set({ description: v } as never)} /></>))}
+        </>
+      )}
+      {section.type === "education" && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          {listEditor("items", "Education", "Entry", { school: "", degree: "", start: "", end: "", description: "" },
+            (it, set) => (<><TextField label="Institution" value={String(it["school"] ?? "")} onChange={(v) => set({ school: v } as never)} /><TextField label="Degree" value={String(it["degree"] ?? "")} onChange={(v) => set({ degree: v } as never)} /><div className="grid grid-cols-2 gap-2"><TextField label="Start year" value={String(it["start"] ?? "")} onChange={(v) => set({ start: v } as never)} /><TextField label="End year" value={String(it["end"] ?? "")} onChange={(v) => set({ end: v } as never)} /></div><AreaField label="Details" value={String(it["description"] ?? "")} onChange={(v) => set({ description: v } as never)} /></>))}
+        </>
+      )}
+      {section.type === "testimonials" && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          {listEditor("items", "Testimonials", "Quote", { name: "", role: "", company: "", message: "", photo: "" },
+            (it, set) => (<><AreaField label="Message" value={String(it["message"] ?? "")} onChange={(v) => set({ message: v } as never)} /><div className="grid grid-cols-2 gap-2"><TextField label="Name" value={String(it["name"] ?? "")} onChange={(v) => set({ name: v } as never)} /><TextField label="Company" value={String(it["company"] ?? "")} onChange={(v) => set({ company: v } as never)} /></div><TextField label="Role" value={String(it["role"] ?? "")} onChange={(v) => set({ role: v } as never)} /><ImageField demo={demo} label="Photo (optional)" value={String(it["photo"] ?? "")} onChange={(v) => set({ photo: v } as never)} /></>))}
+          <p className="text-[11px] text-neutral-400">Quote variant spotlights the first entry.</p>
+        </>
+      )}
+      {section.type === "pricing" && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          {listEditor("items", "Plans", "Plan", { name: "New plan", price: "$0", period: "one-time", description: "", features: [], featured: false },
+            (it, set) => (<><div className="grid grid-cols-2 gap-2"><TextField label="Name" value={String(it["name"] ?? "")} onChange={(v) => set({ name: v } as never)} /><TextField label="Price" value={String(it["price"] ?? "")} onChange={(v) => set({ price: v } as never)} /></div><div className="grid grid-cols-2 gap-2"><TextField label="Billing period" value={String(it["period"] ?? "")} onChange={(v) => set({ period: v } as never)} /><label className="flex items-center gap-2 text-xs font-medium text-neutral-600"><input type="checkbox" checked={Boolean(it["featured"])} onChange={(e) => set({ featured: e.target.checked } as never)} /> Highlighted</label></div><TextField label="Blurb" value={String(it["description"] ?? "")} onChange={(v) => set({ description: v } as never)} /><TextField label="Features (comma separated)" value={(Array.isArray(it["features"]) ? (it["features"] as string[]).join(", ") : "")} onChange={(v) => set({ features: v.split(",").map((s) => s.trim()).filter(Boolean) } as never)} /></>))}
+        </>
+      )}
       {section.type === "gallery" && (
         <div className="space-y-2">
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
           {(Array.isArray(c["images"]) ? c["images"] as string[] : []).map((img, i) => (
-            <ImageField demo={demo} key={i} label={`Photo ${i + 1}`} value={img} onChange={(v) => { const next = [...(c["images"] as string[])]; next[i] = v; onChange({ images: next }); }} />
+            <div key={`${section.id}-img-${i}`} className="rounded-lg border border-neutral-200 p-2">
+              <ImageField demo={demo} label={`Photo ${i + 1}`} value={img} onChange={(v) => { const next = [...(c["images"] as string[])]; next[i] = v; onChange({ images: next }); }} />
+              <div className="mt-1.5 flex gap-1.5">
+                <button onClick={() => { const next = [...(c["images"] as string[])]; next.splice(i, 1); onChange({ images: next }); }} className="flex-1 rounded-md border border-neutral-200 px-2 py-1 text-[11px] text-red-600">Remove this photo</button>
+                <button onClick={() => { const next = [...(c["images"] as string[])]; if (i > 0) { [next[i - 1], next[i]] = [next[i], next[i - 1]]; onChange({ images: next }); } }} disabled={i === 0} className="rounded-md border border-neutral-200 px-2 py-1 text-[11px] disabled:opacity-40">↑</button>
+                <button onClick={() => { const next = [...(c["images"] as string[])]; if (i < next.length - 1) { [next[i + 1], next[i]] = [next[i], next[i + 1]]; onChange({ images: next }); } }} disabled={i === (Array.isArray(c["images"]) ? (c["images"] as string[]).length - 1 : 0)} className="rounded-md border border-neutral-200 px-2 py-1 text-[11px] disabled:opacity-40">↓</button>
+              </div>
+            </div>
           ))}
           <div className="flex gap-2">
             <button onClick={() => onChange({ images: [...(Array.isArray(c["images"]) ? c["images"] as string[] : []), ""] })} className="flex-1 rounded-lg border border-neutral-200 py-1.5 text-xs font-medium">+ Add photo</button>
-            <button onClick={() => onChange({ images: (c["images"] as string[]).slice(0, -1) })} className="rounded-lg border border-neutral-200 px-3 py-1.5 text-xs">−</button>
           </div>
         </div>
       )}
-      {section.type === "team" && listEditor("members", "Members", "Member", { name: "", role: "", photo: "", bio: "" },
-        (it, set) => (<><TextField label="Name" value={String(it["name"] ?? "")} onChange={(v) => set({ name: v } as never)} /><TextField label="Role" value={String(it["role"] ?? "")} onChange={(v) => set({ role: v } as never)} /><ImageField demo={demo} label="Photo" value={String(it["photo"] ?? "")} onChange={(v) => set({ photo: v } as never)} /><AreaField label="Bio" value={String(it["bio"] ?? "")} onChange={(v) => set({ bio: v } as never)} /></>))}
-      {section.type === "process" && listEditor("steps", "Steps", "Step", { title: "", description: "", icon: "" },
-        (it, set) => (<><TextField label="Title" value={String(it["title"] ?? "")} onChange={(v) => set({ title: v } as never)} /><AreaField label="Description" value={String(it["description"] ?? "")} onChange={(v) => set({ description: v } as never)} /></>))}
-      {section.type === "faq" && listEditor("items", "Questions", "Question", { q: "", a: "" },
-        (it, set) => (<><TextField label="Question" value={String(it["q"] ?? "")} onChange={(v) => set({ q: v } as never)} /><AreaField label="Answer" value={String(it["a"] ?? "")} onChange={(v) => set({ a: v } as never)} /></>))}
+      {section.type === "team" && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          {listEditor("members", "Members", "Member", { name: "", role: "", photo: "", bio: "" },
+            (it, set) => (<><TextField label="Name" value={String(it["name"] ?? "")} onChange={(v) => set({ name: v } as never)} /><TextField label="Role" value={String(it["role"] ?? "")} onChange={(v) => set({ role: v } as never)} /><ImageField demo={demo} label="Photo" value={String(it["photo"] ?? "")} onChange={(v) => set({ photo: v } as never)} /><AreaField label="Bio" value={String(it["bio"] ?? "")} onChange={(v) => set({ bio: v } as never)} /></>))}
+        </>
+      )}
+      {section.type === "process" && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          {listEditor("steps", "Steps", "Step", { title: "", description: "", icon: "" },
+            (it, set) => (<><TextField label="Title" value={String(it["title"] ?? "")} onChange={(v) => set({ title: v } as never)} /><AreaField label="Description" value={String(it["description"] ?? "")} onChange={(v) => set({ description: v } as never)} /></>))}
+        </>
+      )}
+      {section.type === "faq" && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          {listEditor("items", "Questions", "Question", { q: "", a: "" },
+            (it, set) => (<><TextField label="Question" value={String(it["q"] ?? "")} onChange={(v) => set({ q: v } as never)} /><AreaField label="Answer" value={String(it["a"] ?? "")} onChange={(v) => set({ a: v } as never)} /></>))}
+        </>
+      )}
       {(section.type === "cta") && (
-        <><TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} /><AreaField label="Description" value={str("description")} onChange={(v) => onChange({ description: v })} /></>
+        <><TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} /><AreaField label="Description" value={str("description")} onChange={(v) => onChange({ description: v })} />
+        <div className="grid grid-cols-2 gap-2">
+          <TextField label="Primary button" value={str("primaryCta")} onChange={(v) => onChange({ primaryCta: v })} />
+          <TextField label="Secondary button" value={str("secondaryCta")} onChange={(v) => onChange({ secondaryCta: v })} />
+        </div></>
       )}
       {(section.type === "logos") && (
         <><TextField label="Heading" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
@@ -494,6 +637,7 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
       )}
       {(section.type === "contact") && (
         <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
           <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
           <TextField label="Email" value={str("email")} onChange={(v) => onChange({ email: v })} />
           <TextField label="Phone" value={str("phone")} onChange={(v) => onChange({ phone: v })} />
@@ -504,8 +648,45 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
       {(section.type === "footer") && (
         <><TextField label="Tagline" value={str("tagline")} onChange={(v) => onChange({ tagline: v })} /><TextField label="Copyright" value={str("copyright")} onChange={(v) => onChange({ copyright: v })} /></>
       )}
-      {(section.type === "menu" || section.type === "hours") && (
-        <p className="rounded-lg bg-neutral-50 p-2.5 text-xs text-neutral-500">Structured editing for this section lives in the right panel. Use enable / variant controls there.</p>
+      {(section.type === "menu") && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          {listEditor("groups", "Menu groups", "Group", { name: "New group", items: [] },
+            (g, setG) => {
+              const items = (Array.isArray(g["items"]) ? g["items"] as { name: string; description: string; price: string }[] : []);
+              const setItems = (next: { name: string; description: string; price: string }[]) => setG({ items: next } as never);
+              return (<>
+                <TextField label="Group name" value={String(g["name"] ?? "")} onChange={(v) => setG({ name: v } as never)} />
+                <div className="space-y-2 rounded-lg bg-neutral-50 p-2">
+                  {items.map((it, j) => (
+                    <div key={j} className="space-y-1.5 rounded-md border border-neutral-200 bg-white p-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-semibold text-neutral-500">Dish #{j + 1}</span>
+                        <span className="flex gap-1">
+                          <button onClick={() => setItems(items.filter((_, k) => k !== j))} className="rounded border border-neutral-200 px-1.5 py-0.5 text-[11px] text-red-600">✕</button>
+                        </span>
+                      </div>
+                      <TextField label="Dish" value={String(it.name ?? "")} onChange={(v) => setItems(items.map((x, k) => (k === j ? { ...x, name: v } : x)))} />
+                      <AreaField label="Description" value={String(it.description ?? "")} onChange={(v) => setItems(items.map((x, k) => (k === j ? { ...x, description: v } : x)))} />
+                      <TextField label="Price" value={String(it.price ?? "")} onChange={(v) => setItems(items.map((x, k) => (k === j ? { ...x, price: v } : x)))} />
+                    </div>
+                  ))}
+                  <button onClick={() => setItems([...items, { name: "New dish", description: "", price: "" }])} className="w-full rounded-md bg-neutral-900 px-2 py-1 text-[11px] font-medium text-white">+ Add dish</button>
+                </div>
+              </>);
+            })}
+        </>
+      )}
+      {(section.type === "hours") && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          <TextField label="Address" value={str("address")} onChange={(v) => onChange({ address: v })} />
+          <TextField label="Phone" value={str("phone")} onChange={(v) => onChange({ phone: v })} />
+          {listEditor("rows", "Opening hours", "Row", { day: "", time: "" },
+            (it, set) => (<div className="grid grid-cols-2 gap-2"><TextField label="Days" value={String(it["day"] ?? "")} onChange={(v) => set({ day: v } as never)} /><TextField label="Hours" value={String(it["time"] ?? "")} onChange={(v) => set({ time: v } as never)} /></div>))}
+        </>
       )}
       {/* allow raw variant note */}
       <details className="text-xs text-neutral-400"><summary className="cursor-pointer">Advanced</summary><pre className="mt-1 max-h-40 overflow-auto rounded bg-neutral-900 p-2 text-[10px] text-neutral-200">{JSON.stringify(c, null, 1).slice(0, 1500)}</pre>
@@ -516,18 +697,24 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
 }
 
 // ─── Sections panel ───
-function SectionsPanel({ config, selectedId, onSelect, onToggle, onMove, onRemove, onDuplicate, onAdd, pageLabel }: {
+function SectionsPanel({ config, selectedId, onSelect, onToggle, onMove, onRemove, onDuplicate, onAdd, onReorder, pageLabel }: {
   config: WebsiteConfig; selectedId: string | null; onSelect: (id: string) => void;
-  onToggle: (id: string) => void; onMove: (id: string, d: -1 | 1) => void; onRemove: (id: string) => void; onDuplicate: (id: string) => void; onAdd: (t: SectionType) => void; pageLabel: string;
+  onToggle: (id: string) => void; onMove: (id: string, d: -1 | 1) => void; onRemove: (id: string) => void; onDuplicate: (id: string) => void; onAdd: (t: SectionType) => void; onReorder: (fromId: string, toId: string) => void; pageLabel: string;
 }) {
   const [dragId, setDragId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
   return (
     <div className="space-y-2">
       <p className="mono-meta px-1 text-[10.5px] font-semibold uppercase" style={{ letterSpacing: "0.12em", color: "var(--ink-3)" }}>Sections · {pageLabel}</p>
       {config.sections.map((s) => (
-        <div key={s.id} draggable onDragStart={() => setDragId(s.id)} onDragOver={(e) => e.preventDefault()} onDrop={() => { /* simple: move via order */ setDragId(null); }}
+        <div key={s.id} draggable
+          onDragStart={(e) => { setDragId(s.id); e.dataTransfer.effectAllowed = "move"; }}
+          onDragOver={(e) => { e.preventDefault(); if (overId !== s.id) setOverId(s.id); }}
+          onDragLeave={() => { if (overId === s.id) setOverId(null); }}
+          onDrop={(e) => { e.preventDefault(); if (dragId && dragId !== s.id) onReorder(dragId, s.id); setDragId(null); setOverId(null); }}
+          onDragEnd={() => { setDragId(null); setOverId(null); }}
           onClick={() => onSelect(s.id)}
-          className={`flex items-center gap-2 rounded-lg border px-2.5 py-2 text-[13px] ${selectedId === s.id ? "border-neutral-900" : "border-neutral-200"} ${s.enabled ? "bg-white" : "bg-neutral-50 opacity-60"}`}>
+          className={`flex items-center gap-2 rounded-lg border px-2.5 py-2 text-[13px] ${selectedId === s.id ? "border-neutral-900" : "border-neutral-200"} ${s.enabled ? "bg-white" : "bg-neutral-50 opacity-60"} ${overId === s.id && dragId ? "ring-2 ring-neutral-400" : ""}`}>
           <span className="cursor-grab text-neutral-400">☰</span>
           <span className="font-medium">{SECTION_META[s.type]?.label}</span>
           <span className="text-[11px] text-neutral-400">{s.variant}</span>
@@ -548,7 +735,7 @@ function SectionsPanel({ config, selectedId, onSelect, onToggle, onMove, onRemov
           ))}
         </div>
       </div>
-      {dragId && <p className="text-[11px] text-neutral-400">Drag to reorder — use ↑ ↓ for precise placement.</p>}
+      {dragId && <p className="text-[11px] text-neutral-400">Drop on a section to move it there — or use ↑ ↓.</p>}
     </div>
   );
 }
@@ -605,7 +792,8 @@ function PagesPanel({ config, activePageId, onSwitch, onAdd, onRename, onRemove,
           ) : (
             <div className="flex gap-1.5 px-2.5 pb-2">
               <button onClick={() => startEdit(p)} className="text-[11px] underline opacity-60">Rename / path</button>
-              <a href={`/s/${siteSlug}/${p.path}`} target="_blank" className="text-[11px] underline opacity-60">Visit ↗</a>
+              <Link href={`/s/${siteSlug}/${p.path}`} target="_blank" className="text-[11px] underline opacity-60">Visit ↗</Link>
+              {p.sections.length === 0 && <span className="ml-auto rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800">Empty — will 404 until you add sections</span>}
             </div>
           )}
         </div>
@@ -665,6 +853,7 @@ function DesignPanel({ theme, onPatch, customCss, onCustomCss }: { theme: ThemeC
           <label className="text-xs">Body size<input type="range" min={14} max={19} step={1} value={theme.bodySize} onChange={(e) => onPatch({ bodySize: Number(e.target.value) })} className="w-full" /></label>
           <label className="text-xs">Line height<input type="range" min={1.4} max={1.9} step={0.05} value={theme.lineHeight} onChange={(e) => onPatch({ lineHeight: Number(e.target.value) })} className="w-full" /></label>
           <label className="text-xs">Radius ({theme.radius}px)<input type="range" min={0} max={24} step={2} value={theme.radius} onChange={(e) => onPatch({ radius: Number(e.target.value) })} className="w-full" /></label>
+          <label className="col-span-2 text-xs">Letter spacing ({theme.letterSpacing.toFixed(3)}em)<input type="range" min={-0.02} max={0.12} step={0.005} value={theme.letterSpacing} onChange={(e) => onPatch({ letterSpacing: Number(e.target.value) })} className="w-full" /></label>
         </div>
       </div>
       <div>
@@ -711,13 +900,38 @@ function SeoPanel({ config, onCommit, demo }: { config: WebsiteConfig; onCommit:
 function SettingsPanel({ site, config, onCommit, onSite }: { site: WebsiteRecord; config: WebsiteConfig; onCommit: (c: WebsiteConfig) => void; onSite: (s: WebsiteRecord) => void }) {
   const [slug, setSlug] = useState(site.slug);
   const [domain, setDomain] = useState(site.customDomain || "");
+  const [siteDesc, setSiteDesc] = useState(config.siteDescription || "");
   const [msg, setMsg] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [syncedSlug, setSyncedSlug] = useState(site.slug);
+  const [syncedDomain, setSyncedDomain] = useState(site.customDomain || "");
+  const [syncedDesc, setSyncedDesc] = useState(config.siteDescription || "");
+  // Re-sync when the site changes elsewhere (e.g. after a save returns a
+  // normalized slug) so inputs never show stale values. State is adjusted
+  // during render (not in an effect) per React docs.
+  if (site.slug !== syncedSlug) { setSyncedSlug(site.slug); setSlug(site.slug); }
+  if ((site.customDomain || "") !== syncedDomain) { setSyncedDomain(site.customDomain || ""); setDomain(site.customDomain || ""); }
+  if ((config.siteDescription || "") !== syncedDesc) { setSyncedDesc(config.siteDescription || ""); setSiteDesc(config.siteDescription || ""); }
 
   async function saveMeta() {
     setMsg("Saving…");
-    const res = await fetch(`/api/websites/${site.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug, customDomain: domain, name: config.siteName, config }) });
-    const data = await res.json();
-    if (res.ok) { onSite(data.website); setMsg("Saved."); } else setMsg(data.error || "Failed.");
+    setSaving(true);
+    try {
+      const cleanDomain = domain.trim().toLowerCase();
+      const res = await fetch(`/api/websites/${site.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: slug.trim().toLowerCase(), customDomain: cleanDomain || undefined, name: config.siteName, config: { ...config, siteDescription: siteDesc } }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error((data as { error?: string }).error || "Failed.");
+      const website = (data as { website: WebsiteRecord }).website;
+      onSite(website);
+      onCommit({ ...config, siteDescription: website.config.siteDescription ?? siteDesc });
+      setSlug(website.slug);
+      setDomain(website.customDomain || "");
+      setMsg("Saved.");
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : "Failed.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -734,15 +948,19 @@ function SettingsPanel({ site, config, onCommit, onSite }: { site: WebsiteRecord
         <p className="mt-1 text-[11px] text-neutral-500">Live at /s/{site.slug}</p>
       </div>
       <div>
+        <label className="mb-1 block text-xs font-medium">Site description (search + fallback)</label>
+        <textarea value={siteDesc} onChange={(e) => setSiteDesc(e.target.value)} rows={2} placeholder="What is this site about?" className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px]" />
+      </div>
+      <div>
         <label className="mb-1 block text-xs font-medium">Google Analytics ID (optional)</label>
-        <input value={config.analyticsId || ""} onChange={(e) => onCommit({ ...config, analyticsId: e.target.value })} placeholder="G-XXXXXXX" className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px]" />
+        <input value={config.analyticsId || ""} onChange={(e) => onCommit({ ...config, analyticsId: e.target.value.trim() })} placeholder="G-XXXXXXX" className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px]" />
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium">Custom domain (optional)</label>
         <input value={domain} onChange={(e) => setDomain(e.target.value)} placeholder="www.yourdomain.com" className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px]" />
-        {domain && <div className="mt-2 rounded-lg bg-amber-50 p-2.5 text-[11px] text-amber-900">Status: waiting for DNS. Add: CNAME www → sites.create.io</div>}
+        {domain && <div className="mt-2 rounded-lg bg-amber-50 p-2.5 text-[11px] text-amber-900">Status: waiting for DNS. Add: CNAME www → sites.create.io. Custom-domain serving is not enabled on this build — the site stays live at /s/{site.slug}.</div>}
       </div>
-      <button onClick={saveMeta} className="w-full rounded-lg bg-neutral-900 py-2 text-[13px] font-medium text-white">Save settings</button>
+      <button onClick={saveMeta} disabled={saving} className="w-full rounded-lg bg-neutral-900 py-2 text-[13px] font-medium text-white disabled:opacity-60">{saving ? "Saving…" : "Save settings"}</button>
       {msg && <p className="text-xs text-neutral-500">{msg}</p>}
       <div className="rounded-lg bg-neutral-50 p-3 text-[11px] leading-relaxed text-neutral-500">
         Shortcuts: Ctrl/Cmd+Z undo · Ctrl/Cmd+Shift+Z redo · Ctrl/Cmd+S save.
@@ -752,10 +970,9 @@ function SettingsPanel({ site, config, onCommit, onSite }: { site: WebsiteRecord
 }
 
 // ─── Right inspector ───
-function SectionInspector({ section, theme, templateId, demo, onPatch, onTheme }: {
-  section: SectionInstance; theme: ThemeConfig; templateId: string; demo?: boolean; onPatch: (fn: (s: SectionInstance) => SectionInstance) => void; onTheme: (p: Partial<ThemeConfig>) => void;
+function SectionInspector({ section, templateId, demo, onPatch }: {
+  section: SectionInstance; templateId: string; demo?: boolean; onPatch: (fn: (s: SectionInstance) => SectionInstance) => void;
 }) {
-  void theme; void onTheme;
   const meta = SECTION_META[section.type];
   const signature = isBespoke(templateId, section.type, section.variant);
   return (

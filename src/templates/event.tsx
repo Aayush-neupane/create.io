@@ -2,7 +2,7 @@
  * Utsav — bespoke predesigned library for events.
  * Festival system: date badges, marquee ticker, ticket stubs, lineup grid.
  */
-import type { SectionType, ThemeConfig } from "@/types/builder";
+import type { SectionType } from "@/types/builder";
 import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTemplate } from "@/lib/templates";
+import { TEMPLATES } from "@/lib/templates";
 import { buildConfigFromTemplate, baseTheme } from "@/lib/website-defaults";
 import { TemplateRenderer } from "@/components/templates/Renderer";
 import { Button } from "@/components/ui/controls";
@@ -14,11 +14,8 @@ export default async function TemplatePreviewPage({
 }) {
   const { id } = await params;
   const sp = await searchParams;
-  const tpl = getTemplate(id);
-  if (!tpl || (id !== tpl.id && !["minimal-portfolio","creative-portfolio","professional-business","restaurant","agency","saas-starter"].includes(id))) {
-    // allow fallback but 404 if unknown and not default
-    if (id !== tpl.id) notFound();
-  }
+  const tpl = TEMPLATES.find((t) => t.id === id);
+  if (!tpl) notFound();
   const device = (sp.device as "desktop" | "tablet" | "mobile") || "desktop";
   const config = buildConfigFromTemplate(
     tpl.id,

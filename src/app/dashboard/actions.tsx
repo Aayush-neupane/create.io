@@ -1,14 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function DashboardActions({ compact, id, slug }: { compact?: boolean; id?: string; slug?: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
 
   async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // Logout is idempotent — still navigate home.
+    }
     router.push("/");
     router.refresh();
   }
@@ -16,26 +22,45 @@ export function DashboardActions({ compact, id, slug }: { compact?: boolean; id?
   async function duplicate() {
     if (!id) return;
     setBusy(true);
-    const res = await fetch(`/api/websites/${id}/duplicate`, { method: "POST" });
-    setBusy(false);
-    if (res.ok) router.refresh();
+    setErr("");
+    try {
+      const res = await fetch(`/api/websites/${id}/duplicate`, { method: "POST" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error((data as { error?: string }).error || "Could not duplicate.");
+      router.refresh();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Could not duplicate.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function remove() {
     if (!id) return;
     if (!confirm("Delete this website? This cannot be undone.")) return;
     setBusy(true);
-    await fetch(`/api/websites/${id}`, { method: "DELETE" });
-    setBusy(false);
-    router.refresh();
+    setErr("");
+    try {
+      const res = await fetch(`/api/websites/${id}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error((data as { error?: string }).error || "Could not delete.");
+      router.refresh();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Could not delete.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   if (compact && id) {
     return (
-      <div className="mt-2 flex gap-2 text-[13px]">
-        <button onClick={duplicate} disabled={busy} className="flex-1 rounded-lg bg-neutral-100 py-1.5 font-medium text-neutral-700 hover:bg-neutral-200">Duplicate</button>
-        <button onClick={remove} disabled={busy} className="flex-1 rounded-lg bg-neutral-100 py-1.5 font-medium text-red-700 hover:bg-red-100">Delete</button>
-        {slug && <a href={`/s/${slug}`} target="_blank" className="flex-1 rounded-lg bg-neutral-100 py-1.5 text-center font-medium text-neutral-700">Visit</a>}
+      <div className="mt-2 text-[13px]">
+        <div className="flex gap-2">
+          <button onClick={duplicate} disabled={busy} className="flex-1 rounded-lg bg-neutral-100 py-1.5 font-medium text-neutral-700 hover:bg-neutral-200 disabled:opacity-60">Duplicate</button>
+          <button onClick={remove} disabled={busy} className="flex-1 rounded-lg bg-neutral-100 py-1.5 font-medium text-red-700 hover:bg-red-100 disabled:opacity-60">Delete</button>
+          {slug && <Link href={`/s/${slug}`} target="_blank" className="flex-1 rounded-lg bg-neutral-100 py-1.5 text-center font-medium text-neutral-700">Visit</Link>}
+        </div>
+        {err && <p className="mt-1.5 text-xs text-red-600">{err}</p>}
       </div>
     );
   }

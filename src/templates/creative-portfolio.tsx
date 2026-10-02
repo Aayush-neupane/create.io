@@ -2,7 +2,7 @@
  * Creative Portfolio — bespoke predesigned library.
  * Darkroom system: near-black canvas, serif display, frame numbers, white-on-dark poster.
  */
-import type { SectionType, ThemeConfig } from "@/types/builder";
+import type { SectionType } from "@/types/builder";
 import { fontStack, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";

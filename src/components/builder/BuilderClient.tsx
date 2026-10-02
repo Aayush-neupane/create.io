@@ -60,7 +60,8 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
   const [dragId, setDragId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
   // Element mode: pick single buttons / headers / text / photos on the canvas.
-  const [elMode, setElMode] = useState(false);
+  // On by default — direct manipulation is the primary way to edit.
+  const [elMode, setElMode] = useState(true);
   const [elSel, setElSel] = useState<{ sectionId: string; key: string; x: number; y: number } | null>(null);
   const hotRef = useRef<Element | null>(null);
   const itemDragRef = useRef<string | null>(null);
@@ -304,8 +305,9 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
       cleanupTags();
       if (hotRef.current) { hotRef.current.classList.remove("el-hot"); hotRef.current = null; }
     };
+    // `mounted` matters: demo first renders a loader, so tag once the preview exists.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [elMode, selectedId, config]);
+  }, [elMode, selectedId, config, mounted]);
 
   const activePage = useMemo(() => (config.pages ?? []).find((p) => p.id === activePageId) ?? null, [config, activePageId]);
   const activeSections = activePage ? activePage.sections : config.sections;
@@ -598,7 +600,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
             <div className={`relative mx-auto overflow-hidden rounded-2xl border bg-white transition-all ${previewWidth}`} style={{ borderColor: "var(--line-2)", boxShadow: "0 30px 80px -40px rgba(23,23,27,.35)" }}>
               {!selected && (
                 <p className="mono-meta absolute left-1/2 top-3 z-30 -translate-x-1/2 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-semibold" style={{ background: "var(--ink)", color: "#fff" }}>
-                  Click any section to edit it
+                  {elMode ? "Click any button, title or photo to edit it · drag cards to move them" : "Click any section to edit it"}
                 </p>
               )}
               <div className="builder-preview">

@@ -1,6 +1,6 @@
 /**
  * Forge — bespoke predesigned library.
- * Brutalist gym system: volt-on-charcoal masthead, giant condensed hero,
+ * Brutalist gym system: brick-on-charcoal masthead, giant condensed hero,
  * dark membership pricing. No soft corners, no apologies.
  */
 import type { SectionType } from "@/types/builder";
@@ -22,9 +22,11 @@ const Navbar: C = ({ content, theme, pages }) => {
         <div className="hidden gap-7 text-[13px] font-bold uppercase tracking-wider md:flex" style={{ color: theme.muted }}>
           {links.map((l, i) => <a key={i} href={l.href} className="transition-colors hover:text-white">{l.label}</a>)}
         </div>
-        <a href={str(content.ctaHref) || "#contact"} className="rounded-sm px-4 py-2 text-[13px] font-black uppercase tracking-wide transition-transform duration-200 hover:-translate-y-px" style={{ background: theme.accent, color: "#0b0d0c" }}>
-          {str(content.cta) || "Join now"}
-        </a>
+        {str(content.cta) ? (
+          <a href={str(content.ctaHref) || "#contact"} className="rounded-sm px-4 py-2 text-[13px] font-black uppercase tracking-wide transition-transform duration-200 hover:-translate-y-px" style={{ background: theme.accent, color: "#0b0d0c" }}>
+            {str(content.cta)}
+          </a>
+        ) : null}
       </div>
     </nav>
   );
@@ -34,18 +36,24 @@ const Hero: C = ({ content, theme }) => (
   <section className="relative overflow-hidden" style={{ background: theme.background }}>
     <div className={`mx-auto px-6 pb-14 pt-16 md:pb-20 md:pt-24 ${containerWidth(theme)}`}>
       <p className="inline-block rounded-sm px-3 py-1 font-mono text-xs font-bold uppercase" style={{ background: theme.accent, color: "#0b0d0c", letterSpacing: "0.18em" }}>{str(content.eyebrow, "Lazimpat · Est. 2018")}</p>
-      <h1 className="mt-5 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(4rem * ${theme.headingScale})`, fontWeight: 800, lineHeight: 0.95, letterSpacing: "-0.01em" }}>
+      <h1 className="mt-5 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `clamp(2.6rem, 11vw, calc(4rem * ${theme.headingScale}))`, fontWeight: 800, lineHeight: 0.95, letterSpacing: "-0.01em" }}>
         {str(content.title, "Strong looks good on you")}
       </h1>
       <p className="mt-5 max-w-xl text-[15px] leading-relaxed" style={{ color: theme.muted }}>{str(content.description)}</p>
       <div className="mt-8 flex flex-wrap gap-3">
-        <a href={str(content.primaryHref) || "#contact"} className="t-btn rounded-sm px-7 py-3.5 text-sm font-black uppercase tracking-wide" style={{ background: theme.accent, color: "#0b0d0c" }}>{str(content.primaryCta, "Claim free week")}</a>
-        {str(content.secondaryCta) && <a href={str(content.secondaryHref) || "#work"} className="t-btn rounded-sm border border-white/25 px-7 py-3.5 text-sm font-bold uppercase tracking-wide">{str(content.secondaryCta)}</a>}
+        {str(content.primaryCta) ? <a href={str(content.primaryHref) || "#contact"} className="t-btn rounded-sm px-7 py-3.5 text-sm font-black uppercase tracking-wide" style={{ background: theme.accent, color: "#0b0d0c" }}>{str(content.primaryCta)}</a> : null}
+        {str(content.secondaryCta) && <a href={str(content.secondaryHref) || "#gallery"} className="t-btn rounded-sm border border-white/25 px-7 py-3.5 text-sm font-bold uppercase tracking-wide">{str(content.secondaryCta)}</a>}
       </div>
       {str(content.image) && <img src={str(content.image)} alt={str(content.title)} loading="lazy" decoding="async" className="mt-10 aspect-[16/7] w-full object-cover" style={{ borderRadius: theme.radius }} />}
     </div>
-    <div className="overflow-hidden border-y border-white/10 py-2.5" aria-hidden>
-      <p className="whitespace-nowrap font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>No shortcuts · Just reps · No shortcuts · Just reps · No shortcuts · Just reps</p>
+    <div className="marquee overflow-hidden border-y border-white/10 py-2.5" aria-hidden>
+      <div className="marquee-track">
+        {[0, 1].map((dup) => (
+          <span key={dup} className="whitespace-nowrap font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>
+            No shortcuts · Just reps · No shortcuts · Just reps · No shortcuts · Just reps ·&nbsp;
+          </span>
+        ))}
+      </div>
     </div>
   </section>
 );
@@ -53,7 +61,7 @@ const Hero: C = ({ content, theme }) => (
 const Pricing: C = ({ content, theme }) => {
   const items = arr<{ name: string; price: string; period: string; description: string; features: string[]; featured: boolean }>(content.items);
   return (
-    <section className={sectionPad(theme)}>
+    <section id="pricing" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.22em", color: theme.accent }}>{str(content.heading, "Membership")}</p>
         <h2 className="mt-2 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "Pick your poison")}</h2>
@@ -99,7 +107,7 @@ const Stats: C = ({ content, theme }) => {
 const Team: C = ({ content, theme }) => {
   const members = arr<{ name: string; role: string; photo: string; bio: string }>(content.members);
   return (
-    <section className={sectionPad(theme)}>
+    <section id="team" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.22em", color: theme.accent }}>{str(content.heading, "Coaches")}</p>
         <h2 className="mt-2 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title)}</h2>
@@ -130,7 +138,7 @@ const Team: C = ({ content, theme }) => {
 const Gallery: C = ({ content, theme }) => {
   const images = arr<string>(content.images);
   return (
-    <section className={sectionPad(theme)} style={{ background: theme.surface }}>
+    <section id="gallery" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h2 className="uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "The floor")}</h2>
@@ -177,14 +185,14 @@ const Faq: C = ({ content, theme }) => {
 };
 
 const Cta: C = ({ content, theme }) => (
-  <section className={sectionPad(theme)}>
+  <section id="contact" className={sectionPad(theme)}>
     <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
       <div className="relative overflow-hidden px-8 py-14 text-center md:py-20" style={{ borderRadius: theme.radius, background: theme.accent, color: "#0b0d0c" }}>
         <p aria-hidden className="pointer-events-none absolute inset-x-0 top-3 whitespace-nowrap font-mono text-xs font-black uppercase opacity-40" style={{ letterSpacing: "0.3em" }}>No card · No excuses · No card · No excuses</p>
         <h2 className="mx-auto mt-4 max-w-2xl uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.6rem * ${theme.headingScale})`, fontWeight: 800, lineHeight: 0.98 }}>{str(content.title)}</h2>
         {str(content.description) && <p className="mx-auto mt-4 max-w-xl font-medium opacity-80">{str(content.description)}</p>}
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <a href={str(content.primaryHref) || "#contact"} className="t-btn rounded-sm bg-black px-7 py-3.5 text-sm font-black uppercase tracking-wide text-white">{str(content.primaryCta, "Claim free week")}</a>
+          {str(content.primaryCta) ? <a href={str(content.primaryHref) || "#contact"} className="t-btn rounded-sm bg-black px-7 py-3.5 text-sm font-black uppercase tracking-wide text-white">{str(content.primaryCta)}</a> : null}
           {str(content.secondaryCta) && <a href={str(content.secondaryHref) || "#contact"} className="t-btn rounded-sm border-2 border-black/70 px-7 py-3.5 text-sm font-black uppercase tracking-wide">{str(content.secondaryCta)}</a>}
         </div>
       </div>
@@ -208,7 +216,7 @@ const Footer: C = ({ content, theme }) => (
 );
 
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
-  navbar: { logo: "Forge", links: [{ label: "Coaches", href: "#team" }, { label: "Plans", href: "#pricing" }, { label: "Stories", href: "#testimonials" }, { label: "Join", href: "#contact" }], cta: "Join now", ctaHref: "#contact" },
+  navbar: { logo: "Forge", links: [{ label: "Coaches", href: "#team" }, { label: "Plans", href: "#pricing" }, { label: "The gym", href: "#gallery" }, { label: "Join", href: "#contact" }], cta: "Join now", ctaHref: "#contact" },
   banner: { message: "First week free for new members — no card required", linkLabel: "Claim", linkHref: "#contact" },
   hero: {
     eyebrow: "Lazimpat · Est. 2018", title: "Strong looks good on you", subtitle: "",

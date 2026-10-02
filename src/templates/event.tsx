@@ -21,10 +21,14 @@ const Navbar: C = ({ content, theme, pages }) => {
         <div className="hidden gap-6 text-[13px] font-semibold md:flex">
           {links.map((l, i) => <a key={i} href={l.href} className="opacity-80 hover:opacity-100">{l.label}</a>)}
         </div>
-        <a href="#contact" className="rounded-full bg-white px-4 py-2 text-[13px] font-bold" style={{ color: theme.primary }}>{str(content.cta) || "Get tickets"}</a>
+        {str(content.cta) ? <a href="#contact" className="rounded-full bg-white px-4 py-2 text-[13px] font-bold" style={{ color: theme.primary }}>{str(content.cta)}</a> : null}
       </div>
-      <div className="overflow-hidden whitespace-nowrap border-t border-white/20 py-1.5 font-mono text-[11px] uppercase" style={{ letterSpacing: "0.2em" }}>
-        <span>Live music · Food stalls · Thangka market · Kids zone · Live music · Food stalls · Thangka market · Kids zone ·&nbsp;</span>
+      <div className="marquee overflow-hidden whitespace-nowrap border-t border-white/20 py-1.5 font-mono text-[11px] uppercase" style={{ letterSpacing: "0.2em" }}>
+        <div className="marquee-track">
+          {[0, 1].map((dup) => (
+            <span key={dup}>Live music · Food stalls · Thangka market · Kids zone · Live music · Food stalls · Thangka market · Kids zone ·&nbsp;</span>
+          ))}
+        </div>
       </div>
     </nav>
   );
@@ -36,7 +40,7 @@ const Hero: C = ({ content, theme }) => {
     <section className="relative overflow-hidden" style={{ background: theme.primary, color: "#fff" }}>
       <div className={`mx-auto px-6 pb-14 pt-16 text-center md:pt-20 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.eyebrow)}</p>
-        <h1 className="mx-auto mt-4 max-w-4xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(3.8rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 0.98 }}>
+        <h1 className="mx-auto mt-4 max-w-4xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `clamp(2.4rem, 10vw, calc(3.8rem * ${theme.headingScale}))`, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 0.98 }}>
           {str(content.title)}
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-[15px] opacity-80">{str(content.description)}</p>
@@ -46,7 +50,7 @@ const Hero: C = ({ content, theme }) => {
           ))}
         </div>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <a href="#contact" className={`${btnRadius(theme)} px-7 py-3 text-sm font-bold`} style={{ background: theme.accent, color: theme.primary }}>{str(content.primaryCta, "Get tickets")}</a>
+          {str(content.primaryCta) ? <a href="#contact" className={`${btnRadius(theme)} px-7 py-3 text-sm font-bold`} style={{ background: theme.accent, color: theme.primary }}>{str(content.primaryCta)}</a> : null}
           <a href="#work" className={`${btnRadius(theme)} border border-white/40 px-7 py-3 text-sm font-semibold`}>Lineup</a>
         </div>
       </div>
@@ -200,7 +204,7 @@ const Logos: C = ({ content, theme }) => {
   return (
     <section className="overflow-hidden border-y border-white/15 py-7" style={{ background: theme.primary, color: "#fff" }}>
       <p className="text-center font-mono text-[11px] font-bold uppercase" style={{ letterSpacing: "0.26em", opacity: 0.7 }}>{str(content.heading, "On stage & decks")}</p>
-      <div className="mt-4 flex items-baseline justify-center gap-8 overflow-x-auto whitespace-nowrap px-6" aria-hidden>
+      <div className="mt-4 flex items-baseline justify-start gap-8 overflow-x-auto whitespace-nowrap px-6 md:justify-center" aria-hidden>
         {items.map((name, i) => (
           <span key={i} className="flex-none italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: i % 2 ? "1.1rem" : "1.7rem", fontWeight: 600, opacity: i % 2 ? 0.65 : 1 }}>{name}<span className="ml-8 not-italic" style={{ color: theme.accent }}>✦</span></span>
         ))}

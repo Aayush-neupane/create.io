@@ -37,8 +37,8 @@ const Hero: C = ({ content, theme }) => (
       </h1>
       <p className="mx-auto mt-3 max-w-xl text-[15px] opacity-80">{str(content.description)}</p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <a href="#contact" className={`${btnRadius(theme)} px-6 py-3 text-sm font-bold`} style={{ background: "#fff8ef", color: theme.primary }}>{str(content.primaryCta, "Reserve a table")}</a>
-        <a href="#menu" className={`${btnRadius(theme)} border border-white/40 px-6 py-3 text-sm font-semibold`}>{str(content.secondaryCta, "See the menu")}</a>
+        {str(content.primaryCta) ? <a href="#contact" className={`${btnRadius(theme)} px-6 py-3 text-sm font-bold`} style={{ background: "#fff8ef", color: theme.primary }}>{str(content.primaryCta)}</a> : null}
+        {str(content.secondaryCta) ? <a href="#menu" className={`${btnRadius(theme)} border border-white/40 px-6 py-3 text-sm font-semibold`}>{str(content.secondaryCta)}</a> : null}
       </div>
       {str(content.image) && <img src={str(content.image)} alt="" className="mx-auto mt-10 aspect-[16/7] max-w-4xl object-cover" style={{ borderRadius: theme.radius * 1.5 }} />}
     </div>

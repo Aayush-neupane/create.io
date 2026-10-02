@@ -36,6 +36,9 @@ export interface SectionInstance {
   enabled: boolean;
   /** Tinted band behind the section (alternating rhythm). */
   band?: boolean;
+  /** Per-section overrides — only this section changes, the rest of
+   *  the site keeps the site theme. Any subset of keys; all optional. */
+  themeOverride?: Partial<Pick<ThemeConfig, "primary" | "background" | "surface" | "text" | "muted" | "accent" | "headingScale" | "sectionSpacing">>;
   content: SectionContent;
 }
 

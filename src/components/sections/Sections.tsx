@@ -122,9 +122,11 @@ export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: 
           <div className="hidden gap-7 text-[13px] font-medium md:flex">
             {links.map((l, i) => <a key={i} href={l.href} className="opacity-80 transition-opacity hover:opacity-100">{l.label}</a>)}
           </div>
-          <a href={str((s.content as { ctaHref?: string }).ctaHref) || "#contact"} className={`${btnRadius(theme)} t-btn bg-white px-4 py-2 text-[13px] font-bold`} style={{ color: theme.primary }}>
-            {str(c.cta) || "Start a project"}
-          </a>
+          {str(c.cta) ? (
+            <a href={str((s.content as { ctaHref?: string }).ctaHref) || "#contact"} className={`${btnRadius(theme)} t-btn bg-white px-4 py-2 text-[13px] font-bold`} style={{ color: theme.primary }}>
+              {str(c.cta)}
+            </a>
+          ) : null}
         </div>
         <div className="h-px bg-white/15" />
       </nav>
@@ -184,11 +186,11 @@ export function HeroSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
   const stats = arr<{ value: string; label: string }>(c.stats);
   const primaryHref = str(c.primaryHref) || "#work";
   const secondaryHref = str(c.secondaryHref) || "#contact";
-  const primary = (
+  const primary = str(c.primaryCta) ? (
     <a href={primaryHref} className={`${btnRadius(theme)} t-btn inline-flex px-5 py-2.5 text-sm font-semibold text-white`} style={{ background: theme.primary }}>
-      {str(c.primaryCta, "View my work")}
+      {str(c.primaryCta)}
     </a>
-  );
+  ) : null;
   const secondary = str(c.secondaryCta) ? (
     <a href={secondaryHref} className={`${btnRadius(theme)} t-btn inline-flex border px-5 py-2.5 text-sm font-semibold`} style={{ borderColor: theme.muted }}>
       {str(c.secondaryCta)}
@@ -242,7 +244,7 @@ export function HeroSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
           </h1>
           {str(c.description) && <p className="mt-5 max-w-xl text-[15px] leading-relaxed opacity-75">{str(c.description)}</p>}
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href={primaryHref} className={`${btnRadius(theme)} t-btn bg-white px-6 py-3 text-sm font-bold`} style={{ color: theme.primary }}>{str(c.primaryCta, "View my work")}</a>
+            {str(c.primaryCta) ? <a href={primaryHref} className={`${btnRadius(theme)} t-btn bg-white px-6 py-3 text-sm font-bold`} style={{ color: theme.primary }}>{str(c.primaryCta)}</a> : null}
             {str(c.secondaryCta) && <a href={secondaryHref} className={`${btnRadius(theme)} t-btn border border-white/40 px-6 py-3 text-sm font-semibold`}>{str(c.secondaryCta)}</a>}
           </div>
           {stats.length > 0 && (
@@ -400,6 +402,24 @@ export function AboutSection({ s, theme }: { s: SectionInstance; theme: ThemeCon
 export function SkillsSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
   const c = s.content as Record<string, unknown>;
   const skills = arr<{ name: string; level: number }>(c.skills);
+  if (s.variant === "simple") {
+    return (
+      <section className={sectionPad(theme)}>
+        <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
+          {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
+          <H theme={theme}>{str(c.title, "Skills")}</H>
+          <ul className="mt-8 grid gap-x-10 md:grid-cols-2">
+            {skills.map((sk, i) => (
+              <li key={i} className="flex items-baseline justify-between gap-4 border-b py-3 text-[15px]" style={{ borderColor: theme.surface }}>
+                <span className="font-medium">{sk.name}</span>
+                <span className="mono-meta shrink-0 text-xs" style={{ color: theme.muted }}>{sk.level}%</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
@@ -606,6 +626,27 @@ export function ProjectsSection({ s, theme }: { s: SectionInstance; theme: Theme
 export function ExperienceSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
   const c = s.content as Record<string, unknown>;
   const items = arr<{ company: string; role: string; start: string; end: string; description: string }>(c.items);
+  if (s.variant === "simple") {
+    return (
+      <section className={sectionPad(theme)}>
+        <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
+          {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
+          <H theme={theme}>{str(c.title, "Experience")}</H>
+          <div className="mt-8 divide-y" style={{ borderColor: theme.surface }}>
+            {items.map((e, i) => (
+              <div key={i} className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4">
+                <div>
+                  <h3 className="font-semibold" style={{ fontFamily: fontStack(theme.fontHeading) }}>{e.role}</h3>
+                  <p className="text-sm" style={{ color: theme.muted }}>{e.company}</p>
+                </div>
+                <span className="mono-meta text-xs" style={{ color: theme.muted }}>{e.start} — {e.end}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
@@ -754,6 +795,23 @@ export function GallerySection({ s, theme }: { s: SectionInstance; theme: ThemeC
       </section>
     );
   }
+  if (s.variant === "masonry") {
+    return (
+      <section id="gallery" className={sectionPad(theme)}>
+        <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
+          {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
+          <H theme={theme}>{str(c.title, "Gallery")}</H>
+          <div className="mt-8 columns-2 gap-3 md:columns-3 [&>*]:mb-3">
+            {images.map((img, i) => (
+              <div key={i} className="img-zoom break-inside-avoid overflow-hidden" style={{ borderRadius: theme.radius, background: theme.surface, aspectRatio: i % 3 === 1 ? "3/4" : "1/1" }}>
+                {img ? <img src={img} alt={`Gallery ${i + 1}`} loading="lazy" decoding="async" className="h-full w-full object-cover" /> : <EmptyArt theme={theme} glyph={String(i + 1).padStart(2, "0")} caption="Frame" className="h-full min-h-44" />}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section id="gallery" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
@@ -852,7 +910,7 @@ export function StatsSection({ s, theme }: { s: SectionInstance; theme: ThemeCon
     );
   }
     return (
-      <section id="gallery" className={sectionPad(theme)} style={{ background: theme.primary, color: "#fff" }}>
+      <section id="stats" className={sectionPad(theme)} style={{ background: theme.primary, color: "#fff" }}>
       <div className={`mx-auto px-6 text-center ${containerWidth(theme)}`}>
         {str(c.heading) && <p className="mb-3 font-mono text-xs font-medium uppercase opacity-70" style={{ letterSpacing: "0.2em" }}>{str(c.heading)}</p>}
         <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.8rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(c.title, "By the numbers")}</h2>
@@ -1025,7 +1083,7 @@ export function CtaSection({ s, theme }: { s: SectionInstance; theme: ThemeConfi
           <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(c.title, "Have a project in mind?")}</h2>
           {str(c.description) && <p className="mx-auto mt-3 max-w-xl opacity-80">{str(c.description)}</p>}
           <div className="mt-7 flex flex-wrap justify-center gap-3">
-            <a href={primaryHref} className={`${btnRadius(theme)} t-btn bg-white px-5 py-2.5 text-sm font-semibold`} style={{ color: theme.primary }}>{str(c.primaryCta, "Start a project")}</a>
+            {str(c.primaryCta) ? <a href={primaryHref} className={`${btnRadius(theme)} t-btn bg-white px-5 py-2.5 text-sm font-semibold`} style={{ color: theme.primary }}>{str(c.primaryCta)}</a> : null}
             {str(c.secondaryCta) && <a href={secondaryHref} className={`${btnRadius(theme)} t-btn border border-white/40 px-5 py-2.5 text-sm font-semibold`}>{str(c.secondaryCta)}</a>}
           </div>
         </div>
@@ -1036,6 +1094,25 @@ export function CtaSection({ s, theme }: { s: SectionInstance; theme: ThemeConfi
 
 export function ContactSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
   const c = s.content as Record<string, unknown>;
+  if (s.variant === "minimal") {
+    return (
+      <section id="contact" className={sectionPad(theme)}>
+        <div className={`mx-auto max-w-2xl px-6 text-center ${containerWidth(theme)}`}>
+          {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
+          <H theme={theme}>{str(c.title, "Contact")}</H>
+          {str(c.body) && <p className="mx-auto mt-3 max-w-md" style={{ color: theme.muted }}>{str(c.body)}</p>}
+          {str(c.email) && (
+            <a href={`mailto:${str(c.email)}`} className="mt-6 inline-block font-semibold underline underline-offset-8" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.4rem * ${theme.headingScale})`, letterSpacing: "-0.02em" }}>
+              {str(c.email)}
+            </a>
+          )}
+          <p className="mono-meta mt-4 text-xs" style={{ color: theme.muted }}>
+            {[str(c.phone), str(c.location)].filter(Boolean).join(" · ") || "Replies within a day"}
+          </p>
+        </div>
+      </section>
+    );
+  }
   const inner = (
     <>
       <div>

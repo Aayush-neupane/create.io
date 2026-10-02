@@ -1,3 +1,4 @@
+import type { DragEvent as RDragEvent, KeyboardEvent as RKeyboardEvent, MouseEvent as RMouseEvent } from "react";
 import type { PageConfig, SectionInstance, ThemeConfig, WebsiteConfig } from "@/types/builder";
 import {
   AboutSection, BannerSection, ContactSection, CtaSection, EducationSection, ExperienceSection, FaqSection,
@@ -38,6 +39,13 @@ export interface NavPage {
   href: string;
 }
 
+/** Effective theme for one section: site theme + that section's own color
+ *  overrides (if any). Lets a single component change color without
+ *  affecting the rest of the site. */
+export function sectionTheme(base: ThemeConfig, s: SectionInstance): ThemeConfig {
+  return s.themeOverride ? { ...base, ...s.themeOverride } : base;
+}
+
 /** Whole-site nav entries (home + subpages). Empty without a slug. */
 export function navPages(config: WebsiteConfig, slug?: string): NavPage[] {
   if (!slug) return [];
@@ -48,50 +56,134 @@ export function navPages(config: WebsiteConfig, slug?: string): NavPage[] {
 }
 
 export function renderSection(s: SectionInstance, theme: ThemeConfig, templateId?: string, pages?: NavPage[]) {
+  const t = sectionTheme(theme, s);
   if (templateId) {
     const Bespoke = getBespoke(templateId, s.type, s.variant);
-    if (Bespoke) return <Bespoke content={s.content as Record<string, unknown>} theme={theme} pages={pages} />;
+    if (Bespoke) return <Bespoke content={s.content as Record<string, unknown>} theme={t} pages={pages} />;
   }
   switch (s.type) {
-    case "navbar": return <NavbarSection s={s} theme={theme} pages={pages} />;
-    case "banner": return <BannerSection s={s} theme={theme} />;
-    case "hero": return <HeroSection s={s} theme={theme} />;
-    case "about": return <AboutSection s={s} theme={theme} />;
-    case "skills": return <SkillsSection s={s} theme={theme} />;
-    case "services": return <ServicesSection s={s} theme={theme} />;
-    case "projects": return <ProjectsSection s={s} theme={theme} />;
-    case "experience": return <ExperienceSection s={s} theme={theme} />;
-    case "education": return <EducationSection s={s} theme={theme} />;
-    case "testimonials": return <TestimonialsSection s={s} theme={theme} />;
-    case "pricing": return <PricingSection s={s} theme={theme} />;
-    case "gallery": return <GallerySection s={s} theme={theme} />;
-    case "video": return <VideoSection s={s} theme={theme} />;
-    case "stats": return <StatsSection s={s} theme={theme} />;
-    case "menu": return <MenuSection s={s} theme={theme} />;
-    case "hours": return <HoursSection s={s} theme={theme} />;
-    case "team": return <TeamSection s={s} theme={theme} />;
-    case "process": return <ProcessSection s={s} theme={theme} />;
-    case "faq": return <FaqSection s={s} theme={theme} />;
-    case "cta": return <CtaSection s={s} theme={theme} />;
-    case "logos": return <LogosSection s={s} theme={theme} />;
-    case "contact": return <ContactSection s={s} theme={theme} />;
-    case "footer": return <FooterSection s={s} theme={theme} pages={pages} />;
+    case "navbar": return <NavbarSection s={s} theme={t} pages={pages} />;
+    case "banner": return <BannerSection s={s} theme={t} />;
+    case "hero": return <HeroSection s={s} theme={t} />;
+    case "about": return <AboutSection s={s} theme={t} />;
+    case "skills": return <SkillsSection s={s} theme={t} />;
+    case "services": return <ServicesSection s={s} theme={t} />;
+    case "projects": return <ProjectsSection s={s} theme={t} />;
+    case "experience": return <ExperienceSection s={s} theme={t} />;
+    case "education": return <EducationSection s={s} theme={t} />;
+    case "testimonials": return <TestimonialsSection s={s} theme={t} />;
+    case "pricing": return <PricingSection s={s} theme={t} />;
+    case "gallery": return <GallerySection s={s} theme={t} />;
+    case "video": return <VideoSection s={s} theme={t} />;
+    case "stats": return <StatsSection s={s} theme={t} />;
+    case "menu": return <MenuSection s={s} theme={t} />;
+    case "hours": return <HoursSection s={s} theme={t} />;
+    case "team": return <TeamSection s={s} theme={t} />;
+    case "process": return <ProcessSection s={s} theme={t} />;
+    case "faq": return <FaqSection s={s} theme={t} />;
+    case "cta": return <CtaSection s={s} theme={t} />;
+    case "logos": return <LogosSection s={s} theme={t} />;
+    case "contact": return <ContactSection s={s} theme={t} />;
+    case "footer": return <FooterSection s={s} theme={t} pages={pages} />;
     default: return null;
   }
 }
 
-export function TemplateRenderer({ config, templateId, slug, pagePath }: {
+/** Builder-only drag-and-drop reorder state, owned by the builder. */
+export interface PreviewDnd {
+  dragId: string | null;
+  overId: string | null;
+  onStart: (id: string) => void;
+  onOver: (id: string | null) => void;
+  onDrop: (id: string) => void;
+  onEnd: () => void;
+}
+
+export function TemplateRenderer({ config, templateId, slug, pagePath, selectedId, onSelect, showHidden, dnd }: {
   config: WebsiteConfig; templateId?: string; slug?: string; pagePath?: string;
+  /** Builder-only: highlight + click-to-select sections in the preview. */
+  selectedId?: string | null; onSelect?: (id: string) => void;
+  /** Builder-only: render hidden sections as slim placeholder strips. */
+  showHidden?: boolean;
+  /** Builder-only: drag handles + drop targets for canvas reorder. */
+  dnd?: PreviewDnd;
 }) {
   const active = pagePath ? (config.pages ?? []).find((p) => p.path === pagePath) : undefined;
   const sections = active ? active.sections : config.sections;
   const pages = navPages(config, slug);
+  const selectable = typeof onSelect === "function";
+  const visible = sections.filter((s) => s.enabled);
+  const hidden = showHidden ? sections.filter((s) => !s.enabled) : [];
   return (
     <div lang={config.seo.language || "en"} style={wrapStyle(config.theme)} className="min-h-full">
       {config.customCss && <style>{config.customCss}</style>}
-      {sections.filter((s) => s.enabled).map((s) => (
-        <div key={s.id} style={s.band ? { background: config.theme.surface } : undefined}>{renderSection(s, config.theme, templateId, pages)}</div>
+      {visible.map((s) => (
+        <div
+          key={s.id}
+          data-section-id={s.id}
+          style={s.band ? { background: sectionTheme(config.theme, s).surface } : undefined}
+          {...(selectable ? {
+            role: "button",
+            tabIndex: 0,
+            "aria-label": `Edit ${SECTION_META[s.type]?.label ?? s.type} section`,
+            onClickCapture: (e: RMouseEvent) => { e.preventDefault(); },
+            onClick: () => (onSelect as (id: string) => void)(s.id),
+            onKeyDown: (e: RKeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); (onSelect as (id: string) => void)(s.id); } },
+            onDragOver: dnd ? (e: RDragEvent) => {
+              if (dnd.dragId && dnd.dragId !== s.id) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "move";
+                if (dnd.overId !== s.id) dnd.onOver(s.id);
+              }
+            } : undefined,
+            onDragLeave: dnd ? () => { if (dnd.overId === s.id) dnd.onOver(null); } : undefined,
+            onDrop: dnd ? (e: RDragEvent) => { e.preventDefault(); dnd.onDrop(s.id); } : undefined,
+          } : {})}
+          className={[
+            selectable ? "builder-selectable" : "",
+            selectable && selectedId === s.id ? "is-selected" : "",
+            dnd && dnd.overId === s.id ? "drop-before" : "",
+            dnd && dnd.dragId === s.id ? "is-dragging" : "",
+          ].filter(Boolean).join(" ") || undefined}
+        >
+          {selectable && (
+            <span aria-hidden className="builder-tag">{SECTION_META[s.type]?.label ?? s.type}</span>
+          )}
+          {selectable && dnd && (
+            <span
+              aria-hidden
+              title="Drag to reorder"
+              draggable
+              onDragStart={(e) => { e.stopPropagation(); try { e.dataTransfer.setData("text/plain", s.id); } catch {} e.dataTransfer.effectAllowed = "move"; dnd.onStart(s.id); }}
+              onDragEnd={() => dnd.onEnd()}
+              className="builder-grip"
+            >
+              ⠿
+            </span>
+          )}
+          {renderSection(s, config.theme, templateId, pages)}
+        </div>
       ))}
+      {hidden.length > 0 && (
+        <div className="px-6 py-6" style={{ background: "var(--paper-2)" }}>
+          <p className="mono-meta mb-2 text-[10.5px] font-semibold uppercase" style={{ letterSpacing: "0.12em", color: "var(--ink-3)" }}>
+            Hidden — invisible on your site
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {hidden.map((s) => (
+              <button
+                key={s.id}
+                data-section-id={s.id}
+                onClick={() => selectable && (onSelect as (id: string) => void)(s.id)}
+                className={`mono-meta rounded-full border border-dashed px-3 py-1.5 text-[11px] transition-colors hover:border-neutral-900 ${selectedId === s.id ? "border-neutral-900 bg-neutral-900 text-white" : "bg-white text-neutral-500"}`}
+                style={selectedId === s.id ? undefined : { borderColor: "var(--line-2)" }}
+              >
+                {SECTION_META[s.type]?.label ?? s.type} · show
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -71,7 +71,7 @@ const Hero: C = ({ content, theme }) => {
         <p className="mt-2 text-lg" style={{ color: theme.muted }}>{str(content.subtitle, "Product Designer & Developer")}</p>
         <div className="mt-6 max-w-xl text-[15px] leading-relaxed" style={{ color: theme.muted }}>{str(content.description)}</div>
         <div className="mt-8 flex gap-3">
-          <a href="#work" className={`${btnRadius(theme)} px-5 py-2.5 text-sm font-semibold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta, "Selected work ↓")}</a>
+          {str(content.primaryCta) ? <a href="#work" className={`${btnRadius(theme)} px-5 py-2.5 text-sm font-semibold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta)}</a> : null}
           {str(content.secondaryCta) && <a href="#contact" className={`${btnRadius(theme)} border px-5 py-2.5 text-sm font-semibold`} style={{ borderColor: theme.surface }}>{str(content.secondaryCta)}</a>}
         </div>
         {stats.length > 0 && (

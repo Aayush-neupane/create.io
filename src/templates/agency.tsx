@@ -21,7 +21,7 @@ const Navbar: C = ({ content, theme, pages }) => {
         <div className="hidden gap-7 text-[13px] font-semibold md:flex">
           {links.map((l, i) => <a key={i} href={l.href} className="opacity-80 hover:opacity-100">{l.label}</a>)}
         </div>
-        <a href="#contact" className="rounded-full bg-white px-4 py-2 text-[13px] font-bold" style={{ color: theme.primary }}>{str(content.cta) || "Start a project ↗"}</a>
+        {str(content.cta) ? <a href="#contact" className="rounded-full bg-white px-4 py-2 text-[13px] font-bold" style={{ color: theme.primary }}>{str(content.cta)}</a> : null}
       </div>
     </nav>
   );
@@ -33,21 +33,21 @@ const Hero: C = ({ content, theme }) => {
     <section className="relative overflow-hidden" style={{ background: theme.primary, color: "#fff" }}>
       <div className={`mx-auto px-6 pb-14 pt-16 md:pb-20 md:pt-24 ${containerWidth(theme)}`}>
         <span className="inline-block -rotate-2 rounded-full px-3 py-1 text-xs font-bold text-white" style={{ background: theme.accent }}>{str(content.eyebrow, "● Booking Q3 projects")}</span>
-        <h1 className="mt-5 max-w-5xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(3.8rem * ${theme.headingScale})`, fontWeight: 700, letterSpacing: "-0.035em", lineHeight: 0.98 }}>
+        <h1 className="mt-5 max-w-5xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `clamp(2.4rem, 10vw, calc(3.8rem * ${theme.headingScale}))`, fontWeight: 700, letterSpacing: "-0.035em", lineHeight: 0.98 }}>
           {str(content.title)}
         </h1>
         <div className="mt-6 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <p className="max-w-xl text-[15px] leading-relaxed opacity-75">{str(content.description)}</p>
           <div className="flex gap-3">
-            <a href="#work" className="rounded-full bg-white px-6 py-3 text-sm font-bold" style={{ color: theme.primary }}>{str(content.primaryCta, "See the work")}</a>
+            {str(content.primaryCta) ? <a href="#work" className="rounded-full bg-white px-6 py-3 text-sm font-bold" style={{ color: theme.primary }}>{str(content.primaryCta)}</a> : null}
             {str(content.secondaryCta) && <a href="#contact" className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold">{str(content.secondaryCta)}</a>}
           </div>
         </div>
         {stats.length > 0 && (
           <dl className="mt-12 grid grid-cols-3 gap-px overflow-hidden rounded-2xl" style={{ background: "#2c2c31" }}>
             {stats.map((st, i) => (
-              <div key={i} className="p-5" style={{ background: theme.primary }}>
-                <dt className="text-3xl font-bold" style={{ fontFamily: fontStack(theme.fontHeading) }}>{st.value}</dt>
+              <div key={i} className="p-4 sm:p-5" style={{ background: theme.primary }}>
+                <dt className="text-2xl font-bold sm:text-3xl" style={{ fontFamily: fontStack(theme.fontHeading) }}>{st.value}</dt>
                 <dd className="mt-1 text-xs uppercase tracking-widest opacity-60">{st.label}</dd>
               </div>
             ))}
@@ -139,7 +139,7 @@ const Process: C = ({ content, theme }) => {
 const Team: C = ({ content, theme }) => {
   const members = arr<{ name: string; role: string; photo: string; bio: string }>(content.members);
   return (
-    <section className={sectionPad(theme)}>
+    <section id="team" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(content.title, "No juniors, no hand-offs")}</h2>
         <div className="mt-8 grid gap-5 md:grid-cols-3">
@@ -181,12 +181,12 @@ const Testimonials: C = ({ content, theme }) => {
 };
 
 const Cta: C = ({ content, theme }) => (
-  <section className={sectionPad(theme)}>
+  <section id="contact" className={sectionPad(theme)}>
     <div className={`mx-auto px-6 text-center ${containerWidth(theme)}`}>
       <span className="inline-block rotate-2 rounded-full px-3 py-1 text-xs font-bold text-white" style={{ background: theme.accent }}>● 2 slots left for Q3</span>
       <h2 className="mx-auto mt-4 max-w-2xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.8rem * ${theme.headingScale})`, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.02 }}>{str(content.title)}</h2>
       <p className="mx-auto mt-3 max-w-lg text-sm" style={{ color: theme.muted }}>{str(content.description)}</p>
-      <a href="#contact" className={`${btnRadius(theme)} mt-7 inline-block px-8 py-3.5 text-sm font-bold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta, "Start a project ↗")}</a>
+      {str(content.primaryCta) ? <a href="#contact" className={`${btnRadius(theme)} mt-7 inline-block px-8 py-3.5 text-sm font-bold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta)}</a> : null}
     </div>
   </section>
 );
@@ -197,14 +197,14 @@ const Footer: C = ({ content, theme }) => (
       <p className="leading-none" style={{ fontFamily: fontStack(theme.fontHeading), fontWeight: 700, letterSpacing: "-0.035em", fontSize: "clamp(2.6rem, 8vw, 5.5rem)" }}>{str(content.tagline, "Let's build ↗")}</p>
       <div className="mt-8 flex flex-col gap-3 border-t border-white/15 pt-6 text-[13px] md:flex-row md:items-center md:justify-between">
         <span className="opacity-60">{str(content.copyright)}</span>
-        <div className="flex gap-5 font-semibold"><a href="#work">Work</a><a href="#about">Studio</a><a href="#contact">Contact</a></div>
+        <div className="flex gap-5 font-semibold"><a href="#work">Work</a><a href="#team">Team</a><a href="#contact">Contact</a></div>
       </div>
     </div>
   </footer>
 );
 
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
-  navbar: { logo: "Studio Himal", links: [{ label: "Work", href: "#work" }, { label: "Studio", href: "#about" }, { label: "Contact", href: "#contact" }], cta: "Start a project" },
+  navbar: { logo: "Studio Himal", links: [{ label: "Work", href: "#work" }, { label: "Team", href: "#team" }, { label: "Contact", href: "#contact" }], cta: "Start a project" },
   hero: {
     eyebrow: "Booking projects for 2083", title: "We ship brands that win", subtitle: "",
     description: "Studio Himal is a senior-only design and engineering team in Lalitpur. Brand, website and product, under one roof, shipped in weeks.",

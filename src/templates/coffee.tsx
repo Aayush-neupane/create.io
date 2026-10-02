@@ -22,9 +22,11 @@ const Navbar: C = ({ content, theme, pages }) => {
         <div className="hidden gap-7 text-sm md:flex" style={{ color: theme.muted }}>
           {links.map((l, i) => <a key={i} href={l.href} className="transition-opacity hover:opacity-70">{l.label}</a>)}
         </div>
-        <a href="#contact" className={`${btnRadius(theme)} t-btn px-4 py-2 text-sm font-bold text-white`} style={{ background: theme.primary }}>
-          {str(content.cta) || "Find us"}
-        </a>
+        {str(content.cta) ? (
+          <a href="#contact" className={`${btnRadius(theme)} t-btn px-4 py-2 text-sm font-bold text-white`} style={{ background: theme.primary }}>
+            {str(content.cta)}
+          </a>
+        ) : null}
       </div>
     </nav>
   );
@@ -43,7 +45,7 @@ const Hero: C = ({ content, theme }) => (
         </h1>
         <p className="mt-4 max-w-md text-[15px] leading-relaxed" style={{ color: theme.muted }}>{str(content.description)}</p>
         <div className="mt-7 flex flex-wrap gap-3">
-          <a href={str(content.primaryHref) || "#menu"} className={`${btnRadius(theme)} t-btn px-6 py-3 text-sm font-bold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta, "See the menu")}</a>
+          {str(content.primaryCta) ? <a href={str(content.primaryHref) || "#menu"} className={`${btnRadius(theme)} t-btn px-6 py-3 text-sm font-bold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta)}</a> : null}
           {str(content.secondaryCta) && <a href={str(content.secondaryHref) || "#contact"} className={`${btnRadius(theme)} t-btn border px-6 py-3 text-sm font-semibold`} style={{ borderColor: theme.muted }}>{str(content.secondaryCta)}</a>}
         </div>
         {str(content.subtitle) && <p className="mono-meta mt-6 text-xs" style={{ color: theme.muted }}>{str(content.subtitle)}</p>}
@@ -216,11 +218,11 @@ const Contact: C = ({ content, theme }) => (
 );
 
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
-  navbar: { logo: "Copper Cup", links: [{ label: "Menu", href: "#menu" }, { label: "Story", href: "#about" }, { label: "Visit", href: "#contact" }], cta: "Find us", ctaHref: "#contact" },
+  navbar: { logo: "Copper Cup", links: [{ label: "Menu", href: "#menu" }, { label: "Hours", href: "#hours" }, { label: "Visit", href: "#contact" }], cta: "Find us", ctaHref: "#contact" },
   hero: {
     eyebrow: "Roasted in small batches", title: "Slow mornings, strong chiya", subtitle: "Single-origin Ilam beans · Patan courtyard seating",
     description: "A twelve-table café in Jhamsikhel pouring careful espresso, masala chiya and the flakiest croissants south of the Bagmati.",
-    primaryCta: "See the menu", secondaryCta: "Our story", primaryHref: "#menu", secondaryHref: "#about", image: "", stats: [],
+    primaryCta: "See the menu", secondaryCta: "Find us", primaryHref: "#menu", secondaryHref: "#contact", image: "", stats: [],
   },
   about: {
     heading: "Our story", title: "From Ilam gardens to your cup",

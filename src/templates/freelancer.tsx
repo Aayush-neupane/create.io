@@ -45,9 +45,11 @@ const Hero: C = ({ content, theme }) => {
             <p className="font-mono text-[11px] uppercase" style={{ color: theme.muted }}>Availability</p>
             <p className="mt-1 text-2xl font-extrabold" style={{ fontFamily: fontStack(theme.fontHeading) }}>2 slots</p>
           </div>
-          <a href="#contact" className="flex items-center justify-center p-5 text-sm font-bold text-white" style={{ background: theme.primary }}>
-            {str(content.primaryCta, "Book intro call →")}
-          </a>
+          {str(content.primaryCta) ? (
+            <a href="#contact" className="flex items-center justify-center p-5 text-sm font-bold text-white" style={{ background: theme.primary }}>
+              {str(content.primaryCta)}
+            </a>
+          ) : null}
         </div>
         {stats.length > 0 && (
           <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-3">
@@ -138,7 +140,7 @@ const Testimonials: C = ({ content, theme }) => {
 const Pricing: C = ({ content, theme }) => {
   const items = arr<{ name: string; price: string; period: string; description: string; features: string[] }>(content.items);
   return (
-    <section className={sectionPad(theme)}>
+    <section id="rates" className={sectionPad(theme)}>
       <div className={`mx-auto grid gap-8 px-6 md:grid-cols-[1fr_1.5fr] ${containerWidth(theme)}`}>
         <div>
           <p className="font-mono text-xs uppercase" style={{ letterSpacing: "0.2em", color: theme.muted }}>04 — {str(content.heading, "Rates")}</p>

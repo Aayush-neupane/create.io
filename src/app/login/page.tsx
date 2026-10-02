@@ -58,7 +58,7 @@ export default function LoginPage() {
             or
             <span className="h-px flex-1" style={{ background: "var(--line)" }} />
           </div>
-          <Link href="/demo/minimal-portfolio" className="btn-ghost w-full">
+          <Link href="/demo" className="btn-ghost w-full">
             Continue as guest — no signup
           </Link>
 <p className="mt-5 text-center text-sm text-neutral-600">No account yet? <Link href="/signup" className="font-medium text-neutral-900 underline">Sign up</Link></p>

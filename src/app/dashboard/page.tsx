@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { LogoTile } from "@/components/layout/chrome";
 import { currentUser } from "@/lib/auth";
 import { websitesForUser } from "@/lib/db";
+import { getTemplate } from "@/lib/templates";
 import { timeAgo } from "@/lib/utils";
-import { Badge } from "@/components/ui/controls";
 import { DashboardActions } from "./actions";
 
 export default async function DashboardPage() {
@@ -48,26 +48,35 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {sites.map((s) => (
-              <div key={s.id} className="rounded-2xl border border-neutral-200 bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold">{s.name}</h3>
-                  <Badge tone={s.status === "published" ? "green" : "neutral"}>{s.status}</Badge>
+            {sites.map((s) => {
+              const tpl = getTemplate(s.templateId);
+              return (
+              <div key={s.id} className="card card-hover p-5">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 flex-none place-items-center rounded-[13px] text-sm font-bold text-white" style={{ background: tpl.theme.primary }} aria-hidden>
+                    {s.name.slice(0, 1)}
+                  </span>
+                  <h3 className="min-w-0 flex-1 truncate font-semibold" style={{ letterSpacing: "-0.015em" }}>{s.name}</h3>
+                  <span className="mono-meta flex flex-none items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10.5px] font-semibold uppercase" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)", letterSpacing: "0.08em" }}>
+                    <i className="h-1.5 w-1.5 rounded-full" style={{ background: s.status === "published" ? "#16a34a" : "var(--ink-3)" }} />
+                    {s.status}
+                  </span>
                 </div>
-                <p className="mt-1 text-xs text-neutral-500">{s.templateId} · updated {timeAgo(s.updatedAt)}</p>
+                <p className="mono-meta mt-1.5 text-[11px]" style={{ color: "var(--ink-3)" }}>{s.templateId} · updated {timeAgo(s.updatedAt)}</p>
                 {s.status === "published" && (
-                  <Link href={`/s/${s.slug}`} target="_blank" className="mt-2 block truncate text-sm font-medium text-blue-700 hover:underline">
-                    /s/{s.slug}
+                  <Link href={`/s/${s.slug}`} target="_blank" className="mt-2 block truncate text-sm font-medium underline underline-offset-4" style={{ color: "var(--accent-text)" }}>
+                    /s/{s.slug} ↗
                   </Link>
                 )}
                 <div className="mt-4 grid grid-cols-3 gap-2">
                   <Link href={`/builder/${s.id}`} className="btn-primary flex-1" style={{ height: 36, fontSize: 13 }}>Edit</Link>
-                  <Link href={`/s/${s.slug}`} className="rounded-lg border border-neutral-200 px-2 py-2 text-center text-[13px] font-medium">Preview</Link>
-                  <Link href={`/builder/${s.id}?tab=settings`} className="rounded-lg border border-neutral-200 px-2 py-2 text-center text-[13px] font-medium">Settings</Link>
+                  <Link href={`/s/${s.slug}`} className="rounded-lg border border-neutral-200 px-2 py-2 text-center text-[13px] font-medium transition-colors hover:border-neutral-400">Preview</Link>
+                  <Link href={`/builder/${s.id}?tab=settings`} className="rounded-lg border border-neutral-200 px-2 py-2 text-center text-[13px] font-medium transition-colors hover:border-neutral-400">Settings</Link>
                 </div>
                 <DashboardCardActions id={s.id} slug={s.slug} />
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </main>

@@ -307,6 +307,26 @@ export function buildConfigFromTemplate(
 }
 
 /** Sanitize one section list (home or subpage) without ever throwing. */
+const OVERRIDE_KEYS = ["primary", "background", "surface", "text", "muted", "accent"] as const;
+const SPACING_VALUES = ["compact", "comfortable", "spacious"] as const;
+
+export function sanitizeThemeOverride(raw: unknown): SectionInstance["themeOverride"] {
+  if (!raw || typeof raw !== "object") return undefined;
+  const src = raw as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+  for (const k of OVERRIDE_KEYS) {
+    const v = src[k];
+    if (typeof v === "string" && v.trim()) out[k] = v.trim().slice(0, 32);
+  }
+  const hs = src["headingScale"];
+  if (typeof hs === "number" && Number.isFinite(hs)) {
+    out["headingScale"] = Math.min(1.5, Math.max(0.7, Math.round(hs * 100) / 100));
+  }
+  const sp = src["sectionSpacing"];
+  if (typeof sp === "string" && (SPACING_VALUES as readonly string[]).includes(sp)) out["sectionSpacing"] = sp;
+  return Object.keys(out).length > 0 ? (out as SectionInstance["themeOverride"]) : undefined;
+}
+
 export function sanitizeSections(raw: unknown): SectionInstance[] {
   if (!Array.isArray(raw) || raw.length === 0) return [];
   return (raw as SectionInstance[]).map((s) => ({
@@ -315,6 +335,7 @@ export function sanitizeSections(raw: unknown): SectionInstance[] {
     variant: typeof s?.variant === "string" ? s.variant : "simple",
     enabled: s?.enabled !== false,
     ...(s?.band === true ? { band: true as const } : {}),
+    ...(sanitizeThemeOverride(s?.themeOverride) ? { themeOverride: sanitizeThemeOverride(s?.themeOverride) } : {}),
     content: ((s?.content ?? {}) as Record<string, unknown>) ?? {},
   }));
 }

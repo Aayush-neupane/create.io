@@ -20,6 +20,39 @@ const PRINCIPLES = [
   { icon: "✦", t: "Zero code", d: "Structured editing keeps every site professional. Undo, autosave, SEO included." },
 ];
 
+/** Flat supporting tints — decorative surfaces only. Buttons, links and
+ *  eyebrows stay on the single indigo brand accent. */
+const TINTS = [
+  { bg: "#fbe7d7", fg: "#9a3412" }, // clay
+  { bg: "#dde9e2", fg: "#2d6a4f" }, // sage
+  { bg: "#f3e7c8", fg: "#8a6414" }, // gold
+  { bg: "#e7e9fb", fg: "#4338ca" }, // indigo
+];
+
+/** Category dot colors borrow each library template's own accent. */
+const CATEGORY_DOTS: Record<string, string> = {
+  portfolio: "#111111",
+  business: "#2563eb",
+  restaurant: "#ea580c",
+  agency: "#7c3aed",
+  saas: "#10b981",
+  photography: "#18181b",
+};
+
+function SecHead({ index, eyebrow, title, sub, dark }: { index: string; eyebrow: string; title: React.ReactNode; sub?: string; dark?: boolean }) {
+  return (
+    <div className="mb-10 grid justify-items-center gap-4 text-center">
+      <p className="eyebrow" style={dark ? { color: "var(--accent-soft)" } : undefined}>
+        <span className="mono-meta" style={{ color: dark ? "#8f8b9e" : "var(--ink-3)" }}>{index}</span>
+        <span aria-hidden className="h-px w-8" style={{ background: dark ? "rgba(244,243,239,.25)" : "var(--line-2)" }} />
+        {eyebrow}
+      </p>
+      <h2 className="max-w-2xl text-4xl font-semibold md:text-5xl" style={dark ? { color: "#f4f3ef" } : undefined}>{title}</h2>
+      {sub && <p className="max-w-[620px]" style={{ color: dark ? "#b9b8c2" : "var(--ink-2)" }}>{sub}</p>}
+    </div>
+  );
+}
+
 export default async function LandingPage() {
   const user = await currentUser();
   const styleCount = Object.values(SECTION_META).reduce((n, m) => n + m.variants.length, 0);
@@ -30,6 +63,7 @@ export default async function LandingPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden pb-4 pt-16 md:pt-24">
+        <div className="blueprint pointer-events-none absolute inset-0" aria-hidden />
         <div className="relative mx-auto grid max-w-7xl justify-items-center gap-6 px-6 text-center">
           <Link href="/templates" className="pill group">
             <span className="tag">New</span>
@@ -55,23 +89,29 @@ export default async function LandingPage() {
           </div>
           <ul className="mt-4 flex flex-wrap justify-center gap-2">
             {["portfolio", "business", "restaurant", "agency", "saas", "photography"].map((s) => (
-              <li key={s} className="mono-meta inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)" }}>
-                <i className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--accent)" }} />{s}
+              <li key={s} className="mono-meta inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)", background: "var(--surface)" }}>
+                <i className="h-1.5 w-1.5 rounded-full" style={{ background: CATEGORY_DOTS[s] ?? "var(--accent)" }} />{s}
               </li>
             ))}
           </ul>
-          <dl className="mt-6 flex flex-wrap justify-center">
+          <dl className="mt-8 grid max-w-full grid-cols-3 justify-items-center gap-x-2 border-t px-2 pt-6 sm:gap-x-6 sm:px-6" style={{ borderColor: "var(--line)" }}>
             {[
               [String(TEMPLATES.length), "complete sites"],
               [`${styleCount}+`, "section styles"],
               ["0", "lines of code"],
             ].map(([v, l], i) => (
-              <div key={l} className="flex flex-col gap-0.5 px-7 py-1" style={{ borderLeft: i ? "1px solid var(--line-2)" : "none" }}>
-                <dt className="mono-meta order-last text-[11px] uppercase" style={{ letterSpacing: "0.1em", color: "var(--ink-3)" }}>{l}</dt>
-                <dd className="text-[26px] font-semibold" style={{ letterSpacing: "-0.045em" }}>{v}</dd>
+              <div key={l} className="flex min-w-0 flex-col items-center gap-0.5 px-2 py-1 sm:px-7" style={{ borderLeft: i ? "1px solid var(--line-2)" : "none" }}>
+                <dt className="mono-meta order-last text-center text-[10px] uppercase sm:text-[11px]" style={{ letterSpacing: "0.1em", color: "var(--ink-3)" }}>{l}</dt>
+                <dd className="text-[22px] font-semibold sm:text-[26px]" style={{ letterSpacing: "-0.045em" }}>{v}</dd>
               </div>
             ))}
           </dl>
+          <div className="mt-8 flex flex-col items-center gap-2" aria-hidden>
+            <span className="mono-meta text-[10px] uppercase" style={{ letterSpacing: "0.22em", color: "var(--ink-3)" }}>Scroll</span>
+            <span className="block h-8 w-px overflow-hidden" style={{ background: "var(--line-2)" }}>
+              <span className="scroll-cue-line block h-3 w-px" style={{ background: "var(--accent)" }} />
+            </span>
+          </div>
         </div>
 
         {/* Browser-window showcase */}
@@ -139,34 +179,27 @@ export default async function LandingPage() {
         </p>
         <div className="marquee mt-5" role="presentation">
           <ul className="marquee-track">
-            {["freelancers", "trekking guides", "thakali kitchens", "saas startups", "photographers", "consultants", "event planners"].map((s) => (
-              <li key={s} className="flex-none rounded-full border px-3.5 py-1.5 text-[13px]" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)", background: "var(--surface)" }}>{s}</li>
+            {["freelancers", "trekking guides", "thakali kitchens", "saas startups", "photographers", "consultants", "event planners"].map((s, i) => (
+              <li key={s} className="flex-none rounded-full px-3.5 py-1.5 text-[13px]" style={{ background: TINTS[i % TINTS.length].bg, color: TINTS[i % TINTS.length].fg }}>{s}</li>
             ))}
-            {["freelancers", "trekking guides", "thakali kitchens", "saas startups", "photographers", "consultants", "event planners"].map((s) => (
-              <li key={`dup-${s}`} aria-hidden className="flex-none rounded-full border px-3.5 py-1.5 text-[13px]" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)", background: "var(--surface)" }}>{s}</li>
+            {["freelancers", "trekking guides", "thakali kitchens", "saas startups", "photographers", "consultants", "event planners"].map((s, i) => (
+              <li key={`dup-${s}`} aria-hidden className="flex-none rounded-full px-3.5 py-1.5 text-[13px]" style={{ background: TINTS[i % TINTS.length].bg, color: TINTS[i % TINTS.length].fg }}>{s}</li>
             ))}
           </ul>
         </div>
       </section>
 
       {/* Site kits */}
-      <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
-        <div className="mb-10 grid justify-items-center gap-4 text-center">
-          <p className="eyebrow">The library</p>
-          <h2 className="max-w-2xl text-4xl font-semibold md:text-5xl">
-            Start from something <span className="serif-accent">finished.</span>
-          </h2>
-          <p className="max-w-[620px]" style={{ color: "var(--ink-2)" }}>
-            Live renders below — what you see is the actual site, with its own components and copy.
-          </p>
-        </div>
+      <section style={{ background: "var(--surface-2)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)", marginTop: 120 }}>
+        <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
+        <SecHead index="01" eyebrow="The library" title={<>Start from something <span className="serif-accent">finished.</span></>} sub="Live renders below — what you see is the actual site, with its own components and copy." />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {TEMPLATES.map((t, i) => (
             <div key={t.id} data-reveal style={{ transitionDelay: `${Math.min(i, 5) * 70}ms` }} className="card card-hover group relative flex flex-col overflow-hidden">
               <div className="relative aspect-[16/10] overflow-hidden" style={{ borderBottom: "1px solid var(--line)" }}>
                 <LiveCard templateId={t.id} />
                 <Link href={`/templates/${t.id}`} aria-label={`Open ${t.name}`} className="absolute inset-0" />
-                <span className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 justify-center bg-gradient-to-t from-black/45 to-transparent pb-3 pt-8 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                <span className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center opacity-0 transition-all duration-300 group-hover:opacity-100">
                   <span className="rounded-full bg-white/95 px-4 py-1.5 text-[13px] font-semibold text-neutral-900 shadow-lg">Open live preview →</span>
                 </span>
               </div>
@@ -188,18 +221,16 @@ export default async function LandingPage() {
             </div>
           ))}
         </div>
+        </div>
       </section>
 
       {/* How it works */}
       <section id="how" className="mx-auto max-w-7xl scroll-mt-24 px-6" style={{ paddingTop: 120 }}>
-        <div className="mb-10 grid justify-items-center gap-4 text-center">
-          <p className="eyebrow">Process</p>
-          <h2 className="max-w-xl text-4xl font-semibold md:text-5xl">Live in four moves</h2>
-        </div>
+        <SecHead index="02" eyebrow="Process" title="Live in four moves" />
         <ol className="grid gap-3.5 md:grid-cols-4">
           {STEPS.map((s, i) => (
             <li key={s.n} className="card card-hover grid content-start gap-2.5 p-[26px]" data-reveal style={{ transitionDelay: `${i * 80}ms` }}>
-              <span className="icon-tile mb-2.5 transition-transform duration-300 hover:-rotate-12 hover:scale-110" style={{ width: 46, height: 46, borderRadius: 15 }}>{s.n.slice(1)}</span>
+              <span className="icon-tile mb-2.5 transition-transform duration-300 hover:-rotate-12 hover:scale-110" style={{ width: 46, height: 46, borderRadius: 15, background: TINTS[i % TINTS.length].bg, color: TINTS[i % TINTS.length].fg }}>{s.n.slice(1)}</span>
               <h3 className="text-[17px] font-semibold">{s.t}</h3>
               <p className="text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{s.d}</p>
             </li>
@@ -211,7 +242,7 @@ export default async function LandingPage() {
       <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
         <div className="card grid gap-10 overflow-hidden p-8 md:grid-cols-2 md:p-12" data-reveal>
           <div>
-            <p className="eyebrow">The builder</p>
+            <p className="eyebrow">03 · The builder</p>
             <h2 className="mt-3 max-w-md text-4xl font-semibold md:text-5xl">
               Feels like filling a form. <span className="serif-accent">Looks like hiring an agency.</span>
             </h2>
@@ -255,11 +286,9 @@ export default async function LandingPage() {
       </section>
 
       {/* Testimonials */}
-      <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
-        <div className="mb-10 grid justify-items-center gap-4 text-center">
-          <p className="eyebrow">Wall of love</p>
-          <h2 className="max-w-xl text-4xl font-semibold md:text-5xl">Namaste, <span className="serif-accent">new website.</span></h2>
-        </div>
+      <section style={{ background: "var(--ink)", marginTop: 120 }}>
+        <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+        <SecHead dark index="04" eyebrow="Wall of love" title={<>Namaste, <span className="serif-accent">new website.</span></>} />
         <div className="grid gap-3.5 md:grid-cols-3">
           {[
             ["I published my trekking site between two bus rides to Pokhara. Bookings came before I got home.", "Binod Thapa", "Guide, Himalayan Trails"],
@@ -267,7 +296,7 @@ export default async function LandingPage() {
             ["Our momo menu finally looks as good as it tastes. Weekend covers are up.", "Tashi Sherpa", "Owner, Lakeside Kitchen"],
           ].map(([m, n, r], i) => (
             <figure key={n} data-reveal style={{ transitionDelay: `${i * 90}ms` }} className="card card-hover flex flex-col p-[26px]">
-              <span aria-hidden className="text-sm tracking-[0.2em]" style={{ color: "#e8a33d" }}>★★★★★</span>
+              <span aria-hidden className="text-sm tracking-[0.2em]" style={{ color: "var(--accent)" }}>★★★★★</span>
               <span className="serif-accent mt-1 text-3xl" aria-hidden>“</span>
               <blockquote className="flex-1 text-[15px] leading-relaxed">{m}</blockquote>
               <figcaption className="mt-5 border-t pt-4 text-sm" style={{ borderColor: "var(--line)" }}>
@@ -277,18 +306,16 @@ export default async function LandingPage() {
             </figure>
           ))}
         </div>
+        </div>
       </section>
 
       {/* Principles */}
       <section id="features" className="mx-auto max-w-7xl scroll-mt-24 px-6" style={{ paddingTop: 120 }}>
-        <div className="mb-10 grid justify-items-center gap-4 text-center">
-          <p className="eyebrow">Why it works</p>
-          <h2 className="max-w-xl text-4xl font-semibold md:text-5xl">Opinionated, <span className="serif-accent">on purpose.</span></h2>
-        </div>
+        <SecHead index="05" eyebrow="Why it works" title={<>Opinionated, <span className="serif-accent">on purpose.</span></>} />
         <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
           {PRINCIPLES.map((p, i) => (
             <div key={p.t} data-reveal style={{ transitionDelay: `${i * 70}ms` }} className="card card-hover grid content-start gap-2.5 p-[26px]">
-              <span className="icon-tile mb-2.5 transition-transform duration-300 hover:-rotate-12 hover:scale-110" aria-hidden>{p.icon}</span>
+              <span className="icon-tile mb-2.5 transition-transform duration-300 hover:-rotate-12 hover:scale-110" aria-hidden style={{ background: TINTS[(i + 2) % TINTS.length].bg, color: TINTS[(i + 2) % TINTS.length].fg }}>{p.icon}</span>
               <h3 className="text-[17px] font-semibold">{p.t}</h3>
               <p className="text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{p.d}</p>
             </div>
@@ -302,11 +329,9 @@ export default async function LandingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="mx-auto max-w-3xl px-6" style={{ paddingTop: 120 }}>
-        <div className="mb-8 grid justify-items-center gap-4 text-center">
-          <p className="eyebrow">Fair questions</p>
-          <h2 className="text-4xl font-semibold md:text-5xl">Asked <span className="serif-accent">often.</span></h2>
-        </div>
+      <section style={{ background: "var(--surface-2)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)", marginTop: 120 }}>
+        <div className="mx-auto max-w-3xl px-6 py-16 md:py-20">
+        <SecHead index="06" eyebrow="Fair questions" title={<>Asked <span className="serif-accent">often.</span></>} />
         <div className="divide-y border-y" style={{ borderColor: "var(--line)" }}>
           {[
             ["Do I need to write any code?", "Never. If you can fill a form and upload a photo, you can ship a site."],
@@ -320,12 +345,13 @@ export default async function LandingPage() {
             </details>
           ))}
         </div>
+        </div>
       </section>
 
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-6" style={{ paddingTop: 120 }}>
         <div className="relative grid justify-items-center gap-[18px] overflow-hidden px-6 py-[92px] text-center" data-reveal style={{ borderRadius: 36, background: "var(--ink)", color: "#f4f3ef" }}>
-          <p className="eyebrow relative" style={{ color: "#b9b4ff" }}>No code · No canvas · No kidding</p>
+          <p className="eyebrow relative" style={{ color: "var(--accent-soft)" }}>No code · No canvas · No kidding</p>
           <h2 className="relative max-w-2xl font-semibold" style={{ fontSize: "clamp(38px, 6vw, 72px)", lineHeight: 1, letterSpacing: "-0.055em" }}>
             Your website is <span className="serif-accent">waiting.</span>
           </h2>

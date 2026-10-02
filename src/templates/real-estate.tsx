@@ -25,10 +25,12 @@ const Navbar: C = ({ content, theme, pages }) => {
         <div className="hidden gap-7 text-sm font-medium md:flex" style={{ color: theme.muted }}>
           {links.map((l, i) => <a key={i} href={l.href} className="transition-opacity hover:opacity-70">{l.label}</a>)}
         </div>
-        <a href={str(content.ctaHref) || "#contact"} className="hidden sm:block">
-          <span className="font-mono text-xs" style={{ color: theme.muted }}>Call us · </span>
-          <span className="text-sm font-bold" style={{ color: theme.primary }}>{str(content.cta) || "(01) 444-8899"}</span>
-        </a>
+        {str(content.cta) ? (
+          <a href={str(content.ctaHref) || "#contact"} className="hidden sm:block">
+            <span className="font-mono text-xs" style={{ color: theme.muted }}>Call us · </span>
+            <span className="text-sm font-bold" style={{ color: theme.primary }}>{str(content.cta)}</span>
+          </a>
+        ) : null}
       </div>
     </nav>
   );
@@ -44,7 +46,7 @@ const Hero: C = ({ content, theme }) => (
         </h1>
         <p className="mt-4 max-w-lg text-[15px] leading-relaxed" style={{ color: theme.muted }}>{str(content.description)}</p>
         <div className="mt-7 flex flex-wrap items-center gap-3">
-          <a href={str(content.primaryHref) || "#work"} className={`${btnRadius(theme)} t-btn px-6 py-3 text-sm font-bold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta, "Browse listings")}</a>
+          {str(content.primaryCta) ? <a href={str(content.primaryHref) || "#gallery"} className={`${btnRadius(theme)} t-btn px-6 py-3 text-sm font-bold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta)}</a> : null}
           {str(content.secondaryCta) && <a href={str(content.secondaryHref) || "#contact"} className="text-sm font-semibold underline underline-offset-4">{str(content.secondaryCta)}</a>}
         </div>
         {str(content.subtitle) && <p className="mono-meta mt-6 text-xs" style={{ color: theme.muted }}>{str(content.subtitle)}</p>}

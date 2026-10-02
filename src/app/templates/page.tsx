@@ -27,7 +27,42 @@ export default function TemplatesPage() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="mx-auto flex max-w-7xl gap-11 px-6" style={{ paddingTop: 36 }}>
+      <div style={{ background: "var(--surface-2)", borderBottom: "1px solid var(--line)" }}>
+        <div className="mx-auto max-w-7xl px-6 pb-8 pt-10">
+          <p className="eyebrow">
+            <span className="mono-meta" style={{ color: "var(--ink-3)" }}>Library</span>
+            <span aria-hidden className="h-px w-8" style={{ background: "var(--line-2)" }} />
+            {list.length === 1 ? "1 site" : `${list.length} sites`}
+          </p>
+          <h1 className="mt-3 font-semibold" style={{ fontSize: "clamp(32px, 4.2vw, 46px)", lineHeight: 1.04 }}>
+            Pick a <span className="serif-accent">finished</span> site
+          </h1>
+          <p className="mt-2.5 max-w-[520px] text-[15px]" style={{ color: "var(--ink-2)" }}>
+            Live renders — what you see is the actual template, components and copy included.
+          </p>
+          <div className="mt-5 flex h-[46px] max-w-md items-center gap-2.5 rounded-[13px] border px-3.5 transition-colors focus-within:border-neutral-400 md:hidden" style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}>
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search sites…" aria-label="Search templates" className="w-full bg-transparent text-sm outline-none" />
+            {q && (
+              <button onClick={() => setQ("")} aria-label="Clear search" className="grid h-6 w-6 flex-none place-items-center rounded-full text-sm transition-colors hover:bg-black/[0.06]" style={{ color: "var(--ink-3)" }}>
+                ✕
+              </button>
+            )}
+          </div>
+          <div className="no-bar snap-row mt-4 flex gap-2 overflow-x-auto pb-1 md:hidden">
+            {cats.map((c) => (
+              <button
+                key={c}
+                onClick={() => setCat(c)}
+                className="flex-none rounded-full border px-3.5 py-1.5 text-[13px]"
+                style={cat === c ? { background: "var(--ink)", color: "#fff", borderColor: "var(--ink)" } : { borderColor: "var(--line-2)", background: "var(--surface)" }}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="mx-auto flex max-w-7xl gap-11 px-6 py-8">
         {/* Sidebar */}
         <aside className="hidden w-[236px] shrink-0 md:block">
           <div className="sticky grid gap-2 overflow-auto" style={{ top: 88, maxHeight: "calc(100vh - 112px)", paddingBottom: 20 }}>
@@ -79,38 +114,7 @@ export default function TemplatesPage() {
 
         {/* Grid */}
         <div className="min-w-0 flex-1">
-          <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
-            <div>
-              <h1 className="font-semibold" style={{ fontSize: "clamp(32px, 4.2vw, 46px)", lineHeight: 1.04 }}>
-                Pick a <span className="serif-accent">finished</span> site
-              </h1>
-              <p className="mt-2.5 max-w-[520px] text-[15px]" style={{ color: "var(--ink-2)" }}>
-                Live renders — what you see is the actual template, components and copy included.
-              </p>
-            </div>
-            <div className="flex h-[46px] items-center gap-2.5 rounded-[13px] border px-3.5 transition-colors focus-within:border-neutral-400 md:hidden" style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}>
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search sites…" aria-label="Search templates" className="w-full bg-transparent text-sm outline-none" />
-              {q && (
-                <button onClick={() => setQ("")} aria-label="Clear search" className="grid h-6 w-6 flex-none place-items-center rounded-full text-sm transition-colors hover:bg-black/[0.06]" style={{ color: "var(--ink-3)" }}>
-                  ✕
-                </button>
-              )}
-            </div>
-          </div>
-          <div className="no-bar snap-row mb-5 flex gap-2 overflow-x-auto pb-1 md:hidden">
-            {cats.map((c) => (
-              <button
-                key={c}
-                onClick={() => setCat(c)}
-                className="flex-none rounded-full border px-3.5 py-1.5 text-[13px]"
-                style={cat === c ? { background: "var(--ink)", color: "#fff", borderColor: "var(--ink)" } : { borderColor: "var(--line-2)", background: "var(--surface)" }}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-
-          <p aria-live="polite" className="mono-meta mb-4 text-xs" style={{ color: "var(--ink-3)" }}>
+          <p aria-live="polite" className="mono-meta mb-4 hidden text-xs md:block" style={{ color: "var(--ink-3)" }}>
             {list.length === 1 ? "1 site" : `${list.length} sites`}{q && <> for “{q}”</>}
           </p>
           <div className="grid gap-[18px] sm:grid-cols-2">
@@ -119,15 +123,25 @@ export default function TemplatesPage() {
                 <div className="relative aspect-[16/10] overflow-hidden" style={{ borderBottom: "1px solid var(--line)" }}>
                   <LiveCard templateId={t.id} />
                   <Link href={`/templates/${t.id}`} aria-label={`Open ${t.name}`} className="absolute inset-0" />
-                  <span className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-2 justify-center bg-gradient-to-t from-black/45 to-transparent pb-3 pt-8 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <span className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center opacity-0 transition-all duration-300 group-hover:opacity-100">
                     <span className="rounded-full bg-white/95 px-4 py-1.5 text-[13px] font-semibold text-neutral-900 shadow-lg">Open full preview →</span>
                   </span>
                 </div>
                 <div className="flex items-center gap-3 px-[18px] py-[13px]">
-                  <div className="min-w-0">
-                    <span className="block truncate text-[14.5px] font-semibold" style={{ letterSpacing: "-0.015em" }}>{t.name}</span>
+                  <div className="min-w-0 flex-1">
+                    <span className="flex items-center gap-2">
+                      <span className="block truncate text-[14.5px] font-semibold" style={{ letterSpacing: "-0.015em" }}>{t.name}</span>
+                      {t.tier === "premium" && (
+                        <span className="mono-meta flex-none rounded-full px-2 py-0.5 text-[10px] font-bold uppercase" style={{ background: "var(--accent-soft)", color: "var(--accent-text)", letterSpacing: "0.08em" }}>Pro</span>
+                      )}
+                    </span>
                     <span className="mono-meta text-[10.5px] uppercase" style={{ letterSpacing: "0.08em", color: "var(--ink-3)" }}>{t.category} · {t.sections.length} sections</span>
                   </div>
+                  <span className="flex flex-none gap-1" aria-hidden>
+                    {[t.theme.primary, t.theme.accent, t.theme.surface].map((c) => (
+                      <i key={c} className="h-4 w-4 rounded-full border" style={{ background: c, borderColor: "var(--line-2)" }} />
+                    ))}
+                  </span>
                 </div>
                 <div className="flex gap-2 border-t px-[14px] py-3" style={{ borderColor: "var(--line)" }}>
                   <Link href={`/templates/${t.id}`} className="flex-1 rounded-[9px] border px-3 py-2 text-center text-[13px] font-medium transition-colors" style={{ borderColor: "var(--line-2)" }}>

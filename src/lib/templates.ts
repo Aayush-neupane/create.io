@@ -213,7 +213,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     id: "fitness",
     name: "Forge",
     category: "Fitness",
-    description: "Brutalist gym site with volt-on-charcoal attitude, plans, coaches and a free-week offer.",
+    description: "Brutalist gym site with brick-on-charcoal attitude, plans, coaches and a free-week offer.",
     tags: ["gym", "fitness", "coaches", "membership", "training"],
     style: "Brutal",
     mode: "dark",

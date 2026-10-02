@@ -21,7 +21,7 @@ const Navbar: C = ({ content, theme, pages }) => {
         <div className="hidden gap-5 text-[13px] font-medium md:flex" style={{ color: theme.muted }}>
           {links.map((l, i) => <a key={i} href={l.href} className="hover:opacity-70">{l.label}</a>)}
         </div>
-        <a href="#contact" className="rounded-full px-4 py-2 text-[13px] font-bold text-white" style={{ background: theme.primary }}>{str(content.cta) || "Get started"}</a>
+        {str(content.cta) ? <a href="#contact" className="rounded-full px-4 py-2 text-[13px] font-bold text-white" style={{ background: theme.primary }}>{str(content.cta)}</a> : null}
       </nav>
     </div>
   );
@@ -41,7 +41,7 @@ const Hero: C = ({ content, theme }) => {
         </h1>
         <p className="mx-auto mt-4 max-w-xl" style={{ color: theme.muted }}>{str(content.description)}</p>
         <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <a href="#contact" className={`${btnRadius(theme)} px-6 py-3 text-sm font-bold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta, "Start free trial")}</a>
+          {str(content.primaryCta) ? <a href="#contact" className={`${btnRadius(theme)} px-6 py-3 text-sm font-bold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta)}</a> : null}
           <a href="#work" className={`${btnRadius(theme)} border px-6 py-3 text-sm font-semibold`} style={{ borderColor: theme.surface }}>Watch demo ▸</a>
         </div>
         <p className="mt-3 font-mono text-[11px]" style={{ color: theme.muted }}>Free 14-day trial · No credit card</p>
@@ -84,7 +84,7 @@ const Hero: C = ({ content, theme }) => {
 const Services: C = ({ content, theme }) => {
   const items = arr<{ title: string; description: string; price: string }>(content.items);
   return (
-    <section className={sectionPad(theme)}>
+    <section id="work" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="text-center font-mono text-xs uppercase tracking-[0.2em]" style={{ color: theme.accent }}>{str(content.heading, "Features")}</p>
         <h2 className="mx-auto mt-2 max-w-xl text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.02em" }}>{str(content.title)}</h2>
@@ -152,7 +152,7 @@ const Pricing: C = ({ content, theme }) => {
 const Faq: C = ({ content, theme }) => {
   const items = arr<{ q: string; a: string }>(content.items);
   return (
-    <section className={sectionPad(theme)} style={{ background: theme.surface }}>
+    <section id="faq" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className="mx-auto grid max-w-4xl gap-8 px-6 md:grid-cols-[1fr_1.6fr]">
         <div>
           <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.8rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title)}</h2>
@@ -172,13 +172,13 @@ const Faq: C = ({ content, theme }) => {
 };
 
 const Cta: C = ({ content, theme }) => (
-  <section className={sectionPad(theme)}>
+  <section id="contact" className={sectionPad(theme)}>
     <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
       <div className="relative overflow-hidden px-8 py-16 text-center text-white" style={{ borderRadius: theme.radius * 1.6, background: theme.primary }}>
         <div aria-hidden className="absolute inset-x-0 top-0 h-1.5" style={{ background: theme.accent }} />
         <h2 className="relative mx-auto max-w-xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.02em" }}>{str(content.title)}</h2>
         <p className="relative mx-auto mt-3 max-w-md text-sm opacity-80">{str(content.description)}</p>
-        <a href="#contact" className="relative mt-7 inline-block rounded-full bg-white px-8 py-3.5 text-sm font-bold" style={{ color: theme.primary }}>{str(content.primaryCta, "Start free trial")}</a>
+        {str(content.primaryCta) ? <a href="#contact" className="relative mt-7 inline-block rounded-full bg-white px-8 py-3.5 text-sm font-bold" style={{ color: theme.primary }}>{str(content.primaryCta)}</a> : null}
       </div>
     </div>
   </section>

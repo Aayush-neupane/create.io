@@ -42,9 +42,11 @@ const Navbar: C = ({ content, theme, pages }) => {
         <div className="hidden gap-7 text-[13px] font-bold uppercase tracking-wider md:flex" style={{ color: theme.muted }}>
           {links.map((l, i) => <a key={i} href={l.href} className="transition-colors hover:text-white">{l.label}</a>)}
         </div>
-        <a href={str(content.ctaHref) || "#contact"} className="t-btn rounded-full px-4 py-2 text-[13px] font-black uppercase tracking-wide" style={{ background: theme.accent, color: "#04121f" }}>
-          {str(content.cta) || "Book wash"}
-        </a>
+        {str(content.cta) ? (
+          <a href={str(content.ctaHref) || "#contact"} className="t-btn rounded-full px-4 py-2 text-[13px] font-black uppercase tracking-wide" style={{ background: theme.accent, color: "#04121f" }}>
+            {str(content.cta)}
+          </a>
+        ) : null}
       </div>
     </nav>
   );
@@ -57,18 +59,24 @@ const Hero: C = ({ content, theme }) => (
       <p className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3.5 py-1.5 font-mono text-[11px] font-bold uppercase" style={{ letterSpacing: "0.2em", color: theme.accent }}>
         <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: theme.accent }} />{str(content.eyebrow, "We come to your driveway")}
       </p>
-      <h1 className="mt-5 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(4.2rem * ${theme.headingScale})`, fontWeight: 800, lineHeight: 0.94, letterSpacing: "-0.015em" }}>
+      <h1 className="mt-5 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `clamp(2.6rem, 11vw, calc(4.2rem * ${theme.headingScale}))`, fontWeight: 800, lineHeight: 0.94, letterSpacing: "-0.015em" }}>
         {str(content.title, "Showroom shine, zero driving")}
       </h1>
       <p className="mt-5 max-w-xl text-[15px] leading-relaxed" style={{ color: theme.muted }}>{str(content.description)}</p>
       <div className="mt-8 flex flex-wrap gap-3">
-        <a href={str(content.primaryHref) || "#contact"} className="t-btn rounded-full px-7 py-3.5 text-sm font-black uppercase tracking-wide" style={{ background: theme.accent, color: "#04121f" }}>{str(content.primaryCta, "Book a detail")}</a>
+        {str(content.primaryCta) ? <a href={str(content.primaryHref) || "#contact"} className="t-btn rounded-full px-7 py-3.5 text-sm font-black uppercase tracking-wide" style={{ background: theme.accent, color: "#04121f" }}>{str(content.primaryCta)}</a> : null}
         {str(content.secondaryCta) && <a href={str(content.secondaryHref) || "#work"} className="t-btn rounded-full border border-white/25 px-7 py-3.5 text-sm font-bold uppercase tracking-wide">{str(content.secondaryCta)}</a>}
       </div>
       {str(content.subtitle) && <p className="mono-meta mt-6 text-xs" style={{ color: theme.muted }}>{str(content.subtitle)}</p>}
     </div>
-    <div className="overflow-hidden border-y border-white/10 py-2.5" style={{ background: theme.surface }} aria-hidden>
-      <p className="whitespace-nowrap font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>Wash · Clay · Polish · Seal · Wash · Clay · Polish · Seal · Wash · Clay · Polish · Seal</p>
+    <div className="marquee overflow-hidden border-y border-white/10 py-2.5" style={{ background: theme.surface }} aria-hidden>
+      <div className="marquee-track">
+        {[0, 1].map((dup) => (
+          <span key={dup} className="whitespace-nowrap font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>
+            Wash · Clay · Polish · Seal · Wash · Clay · Polish · Seal · Wash · Clay · Polish · Seal ·&nbsp;
+          </span>
+        ))}
+      </div>
     </div>
   </section>
 );
@@ -195,7 +203,7 @@ const Services: C = ({ content, theme }) => {
 const Pricing: C = ({ content, theme }) => {
   const items = arr<{ name: string; price: string; period: string; description: string; features: string[]; featured: boolean }>(content.items);
   return (
-    <section className={sectionPad(theme)} style={{ background: theme.surface }}>
+    <section id="pricing" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="text-center font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.22em", color: theme.accent }}>{str(content.heading, "Packages")}</p>
         <h2 className="mt-2 text-center uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title)}</h2>
@@ -240,7 +248,7 @@ const Process: C = ({ content, theme }) => {
 const Testimonials: C = ({ content, theme }) => {
   const items = arr<{ name: string; company: string; message: string }>(content.items);
   return (
-    <section className={sectionPad(theme)} style={{ background: theme.surface }}>
+    <section id="testimonials" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.22em", color: theme.accent }}>{str(content.heading, "Reviews")}</p>
         <h2 className="mt-2 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title)}</h2>
@@ -296,7 +304,7 @@ const Cta: C = ({ content, theme }) => (
         <h2 className="mx-auto mt-3 max-w-2xl uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 800, lineHeight: 1 }}>{str(content.title)}</h2>
         {str(content.description) && <p className="mx-auto mt-4 max-w-xl text-sm" style={{ color: theme.muted }}>{str(content.description)}</p>}
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <a href={str(content.primaryHref) || "#contact"} className="t-btn rounded-full px-7 py-3.5 text-sm font-black uppercase tracking-wide" style={{ background: theme.accent, color: "#04121f" }}>{str(content.primaryCta, "Book now")}</a>
+          {str(content.primaryCta) ? <a href={str(content.primaryHref) || "#contact"} className="t-btn rounded-full px-7 py-3.5 text-sm font-black uppercase tracking-wide" style={{ background: theme.accent, color: "#04121f" }}>{str(content.primaryCta)}</a> : null}
           {str(content.secondaryCta) && <a href={str(content.secondaryHref) || "#contact"} className="t-btn rounded-full border border-white/25 px-7 py-3.5 text-sm font-bold uppercase tracking-wide">{str(content.secondaryCta)}</a>}
         </div>
       </div>

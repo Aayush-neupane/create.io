@@ -30,12 +30,12 @@ const Hero: C = ({ content, theme }) => {
     <section className="relative overflow-hidden" style={{ background: "#0c0c0c", color: "#fff" }}>
       <div className={`mx-auto px-6 pb-16 pt-32 md:pt-40 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs uppercase tracking-[0.22em] text-white/50">{str(content.eyebrow)}</p>
-        <h1 className="mt-5 max-w-5xl italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(4rem * ${theme.headingScale})`, fontWeight: 500, letterSpacing: "-0.02em", lineHeight: 0.98 }}>
+        <h1 className="mt-5 max-w-5xl italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `clamp(2.6rem, 11vw, calc(4rem * ${theme.headingScale}))`, fontWeight: 500, letterSpacing: "-0.02em", lineHeight: 0.98 }}>
           {str(content.title)}
         </h1>
         <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <p className="max-w-md text-[15px] leading-relaxed text-white/60">{str(content.description)}</p>
-          <a href="#work" className={`${btnRadius(theme)} shrink-0 border border-white/40 px-6 py-3 text-sm font-semibold text-white`}>{str(content.primaryCta, "Enter the gallery")}</a>
+          {str(content.primaryCta) ? <a href="#work" className={`${btnRadius(theme)} shrink-0 border border-white/40 px-6 py-3 text-sm font-semibold text-white`}>{str(content.primaryCta)}</a> : null}
         </div>
         {stats.length > 0 && (
           <dl className="mt-14 grid grid-cols-3 gap-6 border-t border-white/15 pt-6">

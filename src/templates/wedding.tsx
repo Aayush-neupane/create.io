@@ -43,8 +43,8 @@ const Hero: C = ({ content, theme }) => (
         <span className="h-px flex-1" style={{ background: theme.accent, opacity: 0.5 }} />
       </div>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <a href={str(content.primaryHref) || "#contact"} className={`${btnRadius(theme)} t-btn px-6 py-3 text-sm font-bold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta, "RSVP")}</a>
-        {str(content.secondaryCta) && <a href={str(content.secondaryHref) || "#work"} className={`${btnRadius(theme)} t-btn border px-6 py-3 text-sm font-semibold`} style={{ borderColor: theme.accent, color: theme.primary }}>{str(content.secondaryCta)}</a>}
+        {str(content.primaryCta) ? <a href={str(content.primaryHref) || "#contact"} className={`${btnRadius(theme)} t-btn px-6 py-3 text-sm font-bold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta)}</a> : null}
+        {str(content.secondaryCta) && <a href={str(content.secondaryHref) || "#process"} className={`${btnRadius(theme)} t-btn border px-6 py-3 text-sm font-semibold`} style={{ borderColor: theme.accent, color: theme.primary }}>{str(content.secondaryCta)}</a>}
       </div>
       {str(content.image) && <img src={str(content.image)} alt={str(content.title)} loading="lazy" decoding="async" className="mx-auto mt-10 aspect-[16/8] max-w-4xl object-cover" style={{ borderRadius: theme.radius * 2 }} />}
     </div>

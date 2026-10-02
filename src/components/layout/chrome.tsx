@@ -47,9 +47,7 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
     <header
       className="sticky top-0 z-40 transition-shadow duration-300"
       style={{
-        background: "color-mix(in srgb, var(--paper) 78%, transparent)",
-        backdropFilter: "blur(18px) saturate(1.4)",
-        WebkitBackdropFilter: "blur(18px) saturate(1.4)",
+        background: "var(--paper)",
         borderBottom: "1px solid var(--line)",
         boxShadow: scrolled ? "0 12px 32px -20px rgba(23,23,27,.35)" : "none",
       }}
@@ -63,14 +61,14 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
             <Link
               key={n.href}
               href={n.href}
-              className="rounded-[9px] px-3 py-[7px] text-sm transition-colors hover:bg-black/[0.045]"
+              className="nav-link rounded-[9px] px-3 py-[7px] text-sm transition-colors hover:bg-black/[0.045]"
               style={{ color: "var(--ink-2)" }}
             >
               {n.label}
             </Link>
           ))}
           {user && (
-            <Link href="/dashboard" className="rounded-[9px] px-3 py-[7px] text-sm font-medium transition-colors hover:bg-black/[0.045]" style={{ color: "var(--ink)" }}>
+            <Link href="/dashboard" className="nav-link rounded-[9px] px-3 py-[7px] text-sm font-medium transition-colors hover:bg-black/[0.045]" style={{ color: "var(--ink)" }}>
               Dashboard
             </Link>
           )}

@@ -99,7 +99,7 @@ export function EmptyArt({ theme, glyph, caption, className = "", style }: {
 
 // ─── NAVBAR ───
 export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: ThemeConfig; pages?: { title: string; href: string }[] }) {
-  const c = s.content as { logo?: string; links?: { label: string; href: string }[]; cta?: string };
+  const c = s.content as { logo?: string; links?: { label: string; href: string }[]; cta?: string; ctaHref?: string };
   const links = [...arr<{ label: string; href: string }>(c.links), ...((pages ?? []).map((pg) => ({ label: pg.title, href: pg.href })))];
   if (s.variant === "overlay") {
     return (
@@ -122,7 +122,7 @@ export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: 
           <div className="hidden gap-7 text-[13px] font-medium md:flex">
             {links.map((l, i) => <a key={i} href={l.href} className="opacity-80 transition-opacity hover:opacity-100">{l.label}</a>)}
           </div>
-          <a href="#contact" className={`${btnRadius(theme)} t-btn bg-white px-4 py-2 text-[13px] font-bold`} style={{ color: theme.primary }}>
+          <a href={str((s.content as { ctaHref?: string }).ctaHref) || "#contact"} className={`${btnRadius(theme)} t-btn bg-white px-4 py-2 text-[13px] font-bold`} style={{ color: theme.primary }}>
             {str(c.cta) || "Start a project"}
           </a>
         </div>
@@ -155,7 +155,7 @@ export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: 
           {links.map((l, i) => <a key={i} href={l.href} className="transition-opacity hover:opacity-80">{l.label}</a>)}
         </div>
         {str(c.cta) && (
-          <a href="#contact" className={`${btnRadius(theme)} t-btn px-4 py-2 text-sm font-medium text-white`} style={{ background: theme.primary }}>
+          <a href={str(c.ctaHref) || "#contact"} className={`${btnRadius(theme)} t-btn px-4 py-2 text-sm font-medium text-white`} style={{ background: theme.primary }}>
             {str(c.cta)}
           </a>
         )}
@@ -164,17 +164,33 @@ export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: 
   );
 }
 
+// ─── ANNOUNCEMENT BANNER ───
+export function BannerSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
+  const c = s.content as Record<string, unknown>;
+  const msg = str(c.message, "Now booking — tell me about your project");
+  const href = str(c.linkHref);
+  const label = str(c.linkLabel);
+  return (
+    <div className="px-4 py-2 text-center text-[13px] font-medium" style={{ background: s.variant === "dark" ? theme.text : theme.primary, color: "#fff" }}>
+      {msg}
+      {href && label && <a href={href} className="ml-2 font-bold underline underline-offset-4 transition-opacity hover:opacity-80">{label} →</a>}
+    </div>
+  );
+}
+
 // ─── HERO ───
 export function HeroSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
   const c = s.content as Record<string, unknown>;
   const stats = arr<{ value: string; label: string }>(c.stats);
+  const primaryHref = str(c.primaryHref) || "#work";
+  const secondaryHref = str(c.secondaryHref) || "#contact";
   const primary = (
-    <a href="#work" className={`${btnRadius(theme)} t-btn inline-flex px-5 py-2.5 text-sm font-semibold text-white`} style={{ background: theme.primary }}>
+    <a href={primaryHref} className={`${btnRadius(theme)} t-btn inline-flex px-5 py-2.5 text-sm font-semibold text-white`} style={{ background: theme.primary }}>
       {str(c.primaryCta, "View my work")}
     </a>
   );
   const secondary = str(c.secondaryCta) ? (
-    <a href="#contact" className={`${btnRadius(theme)} t-btn inline-flex border px-5 py-2.5 text-sm font-semibold`} style={{ borderColor: theme.muted }}>
+    <a href={secondaryHref} className={`${btnRadius(theme)} t-btn inline-flex border px-5 py-2.5 text-sm font-semibold`} style={{ borderColor: theme.muted }}>
       {str(c.secondaryCta)}
     </a>
   ) : null;
@@ -227,8 +243,8 @@ export function HeroSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
           </h1>
           {str(c.description) && <p className="mt-5 max-w-xl text-[15px] leading-relaxed opacity-75">{str(c.description)}</p>}
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#work" className={`${btnRadius(theme)} t-btn bg-white px-6 py-3 text-sm font-bold`} style={{ color: theme.primary }}>{str(c.primaryCta, "View my work")}</a>
-            {str(c.secondaryCta) && <a href="#contact" className={`${btnRadius(theme)} t-btn border border-white/40 px-6 py-3 text-sm font-semibold`}>{str(c.secondaryCta)}</a>}
+            <a href={primaryHref} className={`${btnRadius(theme)} t-btn bg-white px-6 py-3 text-sm font-bold`} style={{ color: theme.primary }}>{str(c.primaryCta, "View my work")}</a>
+            {str(c.secondaryCta) && <a href={secondaryHref} className={`${btnRadius(theme)} t-btn border border-white/40 px-6 py-3 text-sm font-semibold`}>{str(c.secondaryCta)}</a>}
           </div>
           {stats.length > 0 && (
             <dl className="mt-12 grid grid-cols-3 gap-6 border-t border-white/20 pt-6">
@@ -410,7 +426,7 @@ export function ServicesSection({ s, theme }: { s: SectionInstance; theme: Theme
   const items = arr<{ title: string; description: string; icon: string; price: string }>(c.items);
   if (s.variant === "list") {
     return (
-      <section className={sectionPad(theme)}>
+      <section id="services" className={sectionPad(theme)}>
         <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
           {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
           <H theme={theme}>{str(c.title, "Services")}</H>
@@ -432,7 +448,7 @@ export function ServicesSection({ s, theme }: { s: SectionInstance; theme: Theme
   }
   if (s.variant === "split") {
     return (
-      <section className={sectionPad(theme)} style={{ background: theme.primary, color: "#fff" }}>
+      <section id="services" className={sectionPad(theme)} style={{ background: theme.primary, color: "#fff" }}>
         <div className={`mx-auto grid gap-10 px-6 md:grid-cols-[1fr_1.4fr] ${containerWidth(theme)}`}>
           <div className="md:sticky md:top-28 md:self-start">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] opacity-60">{str(c.heading) || "Services"}</p>
@@ -455,7 +471,7 @@ export function ServicesSection({ s, theme }: { s: SectionInstance; theme: Theme
     );
   }
   return (
-    <section className={sectionPad(theme)} style={{ background: theme.surface }}>
+    <section id="services" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
         <H theme={theme}>{str(c.title, "Services")}</H>
@@ -638,7 +654,7 @@ export function TestimonialsSection({ s, theme }: { s: SectionInstance; theme: T
   if (s.variant === "quote") {
     if (items.length === 0) return null;
     return (
-      <section className={sectionPad(theme)}>
+      <section id="testimonials" className={sectionPad(theme)}>
         <div className={`mx-auto px-6 text-center ${containerWidth(theme)}`}>
           {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
           <H theme={theme}>{str(c.title, "Testimonials")}</H>
@@ -655,7 +671,7 @@ export function TestimonialsSection({ s, theme }: { s: SectionInstance; theme: T
   }
   if (s.variant === "minimal") {
     return (
-      <section className={sectionPad(theme)} style={{ background: theme.surface }}>
+      <section id="testimonials" className={sectionPad(theme)} style={{ background: theme.surface }}>
         <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
           <H theme={theme}>{str(c.title, "Testimonials")}</H>
           <div className="mt-8 space-y-8">{items.map((t0, i) => (
@@ -672,7 +688,7 @@ export function TestimonialsSection({ s, theme }: { s: SectionInstance; theme: T
     );
   }
   return (
-    <section className={sectionPad(theme)} style={{ background: theme.surface }}>
+    <section id="testimonials" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
         <H theme={theme}>{str(c.title, "Testimonials")}</H>
@@ -694,7 +710,7 @@ export function PricingSection({ s, theme }: { s: SectionInstance; theme: ThemeC
   const c = s.content as Record<string, unknown>;
   const items = arr<{ name: string; price: string; period: string; description: string; features: string[]; featured: boolean }>(c.items);
   return (
-    <section className={sectionPad(theme)}>
+    <section id="pricing" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <div className="text-center">{str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
         <H theme={theme}>{str(c.title, "Pricing")}</H></div>
@@ -740,7 +756,7 @@ export function GallerySection({ s, theme }: { s: SectionInstance; theme: ThemeC
     );
   }
   return (
-    <section className={sectionPad(theme)}>
+    <section id="gallery" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
         <H theme={theme}>{str(c.title, "Gallery")}</H>
@@ -752,6 +768,103 @@ export function GallerySection({ s, theme }: { s: SectionInstance; theme: ThemeC
           ))}
         </div>
         <p className="mono-meta mt-3 text-[11px] md:hidden" style={{ color: theme.muted }}>Swipe →</p>
+      </div>
+    </section>
+  );
+}
+
+// ─── VIDEO ───
+export function videoEmbedUrl(raw: string): { kind: "youtube" | "vimeo" | "file"; src: string } | null {
+  const url = raw.trim();
+  if (!url) return null;
+  if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) return { kind: "file", src: url };
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+  if (yt) return { kind: "youtube", src: `https://www.youtube.com/embed/${yt[1]}` };
+  const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}` };
+  return null;
+}
+
+export function VideoSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
+  const c = s.content as Record<string, unknown>;
+  const embed = videoEmbedUrl(str(c.url));
+  const frame = embed ? (
+    embed.kind === "file" ? (
+      <video src={embed.src} controls preload="metadata" className="h-full w-full" />
+    ) : (
+      <iframe src={embed.src} title={str(c.title, "Video")} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="h-full w-full border-0" />
+    )
+  ) : (
+    <div className="flex h-full min-h-56 flex-col items-center justify-center gap-2 p-8 text-center">
+      <span className="flex h-14 w-14 items-center justify-center rounded-full text-xl text-white" style={{ background: theme.primary }}>▶</span>
+      <p className="text-sm" style={{ color: theme.muted }}>{str(c.url) ? "That link isn't a YouTube, Vimeo or MP4 URL yet." : "Paste a YouTube, Vimeo or MP4 link in Content → Video."}</p>
+      {str(c.url) && <a href={str(c.url)} className="text-sm font-semibold underline underline-offset-4">Open the link →</a>}
+    </div>
+  );
+  if (s.variant === "card") {
+    return (
+      <section className={sectionPad(theme)} style={{ background: theme.surface }}>
+        <div className={`mx-auto grid items-center gap-8 px-6 md:grid-cols-[1fr_1.5fr] ${containerWidth(theme)}`}>
+          <div>
+            {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
+            <H theme={theme}>{str(c.title, "Watch")}</H>
+            {str(c.description) && <p className="mt-3 text-[15px] leading-relaxed" style={{ color: theme.muted }}>{str(c.description)}</p>}
+            {str(c.caption) && <p className="mono-meta mt-4 text-xs" style={{ color: theme.muted }}>{str(c.caption)}</p>}
+          </div>
+          <div className="aspect-video overflow-hidden shadow-xl" style={{ borderRadius: theme.radius * 1.4, background: theme.background }}>{frame}</div>
+        </div>
+      </section>
+    );
+  }
+  return (
+    <section className={sectionPad(theme)}>
+      <div className={`mx-auto px-6 text-center ${containerWidth(theme)}`}>
+        {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
+        <H theme={theme}>{str(c.title, "Watch")}</H>
+        {str(c.description) && <p className="mx-auto mt-3 max-w-2xl" style={{ color: theme.muted }}>{str(c.description)}</p>}
+        <div className="mx-auto mt-8 aspect-video max-w-4xl overflow-hidden shadow-xl" style={{ borderRadius: theme.radius * 1.5, background: theme.surface }}>{frame}</div>
+        {str(c.caption) && <p className="mono-meta mt-3 text-xs" style={{ color: theme.muted }}>{str(c.caption)}</p>}
+      </div>
+    </section>
+  );
+}
+
+// ─── STATS BAND ───
+export function StatsSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
+  const c = s.content as Record<string, unknown>;
+  const items = arr<{ value: string; label: string }>(c.items);
+  if (s.variant === "grid") {
+    return (
+      <section className={sectionPad(theme)}>
+        <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
+          {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
+          <H theme={theme}>{str(c.title, "By the numbers")}</H>
+          {str(c.description) && <p className="mt-3 max-w-2xl" style={{ color: theme.muted }}>{str(c.description)}</p>}
+          <dl className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+            {items.map((st, i) => (
+              <div key={i} className="border p-6 text-center transition-transform duration-300 hover:-translate-y-1" style={{ borderRadius: theme.radius, borderColor: theme.surface, background: theme.surface }}>
+                <dt className="text-3xl font-extrabold tabular-nums" style={{ fontFamily: fontStack(theme.fontHeading) }}>{st.value}</dt>
+                <dd className="mt-1 text-xs uppercase tracking-widest" style={{ color: theme.muted }}>{st.label}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+    );
+  }
+    return (
+      <section id="gallery" className={sectionPad(theme)} style={{ background: theme.primary, color: "#fff" }}>
+      <div className={`mx-auto px-6 text-center ${containerWidth(theme)}`}>
+        {str(c.heading) && <p className="mb-3 font-mono text-xs font-medium uppercase opacity-70" style={{ letterSpacing: "0.2em" }}>{str(c.heading)}</p>}
+        <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.8rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(c.title, "By the numbers")}</h2>
+        <dl className="mx-auto mt-8 grid max-w-4xl grid-cols-2 gap-8 md:grid-cols-4">
+          {items.map((st, i) => (
+            <div key={i}>
+              <dt className="text-4xl font-extrabold tabular-nums" style={{ fontFamily: fontStack(theme.fontHeading) }}>{st.value}</dt>
+              <dd className="mt-1 text-xs uppercase tracking-widest opacity-70">{st.label}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );
@@ -792,7 +905,7 @@ export function MenuSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
   const c = s.content as Record<string, unknown>;
   const groups = arr<{ name: string; items: { name: string; description: string; price: string }[] }>(c.groups);
   return (
-    <section className={sectionPad(theme)} style={{ background: theme.surface }}>
+    <section id="menu" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <div className="text-center">{str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
         <H theme={theme}>{str(c.title, "Menu")}</H></div>
@@ -838,7 +951,7 @@ export function TeamSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
   const c = s.content as Record<string, unknown>;
   const members = arr<{ name: string; role: string; photo: string; bio: string }>(c.members);
   return (
-    <section className={sectionPad(theme)}>
+    <section id="team" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
         <H theme={theme}>{str(c.title, "Team")}</H>
@@ -863,7 +976,7 @@ export function ProcessSection({ s, theme }: { s: SectionInstance; theme: ThemeC
   const c = s.content as Record<string, unknown>;
   const steps = arr<{ title: string; description: string }>(c.steps);
   return (
-    <section className={sectionPad(theme)}>
+    <section id="process" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
         <H theme={theme}>{str(c.title, "Process")}</H>
@@ -904,15 +1017,17 @@ export function FaqSection({ s, theme }: { s: SectionInstance; theme: ThemeConfi
 
 export function CtaSection({ s, theme }: { s: SectionInstance; theme: ThemeConfig }) {
   const c = s.content as Record<string, unknown>;
+  const primaryHref = str(c.primaryHref) || "#contact";
+  const secondaryHref = str(c.secondaryHref) || "#contact";
   return (
     <section className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <div className="px-8 py-14 text-center md:py-16" style={{ borderRadius: theme.radius * 1.6, background: theme.primary, color: "#fff" }}>
           <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(c.title, "Have a project in mind?")}</h2>
           {str(c.description) && <p className="mx-auto mt-3 max-w-xl opacity-80">{str(c.description)}</p>}
-          <div className="mt-7 flex justify-center gap-3">
-            <a href="#contact" className={`${btnRadius(theme)} t-btn bg-white px-5 py-2.5 text-sm font-semibold`} style={{ color: theme.primary }}>{str(c.primaryCta, "Start a project")}</a>
-            {str(c.secondaryCta) && <a href="#contact" className={`${btnRadius(theme)} t-btn border border-white/40 px-5 py-2.5 text-sm font-semibold`}>{str(c.secondaryCta)}</a>}
+          <div className="mt-7 flex flex-wrap justify-center gap-3">
+            <a href={primaryHref} className={`${btnRadius(theme)} t-btn bg-white px-5 py-2.5 text-sm font-semibold`} style={{ color: theme.primary }}>{str(c.primaryCta, "Start a project")}</a>
+            {str(c.secondaryCta) && <a href={secondaryHref} className={`${btnRadius(theme)} t-btn border border-white/40 px-5 py-2.5 text-sm font-semibold`}>{str(c.secondaryCta)}</a>}
           </div>
         </div>
       </div>

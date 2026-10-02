@@ -18,6 +18,10 @@ export const THEME_PRESETS: { name: string; theme: Partial<ThemeConfig> }[] = [
   { name: "Professional", theme: { primary: "#1e3a5f", secondary: "#475569", background: "#ffffff", surface: "#f1f5f9", text: "#0f172a", muted: "#64748b", accent: "#2563eb" } },
   { name: "Elegant", theme: { primary: "#3b2f2f", secondary: "#6b5d5d", background: "#fdfbf7", surface: "#f5efe6", text: "#2a2222", muted: "#8a7f7a", accent: "#b45309" } },
   { name: "Noir", theme: { primary: "#fafafa", secondary: "#a1a1aa", background: "#0a0a0a", surface: "#171717", text: "#fafafa", muted: "#a1a1aa", accent: "#fafafa" } },
+  { name: "Ember", theme: { primary: "#7c2d12", secondary: "#b45309", background: "#fffbeb", surface: "#fef3c7", text: "#292019", muted: "#8a7a6b", accent: "#ea580c" } },
+  { name: "Glacier", theme: { primary: "#0c4a6e", secondary: "#0284c7", background: "#f0f9ff", surface: "#e0f2fe", text: "#082f49", muted: "#5b8ca8", accent: "#06b6d4" } },
+  { name: "Grape", theme: { primary: "#5b21b6", secondary: "#8b5cf6", background: "#faf5ff", surface: "#f3e8ff", text: "#2e1065", muted: "#7e7391", accent: "#d946ef" } },
+  { name: "Blush", theme: { primary: "#9d174d", secondary: "#db2777", background: "#fff1f2", surface: "#ffe4e6", text: "#4c0519", muted: "#9d7a84", accent: "#f43f5e" } },
 ];
 
 let counter = 0;
@@ -33,7 +37,9 @@ export function defaultSection(type: SectionType, variant: string): SectionInsta
 export function defaultContentFor(type: SectionType): Record<string, unknown> {
   switch (type) {
     case "navbar":
-      return { logo: "Your Name", links: [{ label: "About", href: "#about" }, { label: "Work", href: "#work" }, { label: "Contact", href: "#contact" }], cta: "Hire me" };
+      return { logo: "Your Name", links: [{ label: "About", href: "#about" }, { label: "Work", href: "#work" }, { label: "Contact", href: "#contact" }], cta: "Hire me", ctaHref: "#contact" };
+    case "banner":
+      return { message: "Now booking new projects for next quarter", linkLabel: "Get in touch", linkHref: "#contact" };
     case "hero":
       return {
         eyebrow: "Available for new projects",
@@ -128,6 +134,26 @@ export function defaultContentFor(type: SectionType): Record<string, unknown> {
         heading: "Gallery",
         title: "Selected frames",
         images: ["", "", "", "", "", ""],
+      };
+    case "video":
+      return {
+        heading: "Showreel",
+        title: "Watch",
+        description: "A two-minute tour of the work.",
+        url: "",
+        caption: "",
+      };
+    case "stats":
+      return {
+        heading: "Proof",
+        title: "By the numbers",
+        description: "",
+        items: [
+          { value: "8+", label: "Years experience" },
+          { value: "120+", label: "Projects shipped" },
+          { value: "40+", label: "Happy clients" },
+          { value: "12", label: "Awards won" },
+        ],
       };
     case "menu":
       return {
@@ -288,6 +314,7 @@ export function sanitizeSections(raw: unknown): SectionInstance[] {
     type: (s?.type ?? "about") as SectionType,
     variant: typeof s?.variant === "string" ? s.variant : "simple",
     enabled: s?.enabled !== false,
+    ...(s?.band === true ? { band: true as const } : {}),
     content: ((s?.content ?? {}) as Record<string, unknown>) ?? {},
   }));
 }

@@ -2,6 +2,7 @@
 
 export type SectionType =
   | "navbar"
+  | "banner"
   | "hero"
   | "about"
   | "skills"
@@ -12,6 +13,8 @@ export type SectionType =
   | "testimonials"
   | "pricing"
   | "gallery"
+  | "video"
+  | "stats"
   | "menu"
   | "hours"
   | "team"
@@ -31,6 +34,8 @@ export interface SectionInstance {
   type: SectionType;
   variant: string;
   enabled: boolean;
+  /** Tinted band behind the section (alternating rhythm). */
+  band?: boolean;
   content: SectionContent;
 }
 

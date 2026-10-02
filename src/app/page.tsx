@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Navbar, Footer } from "@/components/layout/chrome";
 import { Reveal } from "@/components/layout/Reveal";
 import { LiveCard } from "@/components/templates/LiveCard";
+import { SECTION_META } from "@/components/templates/Renderer";
 import { currentUser } from "@/lib/auth";
 import { TEMPLATES } from "@/lib/templates";
 
@@ -21,6 +22,7 @@ const PRINCIPLES = [
 
 export default async function LandingPage() {
   const user = await currentUser();
+  const styleCount = Object.values(SECTION_META).reduce((n, m) => n + m.variants.length, 0);
   return (
     <div className="min-h-screen">
       <Navbar user={user} />
@@ -32,7 +34,7 @@ export default async function LandingPage() {
         <div className="relative mx-auto grid max-w-7xl justify-items-center gap-6 px-6 text-center">
           <Link href="/templates" className="pill group">
             <span className="tag">New</span>
-            6 predesigned sites — browse them live
+            {TEMPLATES.length} predesigned sites — browse them live
             <span aria-hidden className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
           </Link>
           <h1 className="max-w-4xl font-bold" style={{ fontSize: "clamp(46px, 8vw, 96px)", lineHeight: 0.96 }}>
@@ -61,8 +63,8 @@ export default async function LandingPage() {
           </ul>
           <dl className="mt-6 flex flex-wrap justify-center">
             {[
-              ["6", "complete sites"],
-              ["50+", "predesigned sections"],
+              [String(TEMPLATES.length), "complete sites"],
+              [`${styleCount}+`, "section styles"],
               ["0", "lines of code"],
             ].map(([v, l], i) => (
               <div key={l} className="flex flex-col gap-0.5 px-7 py-1" style={{ borderLeft: i ? "1px solid var(--line-2)" : "none" }}>

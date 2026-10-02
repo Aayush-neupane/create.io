@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { TEMPLATES } from "@/lib/templates";
+import { SECTION_META } from "@/components/templates/Renderer";
 
 export function LogoTile({ size = 28 }: { size?: number }) {
   return (
@@ -155,6 +157,7 @@ export function Footer() {
     { h: "Library", links: [{ href: "/templates", label: "Portfolio" }, { href: "/templates", label: "Business" }, { href: "/templates", label: "Restaurant" }] },
     { h: "Account", links: [{ href: "/login", label: "Log in" }, { href: "/signup", label: "Sign up" }, { href: "/settings", label: "Settings" }] },
   ];
+  const styleCount = Object.values(SECTION_META).reduce((n, m) => n + m.variants.length, 0);
   return (
     <footer style={{ borderTop: "1px solid var(--line)", marginTop: 96 }}>
       <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[1.7fr_1fr_1fr_1fr]">
@@ -164,7 +167,7 @@ export function Footer() {
             Whole websites, predesigned. Pick one, make it yours, publish in minutes.
           </p>
           <p className="mono-meta mt-4 text-xs" style={{ color: "var(--ink-3)" }}>
-            6 sites · 50+ sections · 0 code
+            {TEMPLATES.length} sites · {styleCount}+ sections · 0 code
           </p>
         </div>
         {cols.map((c) => (

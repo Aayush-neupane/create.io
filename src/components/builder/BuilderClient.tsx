@@ -304,7 +304,12 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
   function addSection(type: SectionType) {
     const meta = SECTION_META[type];
     const inst = defaultSection(type, meta.variants[0].id);
-    setActiveSections((list) => [...list, inst]);
+    // Announcement banners belong at the very top, above the navbar.
+    if (type === "banner") {
+      setActiveSections((list) => [inst, ...list]);
+    } else {
+      setActiveSections((list) => [...list, inst]);
+    }
     setSelectedId(inst.id);
     setTab("content");
   }
@@ -484,8 +489,18 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
         <>
           <TextField label="Logo text" value={str("logo")} onChange={(v) => onChange({ logo: v })} />
           <TextField label="Button text" value={str("cta")} onChange={(v) => onChange({ cta: v })} />
+          <TextField label="Button link" value={str("ctaHref")} onChange={(v) => onChange({ ctaHref: v })} placeholder="#contact" />
           {listEditor("links", "Nav links", "Link", { label: "New", href: "#about" },
             (it, set) => (<div className="grid grid-cols-2 gap-2"><TextField label="Label" value={String(it["label"] ?? "")} onChange={(v) => set({ label: v } as never)} /><TextField label="Link" value={String(it["href"] ?? "")} onChange={(v) => set({ href: v } as never)} /></div>))}
+        </>
+      )}
+      {(section.type === "banner") && (
+        <>
+          <TextField label="Message" value={str("message")} onChange={(v) => onChange({ message: v })} />
+          <div className="grid grid-cols-2 gap-2">
+            <TextField label="Link label (optional)" value={str("linkLabel")} onChange={(v) => onChange({ linkLabel: v })} />
+            <TextField label="Link URL (optional)" value={str("linkHref")} onChange={(v) => onChange({ linkHref: v })} placeholder="#contact" />
+          </div>
         </>
       )}
       {(section.type === "hero") && (
@@ -497,6 +512,10 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
           <div className="grid grid-cols-2 gap-2">
             <TextField label="Primary button" value={str("primaryCta")} onChange={(v) => onChange({ primaryCta: v })} />
             <TextField label="Secondary button" value={str("secondaryCta")} onChange={(v) => onChange({ secondaryCta: v })} />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <TextField label="Primary link" value={str("primaryHref")} onChange={(v) => onChange({ primaryHref: v })} placeholder="#work" />
+            <TextField label="Secondary link" value={str("secondaryHref")} onChange={(v) => onChange({ secondaryHref: v })} placeholder="#contact" />
           </div>
           <ImageField demo={demo} label="Hero image" value={str("image")} onChange={(v) => onChange({ image: v })} />
           {listEditor("stats", "Stats", "Stat", { value: "", label: "" },
@@ -629,7 +648,29 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
         <div className="grid grid-cols-2 gap-2">
           <TextField label="Primary button" value={str("primaryCta")} onChange={(v) => onChange({ primaryCta: v })} />
           <TextField label="Secondary button" value={str("secondaryCta")} onChange={(v) => onChange({ secondaryCta: v })} />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <TextField label="Primary link" value={str("primaryHref")} onChange={(v) => onChange({ primaryHref: v })} placeholder="#contact" />
+          <TextField label="Secondary link" value={str("secondaryHref")} onChange={(v) => onChange({ secondaryHref: v })} placeholder="#contact" />
         </div></>
+      )}
+      {(section.type === "video") && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          <AreaField label="Description" value={str("description")} onChange={(v) => onChange({ description: v })} />
+          <TextField label="Video URL (YouTube, Vimeo or MP4)" value={str("url")} onChange={(v) => onChange({ url: v })} placeholder="https://youtube.com/watch?v=…" />
+          <TextField label="Caption (optional)" value={str("caption")} onChange={(v) => onChange({ caption: v })} />
+        </>
+      )}
+      {(section.type === "stats") && (
+        <>
+          <TextField label="Eyebrow" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
+          <TextField label="Title" value={str("title")} onChange={(v) => onChange({ title: v })} />
+          <AreaField label="Description" value={str("description")} onChange={(v) => onChange({ description: v })} />
+          {listEditor("items", "Stats", "Stat", { value: "", label: "" },
+            (it, set) => (<div className="grid grid-cols-2 gap-2"><TextField label="Value" value={String(it["value"] ?? "")} onChange={(v) => set({ value: v } as never)} /><TextField label="Label" value={String(it["label"] ?? "")} onChange={(v) => set({ label: v } as never)} /></div>))}
+        </>
       )}
       {(section.type === "logos") && (
         <><TextField label="Heading" value={str("heading")} onChange={(v) => onChange({ heading: v })} />
@@ -996,6 +1037,12 @@ function SectionInspector({ section, templateId, demo, onPatch }: {
         <span>Visible on site</span>
         <button onClick={() => onPatch((s) => ({ ...s, enabled: !s.enabled }))} className={`relative h-6 w-11 rounded-full transition ${section.enabled ? "bg-neutral-900" : "bg-neutral-300"}`}>
           <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${section.enabled ? "left-[22px]" : "left-0.5"}`} />
+        </button>
+      </label>
+      <label className="flex items-center justify-between text-[13px]">
+        <span>Tinted background</span>
+        <button onClick={() => onPatch((s) => ({ ...s, band: !s.band }))} aria-pressed={!!section.band} title="Wrap this section in a tinted band" className={`relative h-6 w-11 rounded-full transition ${section.band ? "bg-neutral-900" : "bg-neutral-300"}`}>
+          <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${section.band ? "left-[22px]" : "left-0.5"}`} />
         </button>
       </label>
       <div className="border-t border-neutral-100 pt-3">

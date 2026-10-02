@@ -194,6 +194,21 @@ const Footer: C = ({ content, theme }) => (
   </footer>
 );
 
+
+const Logos: C = ({ content, theme }) => {
+  const items = arr<string>(content.items);
+  return (
+    <section className="overflow-hidden border-y border-white/15 py-7" style={{ background: theme.primary, color: "#fff" }}>
+      <p className="text-center font-mono text-[11px] font-bold uppercase" style={{ letterSpacing: "0.26em", opacity: 0.7 }}>{str(content.heading, "On stage & decks")}</p>
+      <div className="mt-4 flex items-baseline justify-center gap-8 overflow-x-auto whitespace-nowrap px-6" aria-hidden>
+        {items.map((name, i) => (
+          <span key={i} className="flex-none italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: i % 2 ? "1.1rem" : "1.7rem", fontWeight: 600, opacity: i % 2 ? 0.65 : 1 }}>{name}<span className="ml-8 not-italic" style={{ color: theme.accent }}>✦</span></span>
+        ))}
+      </div>
+    </section>
+  );
+};
+
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
   navbar: { logo: "Utsav Fest", links: [{ label: "Lineup", href: "#work" }, { label: "Tickets", href: "#tickets" }, { label: "Venue", href: "#contact" }], cta: "Get tickets" },
   hero: {
@@ -252,4 +267,5 @@ export const components: Record<string, C> = {
   "faq:accordion": Faq,
   "contact:split": Contact,
   "footer:columns": Footer,
+  "logos:row": Logos,
 };

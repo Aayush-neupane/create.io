@@ -54,7 +54,7 @@ const Hero: C = ({ content, theme }) => (
 const Gallery: C = ({ content, theme }) => {
   const images = arr<string>(content.images);
   return (
-    <section className={sectionPad(theme)} style={{ background: theme.surface }}>
+    <section id="gallery" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 text-center ${containerWidth(theme)}`}>
         <p className="text-xs font-semibold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.heading, "Moments")}</p>
         <h2 className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})` }}>{str(content.title, "Engagement diaries")}</h2>
@@ -108,6 +108,101 @@ const Footer: C = ({ content, theme }) => (
   </footer>
 );
 
+const Banner: C = ({ content, theme }) => (
+  <div className="px-4 py-2 text-center text-[13px] italic" style={{ background: theme.primary, color: "#fff8f2", fontFamily: fontStack(theme.fontHeading) }}>
+    <span aria-hidden>❦ </span>{str(content.message, "Kindly RSVP by Magh 20")}
+    {str(content.linkHref) && str(content.linkLabel) && <a href={str(content.linkHref)} className="ml-2 font-sans font-bold not-italic underline underline-offset-4">{str(content.linkLabel)} →</a>}
+  </div>
+);
+
+const About: C = ({ content, theme }) => {
+  const body = str(content.body);
+  return (
+    <section id="about" className={sectionPad(theme)}>
+      <div className={`mx-auto max-w-2xl px-6 text-center ${containerWidth(theme)}`}>
+        <p className="text-xs font-semibold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.heading, "Our story")}</p>
+        <h2 className="mt-3 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 500, lineHeight: 1.15 }}>{str(content.title)}</h2>
+        <span aria-hidden className="mx-auto my-5 block h-px w-16" style={{ background: theme.accent }} />
+        {body && <p className="text-[16px] leading-[1.9]" style={{ color: theme.text, fontFamily: fontStack(theme.fontHeading) }}>{body}</p>}
+        {arr<string>(content.bullets).length > 0 && (
+          <div className="mt-7 flex flex-wrap justify-center gap-2.5">
+            {arr<string>(content.bullets).map((b, i) => (
+              <span key={i} className="rounded-full border px-4 py-2 font-mono text-xs" style={{ borderColor: theme.accent, color: theme.primary }}>{b}</span>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
+const Process: C = ({ content, theme }) => {
+  const steps = arr<{ title: string; description: string }>(content.steps);
+  return (
+    <section id="process" className={sectionPad(theme)} style={{ background: theme.surface }}>
+      <div className={`mx-auto max-w-xl px-6 text-center ${containerWidth(theme)}`}>
+        <p className="text-xs font-semibold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.heading, "Order of the day")}</p>
+        <h2 className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})` }}>{str(content.title)}</h2>
+        <div className="mt-10">
+          {steps.map((st, i) => (
+            <div key={i} className="relative pb-10 last:pb-0">
+              {i < steps.length - 1 && <span aria-hidden className="absolute left-1/2 top-8 h-full w-px -translate-x-1/2" style={{ background: theme.accent, opacity: 0.35 }} />}
+              <span aria-hidden className="relative z-10 mx-auto grid h-9 w-9 place-items-center rounded-full text-sm" style={{ background: theme.background, border: `1px solid ${theme.accent}`, color: theme.accent }}>❦</span>
+              <h3 className="mt-3 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "1.4rem" }}>{st.title}</h3>
+              <p className="mx-auto mt-1.5 max-w-md text-sm leading-relaxed" style={{ color: theme.muted }}>{st.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Testimonials: C = ({ content, theme }) => {
+  const items = arr<{ name: string; company: string; message: string }>(content.items);
+  return (
+    <section className={sectionPad(theme)}>
+      <div className={`mx-auto max-w-2xl px-6 text-center ${containerWidth(theme)}`}>
+        <p className="text-xs font-semibold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.heading, "Blessings")}</p>
+        <h2 className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})` }}>{str(content.title)}</h2>
+        <div className="mt-8 space-y-10">
+          {items.map((t0, i) => (
+            <figure key={i}>
+              <span aria-hidden className="italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "2.4rem", color: theme.accent, lineHeight: 1 }}>“</span>
+              <blockquote className="italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "1.4rem", lineHeight: 1.5 }}>{t0.message}</blockquote>
+              <figcaption className="mt-3 font-mono text-[11px] uppercase" style={{ letterSpacing: "0.22em", color: theme.muted }}>— {t0.name}{t0.company ? ` · ${t0.company}` : ""}</figcaption>
+              {i < items.length - 1 && <span aria-hidden className="mx-auto mt-10 block text-sm" style={{ color: theme.accent }}>❦ ❦ ❦</span>}
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Faq: C = ({ content, theme }) => {
+  const items = arr<{ q: string; a: string }>(content.items);
+  return (
+    <section className={sectionPad(theme)} style={{ background: theme.surface }}>
+      <div className={`mx-auto max-w-2xl px-6 ${containerWidth(theme)}`}>
+        <p className="text-center text-xs font-semibold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.heading, "Good to know")}</p>
+        <h2 className="mt-2 text-center italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})` }}>{str(content.title)}</h2>
+        <div className="mt-8 divide-y" style={{ borderColor: theme.background }}>
+          {items.map((f, i) => (
+            <details key={i} className="group py-6">
+              <summary className="flex cursor-pointer list-none items-baseline justify-between gap-4 italic [&::-webkit-details-marker]:hidden" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "1.25rem" }}>
+                {f.q}
+                <span aria-hidden className="font-sans text-lg transition-transform duration-300 group-open:rotate-45" style={{ color: theme.accent }}>＋</span>
+              </summary>
+              <div className="faq-a"><div><p className="pt-3 text-[15px] leading-relaxed" style={{ color: theme.muted }}>{f.a}</p></div></div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
   navbar: { logo: "A & R", links: [{ label: "Our story", href: "#about" }, { label: "Moments", href: "#gallery" }, { label: "Order of day", href: "#process" }, { label: "RSVP", href: "#contact" }], cta: "" },
   banner: { message: "Seats for the bihe are limited — kindly RSVP by Magh 20", linkLabel: "RSVP", linkHref: "#contact" },
@@ -151,8 +246,13 @@ export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
 
 export const components: Record<string, C> = {
   "navbar:centered": Navbar,
+  "banner:strip": Banner,
   "hero:poster": Hero,
+  "about:simple": About,
   "gallery:feature": Gallery,
+  "process:steps": Process,
+  "testimonials:quote": Testimonials,
+  "faq:accordion": Faq,
   "contact:split": Contact,
   "footer:minimal": Footer,
 };

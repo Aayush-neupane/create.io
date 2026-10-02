@@ -203,6 +203,26 @@ const Footer: C = ({ content, theme }) => (
   </footer>
 );
 
+
+const Logos: C = ({ content, theme }) => {
+  const items = arr<string>(content.items);
+  return (
+    <section className="border-y" style={{ borderColor: theme.surface, background: theme.surface }}>
+      <div className={`mx-auto px-6 py-9 ${containerWidth(theme)}`}>
+        <p className="text-center font-mono text-[11px] font-bold uppercase" style={{ letterSpacing: "0.22em", color: theme.muted }}>{str(content.heading, "Powering teams at")}</p>
+        <div className="no-bar snap-row mt-5 flex items-center gap-x-10 overflow-x-auto whitespace-nowrap md:flex-wrap md:justify-center md:overflow-visible md:whitespace-normal">
+          {items.map((name, i) => (
+            <span key={i} className="flex flex-none items-center gap-2 text-[15px] font-bold transition-opacity duration-300 hover:opacity-100" style={{ fontFamily: fontStack(theme.fontHeading), opacity: 0.55 }}>
+              <span className="grid h-7 w-7 place-items-center rounded-md text-xs font-black text-white" style={{ background: theme.primary }}>{name.slice(0, 1)}</span>
+              {name}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 export const seed: Partial<Record<SectionType, Record<string, unknown>>> = {
   navbar: { logo: "Sajilo", links: [{ label: "Features", href: "#work" }, { label: "Pricing", href: "#pricing" }, { label: "FAQ", href: "#faq" }], cta: "Get started" },
   logos: { heading: "Powering modern Nepali teams", items: ["Sajilo Rentals", "Himalayan Trails", "Momo Mart", "Kumari Pay", "FitNepal"] },
@@ -257,4 +277,5 @@ export const components: Record<string, C> = {
   "faq:accordion": Faq,
   "cta:banner": Cta,
   "footer:columns": Footer,
+  "logos:row": Logos,
 };

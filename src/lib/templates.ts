@@ -278,8 +278,34 @@ export const TEMPLATES: TemplateDefinition[] = [
       { type: "footer", variant: "columns" },
     ],
   },
+  {
+    id: "detailing",
+    name: "Chamak",
+    category: "Automotive",
+    description: "Mobile detailing studio with proof-of-work gallery, packages and booking that comes to you.",
+    tags: ["car", "detailing", "automotive", "booking", "services"],
+    style: "Gloss",
+    mode: "dark",
+    tier: "free",
+    thumbnailGradient: "linear-gradient(135deg,#070b12,#0e7490)",
+    theme: { ...t, primary: "#0b3b5e", secondary: "#7d93ab", background: "#070b12", surface: "#101825", text: "#eaf1f8", muted: "#8b98a9", accent: "#22d3ee", fontHeading: "Space Grotesk", fontBody: "Inter", radius: 10 },
+    sections: [
+      { type: "navbar", variant: "bold" },
+      { type: "banner", variant: "dark" },
+      { type: "hero", variant: "poster" },
+      { type: "stats", variant: "band" },
+      { type: "services", variant: "cards" },
+      { type: "pricing", variant: "tiers" },
+      { type: "gallery", variant: "feature" },
+      { type: "process", variant: "steps" },
+      { type: "testimonials", variant: "cards" },
+      { type: "faq", variant: "accordion" },
+      { type: "cta", variant: "banner" },
+      { type: "contact", variant: "split" },
+      { type: "footer", variant: "big" },
+    ],
+  },
 ];
-
 export function getTemplate(id: string) {
   return TEMPLATES.find((t) => t.id === id) ?? TEMPLATES[0];
 }

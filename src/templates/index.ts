@@ -17,6 +17,7 @@ import { seed as seedWedding, components as compWedding } from "./wedding";
 import { seed as seedFitness, components as compFitness } from "./fitness";
 import { seed as seedCoffee, components as compCoffee } from "./coffee";
 import { seed as seedRealEstate, components as compRealEstate } from "./real-estate";
+import { seed as seedDetailing, components as compDetailing } from "./detailing";
 
 export type { BespokeProps };
 
@@ -33,6 +34,7 @@ const LIBS: Record<string, { seed: Partial<Record<SectionType, Record<string, un
   fitness: { seed: seedFitness, components: compFitness },
   coffee: { seed: seedCoffee, components: compCoffee },
   "real-estate": { seed: seedRealEstate, components: compRealEstate },
+  detailing: { seed: seedDetailing, components: compDetailing },
 };
 
 export function templateSeedContent(templateId: string): Partial<Record<SectionType, Record<string, unknown>>> {

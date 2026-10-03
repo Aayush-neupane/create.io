@@ -178,6 +178,30 @@ export async function saveUser(user: UserRecord): Promise<UserRecord> {
   return user;
 }
 
+export async function deleteUser(id: string): Promise<void> {
+  const db = await prisma();
+  if (db) {
+    try {
+      // Websites cascade via onDelete: Cascade in the Prisma schema.
+      await db.user.delete({ where: { id } });
+    } catch (e) {
+      const code = (e as { code?: string })?.code;
+      if (code !== "P2025") throw e;
+    }
+    return;
+  }
+  const users = await listUsers();
+  await writeJson(
+    USERS_FILE,
+    users.filter((u) => u.id !== id),
+  );
+  const all = await listWebsites();
+  await writeJson(
+    SITES_FILE,
+    all.filter((w) => w.userId !== id),
+  );
+}
+
 // ─── Websites ───
 export async function listWebsites(): Promise<WebsiteRecord[]> {
   const db = await prisma();

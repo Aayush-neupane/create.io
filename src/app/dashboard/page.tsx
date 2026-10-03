@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LogoTile } from "@/components/layout/chrome";
+import { AppNavbar } from "@/components/layout/chrome";
 import { currentUser } from "@/lib/auth";
 import { websitesForUser } from "@/lib/db";
 import { getTemplate } from "@/lib/templates";
@@ -14,24 +14,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--paper)" }}>
-      <header className="border-b border-neutral-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-6 py-4">
-          <Link href="/" className="flex items-center gap-2">
-            <LogoTile size={32} />
-            <span className="font-semibold">create.io</span>
-          </Link>
-          <nav className="ml-6 hidden gap-5 text-sm text-neutral-600 md:flex">
-            <span className="font-medium text-neutral-900">Dashboard</span>
-            <Link href="/templates" className="hover:text-neutral-900">Templates</Link>
-            <Link href="/settings" className="hover:text-neutral-900">Settings</Link>
-          </nav>
-          <div className="ml-auto flex items-center gap-2">
-            <span className="hidden text-sm text-neutral-500 sm:inline">{user.name}</span>
-            <Link href="/new" className="btn-primary" style={{ height: 36, fontSize: 13 }}>+ Create Website</Link>
-            <DashboardActions />
-          </div>
-        </div>
-      </header>
+      <AppNavbar user={user} active="/dashboard" actions={<DashboardActions />} />
 
       <main className="mx-auto max-w-7xl px-6 py-10">
         <h1 className="text-2xl font-semibold tracking-tight">Welcome back, {user.name.split(" ")[0]}.</h1>

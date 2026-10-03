@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { confirmPopup } from "@/components/ui/confirm";
 
 export function DashboardActions({ compact, id, slug }: { compact?: boolean; id?: string; slug?: string }) {
   const router = useRouter();
@@ -37,7 +38,13 @@ export function DashboardActions({ compact, id, slug }: { compact?: boolean; id?
 
   async function remove() {
     if (!id) return;
-    if (!confirm("Delete this website? This cannot be undone.")) return;
+    const ok = await confirmPopup({
+      title: "Delete this website?",
+      message: "The site and all its pages will be gone. This cannot be undone.",
+      confirmLabel: "Delete",
+      danger: true,
+    });
+    if (!ok) return;
     setBusy(true);
     setErr("");
     try {

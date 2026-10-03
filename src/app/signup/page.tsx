@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { BrandMark } from "@/components/layout/chrome";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -38,7 +38,7 @@ export default function SignupPage() {
       <div className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-8">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">← Back</Link>
-          <Image src="/logo.png" alt="create.io" width={32} height={32} className="h-8 w-8 rounded-md" style={{ background: "#17171b", padding: 3 }} />
+          <Link href="/" aria-label="create.io home"><BrandMark size={26} /></Link>
         </div>
         <h1 className="mt-4 text-2xl font-semibold tracking-tight">Create your account</h1>
         <p className="mt-1 text-sm text-neutral-600">Start building your website in minutes.</p>

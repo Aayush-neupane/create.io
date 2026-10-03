@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import type { ElementStyle, FloatElement, PageConfig, SectionInstance, SectionType, ThemeConfig, WebsiteConfig, WebsiteRecord } from "@/types/builder";
 import { sectionTheme, TemplateRenderer, SECTION_META } from "@/components/templates/Renderer";
 import { LogoTile } from "@/components/layout/chrome";
+import { alertPopup, confirmPopup, promptPopup } from "@/components/ui/confirm";
 import { isBespoke } from "@/templates";
 import { FONT_CHOICES, THEME_PRESETS, defaultSection, normalizeConfig, sanitizePagePath, sid } from "@/lib/website-defaults";
 import { getTemplate } from "@/lib/templates";
@@ -456,8 +457,14 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     while (taken.has(cleanPath)) cleanPath = `${sanitizePagePath(path || cleanTitle)}-${++n}`;
     commit({ ...config, pages: (config.pages ?? []).map((p) => (p.id === id ? { ...p, title: cleanTitle, path: cleanPath } : p)) });
   }
-  function removePage(id: string) {
-    if (!confirm("Delete this page and all its sections?")) return;
+  async function removePage(id: string) {
+    const ok = await confirmPopup({
+      title: "Delete this page?",
+      message: "The page and all its sections will be gone.",
+      confirmLabel: "Delete page",
+      danger: true,
+    });
+    if (!ok) return;
     commit({ ...config, pages: (config.pages ?? []).filter((p) => p.id !== id) });
     if (activePageId === id) { setActivePageId(null); setSelectedId(null); }
   }
@@ -520,8 +527,14 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     const cx = typeof window !== "undefined" ? window.innerWidth / 2 : 600;
     setFloatSel({ sectionId: sel.id, floatId: f.id, x: cx + 220, y: 300 });
   }
-  function deleteFloat(sectionId: string, floatId: string) {
-    if (!confirm("Delete this element?")) return;
+  async function deleteFloat(sectionId: string, floatId: string) {
+    const ok = await confirmPopup({
+      title: "Delete this element?",
+      message: "The floating text or button will be removed from the canvas.",
+      confirmLabel: "Delete",
+      danger: true,
+    });
+    if (!ok) return;
     patchSection(sectionId, (s) => ({ ...s, floats: (s.floats ?? []).filter((f) => f.id !== floatId) }));
     setFloatSel(null);
   }
@@ -731,11 +744,17 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     const cur = (sel.themeOverride?.sectionSpacing as (typeof SPACING_ORDER)[number] | undefined) ?? config.theme.sectionSpacing;
     patchOverride({ sectionSpacing: SPACING_ORDER[(SPACING_ORDER.indexOf(cur) + 1) % SPACING_ORDER.length] });
   }
-  function removeSection(id: string) {
+  async function removeSection(id: string) {
     const s = activeSections.find((x) => x.id === id);
     if (!s) return;
     if (!SECTION_META[s.type]?.deletable) return;
-    if (!confirm(`Remove ${SECTION_META[s.type].label} section?`)) return;
+    const ok = await confirmPopup({
+      title: `Remove ${SECTION_META[s.type].label} section?`,
+      message: "The section and its content will be removed from this page.",
+      confirmLabel: "Remove",
+      danger: true,
+    });
+    if (!ok) return;
     setActiveSections((list) => list.filter((x) => x.id !== id));
     if (selectedId === id) setSelectedId(null);
   }
@@ -796,7 +815,15 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
             <span className="flex items-center gap-2">
               <span className="tag">Demo — saved in this browser</span>
               <button
-                onClick={() => { if (confirm("Reset the demo to the original template?")) { try { window.localStorage.removeItem(`createio-demo-${site.templateId}`); } catch {} window.location.reload(); } }}
+                onClick={async () => {
+                  const ok = await confirmPopup({
+                    title: "Reset this demo?",
+                    message: "Your edits in this browser will be discarded and the original template restored.",
+                    confirmLabel: "Reset demo",
+                    danger: true,
+                  });
+                  if (ok) { try { window.localStorage.removeItem(`createio-demo-${site.templateId}`); } catch {} window.location.reload(); }
+                }}
                 className="mono-meta text-[11px] underline opacity-60"
               >
                 Reset
@@ -843,7 +870,15 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
             {tab === "content" && <ContentPanel config={activeConfig} selected={selected} onSelect={setSelectedId} onPatch={patchSection} pageLabel={activePage ? activePage.title : "Home"} demo={demo} onAddSection={() => setTab("sections")} />}
             {tab === "sections" && <SectionsPanel config={activeConfig} selectedId={selectedId} onSelect={(id) => { setSelectedId(id); }} onToggle={toggleSection} onMove={reorderSection} onRemove={removeSection} onDuplicate={duplicateSection} onAdd={addSection} onReorder={reorderSectionTo} pageLabel={activePage ? activePage.title : "Home"} />}
             {tab === "pages" && <PagesPanel config={config} activePageId={activePageId} onSwitch={switchPage} onAdd={addPage} onRename={renamePage} onRemove={removePage} siteSlug={site.slug} />}
-            {tab === "design" && <DesignPanel theme={config.theme} onPatch={patchTheme} onCustomCss={(v) => commit({ ...config, customCss: v })} customCss={config.customCss || ""} onResetTheme={() => { if (confirm("Reset colors, fonts and layout to this template's original style? Your content stays.")) patchTheme({ ...getTemplate(site.templateId).theme }); }} />}
+            {tab === "design" && <DesignPanel theme={config.theme} onPatch={patchTheme} onCustomCss={(v) => commit({ ...config, customCss: v })} customCss={config.customCss || ""} onResetTheme={async () => {
+              const ok = await confirmPopup({
+                title: "Reset the style?",
+                message: "Colors, fonts and layout return to this template's original style. Your content stays.",
+                confirmLabel: "Reset style",
+                danger: true,
+              });
+              if (ok) patchTheme({ ...getTemplate(site.templateId).theme });
+            }} />}
             {tab === "seo" && <SeoPanel config={config} onCommit={commit} demo={demo} />}
             {tab === "settings" && <SettingsPanel site={site} config={config} onCommit={commit} onSite={setSite} />}
           </div>
@@ -1633,7 +1668,11 @@ export function SectionFields({ section, onChange, onReplace, demo }: {
       <details className="rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-xs text-neutral-400">
         <summary className="cursor-pointer font-medium text-neutral-500">Advanced — raw content</summary>
         <pre className="mt-2 max-h-40 overflow-auto rounded-lg bg-neutral-900 p-2 font-mono text-[10px] leading-relaxed text-neutral-200">{JSON.stringify(c, null, 1).slice(0, 1500)}</pre>
-        <button className="mt-1.5 underline" onClick={() => { const raw = prompt("Paste section content JSON"); if (raw) { try { onReplace(JSON.parse(raw)); } catch { alert("Invalid JSON"); } } }}>Replace JSON</button>
+        <button className="mt-1.5 underline" onClick={async () => {
+              const raw = await promptPopup({ title: "Replace section content", message: "Paste section content JSON below.", placeholder: '{"title": "…"}', confirmLabel: "Replace" });
+              if (!raw) return;
+              try { onReplace(JSON.parse(raw)); } catch { await alertPopup("Invalid JSON", "That text isn't valid JSON. Nothing was changed."); }
+            }}>Replace JSON</button>
       </details>
     </div>
   );

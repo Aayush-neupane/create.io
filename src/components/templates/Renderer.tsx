@@ -265,6 +265,18 @@ export function TemplateRenderer({ config, templateId, slug, pagePath, selectedI
           </div>
         </div>
       )}
+      {/* Builder credit — always rendered, outside editable sections. */}
+      <div className="template-credit px-6 py-5 text-center" style={{ borderTop: `1px solid ${config.theme.surface}` }}>
+        <a
+          href="https://dynamic-aayush38.netlify.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mono-meta text-[11px] uppercase"
+          style={{ letterSpacing: "0.14em", color: config.theme.muted }}
+        >
+          Developed by <span className="underline underline-offset-4">Aayush Neupane</span>
+        </a>
+      </div>
     </div>
   );
 }

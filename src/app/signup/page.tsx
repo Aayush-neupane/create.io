@@ -5,6 +5,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BrandMark } from "@/components/layout/chrome";
 
+/** Return path requested via ?next= — internal paths only, else dashboard. */
+function safeNext(): string {
+  try {
+    const n = new URLSearchParams(window.location.search).get("next");
+    if (n && n.startsWith("/") && !n.startsWith("//")) return n;
+  } catch { /* ignore */ }
+  return "/dashboard";
+}
+
 export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -24,7 +33,7 @@ export default function SignupPage() {
       const res = await fetch("/api/auth/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, email, password }) });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error((data as { error?: string }).error || "Could not create account.");
-      router.push("/dashboard");
+      router.push(safeNext());
       router.refresh();
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Something went wrong.");

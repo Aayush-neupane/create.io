@@ -231,6 +231,32 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     await saveNow("draft");
   }
 
+  /** Guest funnel: warn on preview/save/publish, then send to signup with a
+   *  return path so the guest lands back on this exact project (drafts live
+   *  in localStorage, so every edit is waiting). */
+  async function guestGate(action: "preview" | "save" | "publish") {
+    const here = window.location.pathname + window.location.search;
+    const copy = {
+      preview: {
+        title: "Preview your finished site?",
+        message: "Previews live on your own create.io link. Create a free account and this exact site — every edit — will be waiting for you.",
+        confirmLabel: "Sign up to preview",
+      },
+      save: {
+        title: "Save this site to your account?",
+        message: "Right now your work lives only in this browser. A free account saves it to the cloud so you never lose it.",
+        confirmLabel: "Sign up to save",
+      },
+      publish: {
+        title: "Publish this site?",
+        message: "Publishing gives your site a public create.io link. Sign up free — your edits are saved in this browser and carry straight over.",
+        confirmLabel: "Sign up to publish",
+      },
+    }[action];
+    const ok = await confirmPopup({ ...copy, cancelLabel: "Keep editing" });
+    if (ok) router.push(`/signup?next=${encodeURIComponent(here)}`);
+  }
+
   // Keep a ref to the latest save so guards/flush don't close over stale state.
   saveNowRef.current = saveNow;
 
@@ -244,6 +270,29 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
   }, [saveState]);
+
+  // Backend-deal upsell for guests: first nudge after ~75s of editing, at most
+  // one repeat per session. Logged-in users already converted — skip them.
+  useEffect(() => {
+    if (!demo) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      const seen = Number(window.sessionStorage.getItem("createio-upsell-count") || 0);
+      if (seen >= 2) return;
+      timer = setTimeout(async () => {
+        try { window.sessionStorage.setItem("createio-upsell-count", String(seen + 1)); } catch { /* ignore */ }
+        const here = window.location.pathname + window.location.search;
+        const ok = await confirmPopup({
+          title: "Frontend's free. Need the backend?",
+          message: "This site, its hosting, and the builder are free forever. When you're ready for more — a real database, user logins, payments, custom features — we build the full-stack app for you, starting at Rs. 85,000.",
+          confirmLabel: "Get the backend deal",
+          cancelLabel: "Keep building",
+        });
+        if (ok) router.push(`/signup?next=${encodeURIComponent(here)}`);
+      }, seen === 0 ? 75000 : 480000);
+    } catch { /* storage unavailable — skip upsell */ }
+    return () => { if (timer) clearTimeout(timer); };
+  }, [demo]);
 
   // Flush a pending autosave when unmounting (e.g. in-app navigation) so the
   // last <1200ms of edits aren't silently dropped.
@@ -837,14 +886,18 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
           <span className={`h-2 w-2 rounded-full ${saveState === "saved" ? "bg-emerald-500" : saveState === "error" ? "bg-red-500" : "bg-amber-400 animate-pulse"}`} title={saveState === "saving" ? "saving…" : saveState === "dirty" ? "unsaved changes" : saveState === "error" ? "save failed" : "all changes saved"} />
           <button onClick={undo} disabled={past.current.length === 0} className="rounded-[9px] border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--line-2)" }} title="Undo (Ctrl+Z)">↩</button>
           <button onClick={redo} disabled={future.current.length === 0} className="rounded-[9px] border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--line-2)" }} title="Redo">↪</button>
-          <Link href={demo ? `/templates/${site.templateId}` : `/s/${site.slug}`} target="_blank" className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Preview</Link>
           {demo ? (
-            <Link href="/signup" className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Save</Link>
+            <button onClick={() => void guestGate("preview")} className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Preview</button>
+          ) : (
+            <Link href={`/s/${site.slug}`} target="_blank" className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Preview</Link>
+          )}
+          {demo ? (
+            <button onClick={() => void guestGate("save")} className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Save</button>
           ) : (
           <button onClick={() => saveNow()} className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Save</button>
           )}
           {demo ? (
-            <Link href="/signup" className="btn-primary rounded-[9px] px-3 py-1.5 text-[13px]" style={{ height: 33 }}>Publish</Link>
+            <button onClick={() => void guestGate("publish")} className="btn-primary rounded-[9px] px-3 py-1.5 text-[13px]" style={{ height: 33 }}>Publish</button>
           ) : site.status === "published" ? (
             <button onClick={unpublish} className="rounded-[9px] px-3 py-1.5 text-[13px] font-medium" style={{ background: "var(--surface-2)" }}>Unpublish</button>
           ) : (

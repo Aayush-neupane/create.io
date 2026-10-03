@@ -1,4 +1,4 @@
-import type { DragEvent as RDragEvent, KeyboardEvent as RKeyboardEvent, MouseEvent as RMouseEvent } from "react";
+import type { DragEvent as RDragEvent, KeyboardEvent as RKeyboardEvent, MouseEvent as RMouseEvent, PointerEvent as RPointerEvent } from "react";
 import type { PageConfig, SectionInstance, ThemeConfig, WebsiteConfig } from "@/types/builder";
 import {
   AboutSection, BannerSection, ContactSection, CtaSection, EducationSection, ExperienceSection, FaqSection,
@@ -99,7 +99,7 @@ export interface PreviewDnd {
   onEnd: () => void;
 }
 
-export function TemplateRenderer({ config, templateId, slug, pagePath, selectedId, onSelect, showHidden, dnd }: {
+export function TemplateRenderer({ config, templateId, slug, pagePath, selectedId, onSelect, showHidden, dnd, floatSel, onFloatSelect, onFloatPointerDown }: {
   config: WebsiteConfig; templateId?: string; slug?: string; pagePath?: string;
   /** Builder-only: highlight + click-to-select sections in the preview. */
   selectedId?: string | null; onSelect?: (id: string) => void;
@@ -107,6 +107,12 @@ export function TemplateRenderer({ config, templateId, slug, pagePath, selectedI
   showHidden?: boolean;
   /** Builder-only: drag handles + drop targets for canvas reorder. */
   dnd?: PreviewDnd;
+  /** Builder-only: selected free-floating overlay element. */
+  floatSel?: { sectionId: string; floatId: string } | null;
+  /** Builder-only: pick a floating element (opens its editor). */
+  onFloatSelect?: (sectionId: string, floatId: string, x: number, y: number) => void;
+  /** Builder-only: begin a free-drag session on a floating element. */
+  onFloatPointerDown?: (sectionId: string, floatId: string, e: RPointerEvent) => void;
 }) {
   const active = pagePath ? (config.pages ?? []).find((p) => p.path === pagePath) : undefined;
   const sections = active ? active.sections : config.sections;
@@ -121,7 +127,10 @@ export function TemplateRenderer({ config, templateId, slug, pagePath, selectedI
         <div
           key={s.id}
           data-section-id={s.id}
-          style={s.band ? { background: sectionTheme(config.theme, s).surface } : undefined}
+          style={{
+            ...((s.floats && s.floats.length > 0) || selectable ? { position: "relative" as const } : {}),
+            ...(s.band ? { background: sectionTheme(config.theme, s).surface } : {}),
+          }}
           {...(selectable ? {
             role: "button",
             tabIndex: 0,
@@ -162,9 +171,78 @@ export function TemplateRenderer({ config, templateId, slug, pagePath, selectedI
             </span>
           )}
           {renderSection(s, config.theme, templateId, pages)}
-          {s.elementZoom && Object.keys(s.elementZoom).length > 0 && (
-            <style>{Object.entries(s.elementZoom).map(([k, v]) => `[data-el="${s.id}:${k}"]{zoom:${v};}`).join("")}</style>
+          {s.elementStyle && Object.keys(s.elementStyle).length > 0 && (
+            <style>{Object.entries(s.elementStyle).map(([k, v]) => {
+              if (!v || typeof v !== "object") return "";
+              const parts: string[] = [];
+              if (typeof v.z === "number") parts.push(`zoom:${v.z};`);
+              const t: string[] = [];
+              if (typeof v.dx === "number" || typeof v.dy === "number") t.push(`translate(${v.dx ?? 0}px,${v.dy ?? 0}px)`);
+              if (typeof v.r === "number") t.push(`rotate(${v.r}deg)`);
+              if (t.length > 0) parts.push(`transform:${t.join(" ")};`);
+              // Explicit user styling wins over template inline styles.
+              if (typeof v.color === "string") parts.push(`color:${v.color}!important;`);
+              if (typeof v.background === "string") parts.push(`background:${v.background}!important;`);
+              if (typeof v.radius === "number") parts.push(`border-radius:${v.radius}px!important;`);
+              return parts.length > 0 ? `[data-el="${s.id}:${k}"]{${parts.join("")}}` : "";
+            }).join("")}</style>
           )}
+          {(s.floats ?? []).map((f) => {
+            const isBtn = f.kind === "button";
+            const effT = sectionTheme(config.theme, s);
+            const fsel = floatSel != null && floatSel.sectionId === s.id && floatSel.floatId === f.id;
+            const editing = !!onFloatSelect;
+            return (
+              <div
+                key={f.id}
+                data-float={`${s.id}:${f.id}`}
+                onClickCapture={editing ? (e: RMouseEvent) => { e.preventDefault(); } : undefined}
+                onClick={editing && onFloatSelect ? (e: RMouseEvent) => { onFloatSelect(s.id, f.id, e.clientX, e.clientY); } : undefined}
+                onPointerDown={editing && onFloatPointerDown ? (e: RPointerEvent) => onFloatPointerDown(s.id, f.id, e) : undefined}
+                style={{
+                  position: "absolute",
+                  left: `${f.x}%`,
+                  top: `${f.y}%`,
+                  transform: "translate(-50%, -50%)",
+                  zIndex: 15,
+                  fontSize: f.size,
+                  lineHeight: 1.25,
+                  ...(editing ? { cursor: "grab", touchAction: "none" as const } : undefined),
+                  ...(fsel ? { outline: "2px solid var(--accent)", outlineOffset: "3px" } : undefined),
+                }}
+              >
+                {isBtn ? (
+                  <a
+                    href={f.href || "#contact"}
+                    style={{
+                      display: "inline-block",
+                      padding: "0.6em 1.25em",
+                      borderRadius: effT.radius,
+                      background: f.background ?? effT.primary,
+                      color: f.color ?? "#ffffff",
+                      fontWeight: 800,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {f.text || "Button"}
+                  </a>
+                ) : (
+                  <span
+                    style={{
+                      color: f.color ?? effT.text,
+                      background: f.background ?? "transparent",
+                      padding: f.background ? "0.25em 0.6em" : undefined,
+                      borderRadius: effT.radius,
+                      fontWeight: 700,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {f.text || "Text"}
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
       ))}
       {hidden.length > 0 && (

@@ -1,4 +1,4 @@
-import type { SectionInstance, SectionType, SeoConfig, ThemeConfig, WebsiteConfig } from "@/types/builder";
+import type { ElementStyle, FloatElement, SectionInstance, SectionType, SeoConfig, ThemeConfig, WebsiteConfig } from "@/types/builder";
 import { templateSeedContent } from "@/templates";
 export const FONT_CHOICES = [
   "Inter",
@@ -336,22 +336,91 @@ export function sanitizeSections(raw: unknown): SectionInstance[] {
     enabled: s?.enabled !== false,
     ...(s?.band === true ? { band: true as const } : {}),
     ...(sanitizeThemeOverride(s?.themeOverride) ? { themeOverride: sanitizeThemeOverride(s?.themeOverride) } : {}),
-    ...(sanitizeElementZoom(s?.elementZoom) ? { elementZoom: sanitizeElementZoom(s?.elementZoom) } : {}),
+    ...(() => {
+      // Legacy elementZoom ({key: number}) upgrades into elementStyle ({key: {z}}).
+      const legacy = (s as unknown as Record<string, unknown>)?.["elementZoom"];
+      const st = sanitizeElementStyle(s?.elementStyle, legacy);
+      return st ? { elementStyle: st } : {};
+    })(),
+    ...(sanitizeFloats(s?.floats) ? { floats: sanitizeFloats(s?.floats) } : {}),
     content: ((s?.content ?? {}) as Record<string, unknown>) ?? {},
   }));
 }
 
-/** Keep per-element zoom factors finite, bounded and few. */
-export function sanitizeElementZoom(raw: unknown): Record<string, number> | undefined {
-  if (!raw || typeof raw !== "object") return undefined;
-  const out: Record<string, number> = {};
-  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
-    if (typeof k !== "string" || !/^[a-zA-Z0-9_.]+$/.test(k)) continue;
-    if (typeof v !== "number" || !Number.isFinite(v)) continue;
-    out[k] = Math.min(2, Math.max(0.5, Math.round(v * 100) / 100));
-    if (Object.keys(out).length >= 24) break;
+/** Keep per-element free transforms bounded and few.
+ *  Upgrades the legacy elementZoom map ({key: number} → {key: {z}}). */
+export function sanitizeElementStyle(raw: unknown, legacyZoom?: unknown): Record<string, ElementStyle> | undefined {
+  const out: Record<string, ElementStyle> = {};
+  const put = (k: string, v: ElementStyle) => {
+    if (Object.keys(out).length < 24) out[k] = v;
+  };
+  if (raw && typeof raw === "object") {
+    for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+      if (!/^[a-zA-Z0-9_.]+$/.test(k) || !v || typeof v !== "object") continue;
+      const r = v as Record<string, unknown>;
+      const st: ElementStyle = {};
+      if (typeof r["z"] === "number" && Number.isFinite(r["z"])) {
+        st.z = Math.min(2, Math.max(0.5, Math.round(r["z"] * 100) / 100));
+      }
+      for (const kk of ["dx", "dy"] as const) {
+        if (typeof r[kk] === "number" && Number.isFinite(r[kk])) {
+          st[kk] = Math.min(500, Math.max(-500, Math.round(r[kk] * 10) / 10));
+        }
+      }
+      if (typeof r["r"] === "number" && Number.isFinite(r["r"])) {
+        st.r = Math.min(180, Math.max(-180, Math.round(r["r"] * 10) / 10));
+      }
+      const hex = (v: unknown) => (typeof v === "string" && /^#[0-9a-fA-F]{3,8}$/.test(v.trim()) ? v.trim() : undefined);
+      const color = hex(r["color"]);
+      if (color) st.color = color;
+      const background = hex(r["background"]);
+      if (background) st.background = background;
+      if (typeof r["radius"] === "number" && Number.isFinite(r["radius"])) {
+        st.radius = Math.min(48, Math.max(0, Math.round(r["radius"])));
+      }
+      if (st.z !== undefined || st.dx !== undefined || st.dy !== undefined || st.r !== undefined || st.color !== undefined || st.background !== undefined || st.radius !== undefined) {
+        put(k, st);
+      }
+    }
+  }
+  if (legacyZoom && typeof legacyZoom === "object") {
+    for (const [k, v] of Object.entries(legacyZoom as Record<string, unknown>)) {
+      if (!/^[a-zA-Z0-9_.]+$/.test(k) || out[k]?.z !== undefined) continue;
+      if (typeof v !== "number" || !Number.isFinite(v)) continue;
+      put(k, { ...(out[k] ?? {}), z: Math.min(2, Math.max(0.5, Math.round(v * 100) / 100)) });
+    }
   }
   return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/** Keep free-floating overlay elements safe and bounded (12 per section). */
+export function sanitizeFloats(raw: unknown): FloatElement[] | undefined {
+  if (!Array.isArray(raw) || raw.length === 0) return undefined;
+  const out: FloatElement[] = [];
+  for (const f of raw.slice(0, 12)) {
+    if (!f || typeof f !== "object") continue;
+    const r = f as Record<string, unknown>;
+    if (r["kind"] !== "text" && r["kind"] !== "button") continue;
+    const num = (v: unknown, lo: number, hi: number, fb: number) =>
+      typeof v === "number" && Number.isFinite(v) ? Math.min(hi, Math.max(lo, Math.round(v * 10) / 10)) : fb;
+    const hex = (v: unknown) => (typeof v === "string" && /^#[0-9a-fA-F]{3,8}$/.test(v.trim()) ? v.trim() : undefined);
+    const id = typeof r["id"] === "string" && r["id"] ? r["id"].slice(0, 64) : sid("float");
+    const el: FloatElement = {
+      id,
+      kind: r["kind"],
+      text: typeof r["text"] === "string" ? r["text"].slice(0, 140) : "",
+      x: num(r["x"], 0, 100, 50),
+      y: num(r["y"], 0, 100, 30),
+      size: num(r["size"], 10, 120, 20),
+    };
+    if (el.kind === "button" && typeof r["href"] === "string" && r["href"]) el.href = r["href"].slice(0, 300);
+    const color = hex(r["color"]);
+    if (color) el.color = color;
+    const background = hex(r["background"]);
+    if (background) el.background = background;
+    out.push(el);
+  }
+  return out.length > 0 ? out : undefined;
 }
 
 export function sanitizePagePath(raw: unknown): string {

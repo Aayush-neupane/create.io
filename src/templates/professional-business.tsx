@@ -3,7 +3,7 @@
  * Dossier system: utility bar, numbered briefings, tables and stamps of proof.
  */
 import type { SectionType } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
+import { fontStack, fluid, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";
 
@@ -14,9 +14,9 @@ const Navbar: C = ({ content, theme, pages }) => {
   return (
     <header>
       <div style={{ background: theme.primary, color: "#fff" }}>
-        <div className={`mx-auto flex items-center justify-between px-6 py-1.5 font-mono text-[11px] ${containerWidth(theme)}`}>
-          <span className="opacity-80">Trusted since 2012 — 120+ engagements</span>
-          <a href="#contact" className="underline underline-offset-2">Book a consultation →</a>
+        <div className={`mx-auto flex items-center justify-between gap-3 px-6 py-1.5 font-mono text-[11px] ${containerWidth(theme)}`}>
+          <span className="truncate opacity-80">Trusted since 2012 — 120+ engagements</span>
+          <a href="#contact" className="shrink-0 whitespace-nowrap underline underline-offset-2">Book a consultation →</a>
         </div>
       </div>
       <nav className="border-b" style={{ borderColor: theme.surface, background: theme.background }}>
@@ -31,6 +31,9 @@ const Navbar: C = ({ content, theme, pages }) => {
           {str(content.cta) ? <a href="#contact" className={`${btnRadius(theme)} px-4 py-2 text-sm font-semibold text-white`} style={{ background: theme.primary }}>{str(content.cta)}</a> : null}
         </div>
       </nav>
+      <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap border-b px-6 py-2.5 text-sm font-medium md:hidden" style={{ borderColor: theme.surface, color: theme.muted, background: theme.background }}>
+        {links.map((l, i) => <a key={i} href={l.href}>{l.label}</a>)}
+      </div>
     </header>
   );
 };
@@ -43,11 +46,11 @@ const Hero: C = ({ content, theme }) => {
         <p className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold" style={{ borderColor: theme.primary, color: theme.primary }}>
           <span className="h-1.5 w-1.5 rounded-full" style={{ background: theme.primary }} />{str(content.eyebrow, "Briefing 01 — Who we help")}
         </p>
-        <h1 className="mt-5 max-w-3xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.9rem * ${theme.headingScale})`, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.08 }}>
+        <h1 className="mt-5 max-w-3xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.9, 1.9), fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1.08 }}>
           {str(content.title)}
         </h1>
         <p className="mt-4 max-w-2xl" style={{ color: theme.muted }}>{str(content.description)}</p>
-        <div className="mt-7 flex gap-3">
+        <div className="mt-7 flex flex-wrap gap-3">
           {str(content.primaryCta) ? <a href="#contact" className={`${btnRadius(theme)} px-5 py-2.5 text-sm font-semibold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta)}</a> : null}
           <a href="#work" className={`${btnRadius(theme)} border bg-white px-5 py-2.5 text-sm font-semibold`} style={{ borderColor: theme.surface }}>See results</a>
         </div>
@@ -56,7 +59,7 @@ const Hero: C = ({ content, theme }) => {
             {stats.map((st, i) => (
               <div key={i} className="border bg-white p-4 sm:p-5" style={{ borderRadius: theme.radius, borderColor: theme.surface }}>
                 <dt className="text-xl font-bold sm:text-2xl" style={{ fontFamily: fontStack(theme.fontHeading), color: theme.primary }}>{st.value}</dt>
-                <dd className="mt-1 text-xs" style={{ color: theme.muted }}>{st.label}</dd>
+                <dd className="mt-1 break-words text-xs" style={{ color: theme.muted }}>{st.label}</dd>
               </div>
             ))}
           </dl>
@@ -72,7 +75,7 @@ const Services: C = ({ content, theme }) => {
     <section id="work" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs" style={{ color: theme.muted }}>02 — {str(content.heading, "Practice areas")}</p>
-        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(content.title, "How I can help")}</h2>
+        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5), fontWeight: 700 }}>{str(content.title, "How I can help")}</h2>
         <div className="mt-8 overflow-hidden border" style={{ borderRadius: theme.radius, borderColor: theme.surface }}>
           {items.map((it, i) => (
             <div key={i} className="grid gap-2 border-b p-6 last:border-0 md:grid-cols-[56px_1fr_auto] md:items-start" style={{ borderColor: theme.surface, background: i % 2 ? theme.surface : theme.background }}>
@@ -96,7 +99,7 @@ const Process: C = ({ content, theme }) => {
     <section className={sectionPad(theme)} style={{ background: theme.primary, color: "#fff" }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs opacity-60">03 — {str(content.heading, "Engagement model")}</p>
-        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(content.title)}</h2>
+        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5), fontWeight: 700 }}>{str(content.title)}</h2>
         <ol className="mt-8 grid gap-px overflow-hidden border border-white/20 md:grid-cols-4" style={{ borderRadius: theme.radius }}>
           {steps.map((st, i) => (
             <li key={i} className="p-6" style={{ background: "#2a4a73" }}>
@@ -117,7 +120,7 @@ const Testimonials: C = ({ content, theme }) => {
     <section id="results" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs" style={{ color: theme.muted }}>04 — {str(content.heading, "Client record")}</p>
-        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(content.title, "Results, in their words")}</h2>
+        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5), fontWeight: 700 }}>{str(content.title, "Results, in their words")}</h2>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {items.map((t0, i) => (
             <figure key={i} className="flex flex-col border-t-4 bg-white p-6" style={{ borderRadius: `0 0 ${theme.radius}px ${theme.radius}px`, borderColor: theme.surface, borderTopColor: theme.primary }}>
@@ -139,7 +142,7 @@ const Pricing: C = ({ content, theme }) => {
     <section className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs" style={{ color: theme.muted }}>05 — {str(content.heading, "Engagement options")}</p>
-        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(content.title)}</h2>
+        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5), fontWeight: 700 }}>{str(content.title)}</h2>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {items.map((p, i) => (
             <div key={i} className="border p-7" style={{ borderRadius: theme.radius, borderColor: p.featured ? theme.primary : theme.surface, background: p.featured ? theme.primary : theme.background, color: p.featured ? "#fff" : undefined }}>
@@ -161,7 +164,7 @@ const Faq: C = ({ content, theme }) => {
     <section id="faq" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className="mx-auto max-w-3xl px-6">
         <p className="text-center font-mono text-xs" style={{ color: theme.muted }}>06 — {str(content.heading, "Due diligence")}</p>
-        <h2 className="mt-2 text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(content.title)}</h2>
+        <h2 className="mt-2 text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5), fontWeight: 700 }}>{str(content.title)}</h2>
         <div className="mt-8 divide-y border-y" style={{ borderColor: theme.background }}>
           {items.map((f, i) => (
             <details key={i} className="group py-5">
@@ -181,7 +184,7 @@ const Cta: C = ({ content, theme }) => (
       <div className="grid gap-6 p-10 md:grid-cols-[1fr_auto] md:items-center" style={{ borderRadius: theme.radius * 1.5, background: theme.primary, color: "#fff" }}>
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] opacity-60">Next step</p>
-          <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.9rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(content.title)}</h2>
+          <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 1.9, 1.35), fontWeight: 700 }}>{str(content.title)}</h2>
           <p className="mt-2 max-w-lg text-sm opacity-75">{str(content.description)}</p>
         </div>
         {str(content.primaryCta) ? <a href="#contact" className={`${btnRadius(theme)} bg-white px-6 py-3 text-sm font-bold`} style={{ color: theme.primary }}>{str(content.primaryCta)}</a> : null}

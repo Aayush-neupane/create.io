@@ -16,12 +16,16 @@ export function LiveCard({ templateId }: { templateId: string }) {
 
   const cfg = useMemo(() => {
     const tpl = getTemplate(templateId);
-    return buildConfigFromTemplate(
+    const built = buildConfigFromTemplate(
       tpl.id,
       tpl.sections,
       { ...baseTheme(), ...tpl.theme },
       { siteName: tpl.name, ownerName: "", tagline: "", siteDescription: tpl.description },
     );
+    // Stable ids: buildConfigFromTemplate mints random ones (Date.now), which
+    // would differ between server render and hydration and warn every load.
+    built.sections.forEach((s, i) => { s.id = `${templateId}-${s.type}-${i}`; });
+    return built;
   }, [templateId]);
 
   useLayoutEffect(() => {

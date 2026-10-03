@@ -6,6 +6,7 @@ import { findWebsiteBySlug } from "@/lib/db";
 import { sessionUserId } from "@/lib/auth";
 import { normalizeConfig } from "@/lib/website-defaults";
 import { TemplateRenderer } from "@/components/templates/Renderer";
+import { PublishedTagger } from "@/components/templates/Tagger";
 
 async function isOwner(siteUserId: string): Promise<boolean> {
   try {
@@ -51,6 +52,7 @@ export default async function SubPage({ params }: { params: Promise<{ slug: stri
         </div>
       )}
       <TemplateRenderer config={cfg} templateId={site.templateId} slug={site.slug} pagePath={page} />
+      <PublishedTagger sections={sub.sections} />
       <footer className="border-t border-neutral-100 bg-white px-6 py-4 text-center text-xs text-neutral-400">
         <Link href={`/s/${site.slug}`} className="font-medium text-neutral-600 underline">← {site.name}</Link>
         <span className="mx-2">·</span>

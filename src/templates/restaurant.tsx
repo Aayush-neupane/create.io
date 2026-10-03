@@ -3,7 +3,7 @@
  * Hearth system: centered crest masthead, dotted menu leaders, reservation cards.
  */
 import type { SectionType } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
+import { fontStack, fluid, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";
 
@@ -32,7 +32,7 @@ const Hero: C = ({ content, theme }) => (
   <section className="relative overflow-hidden" style={{ background: theme.primary, color: "#fff8ef" }}>
     <div className={`mx-auto px-6 pb-16 pt-16 text-center md:pb-20 md:pt-20 ${containerWidth(theme)}`}>
       <p className="text-xs font-semibold uppercase" style={{ letterSpacing: "0.32em", color: "#f5c98a" }}>{str(content.eyebrow)}</p>
-      <h1 className="mx-auto mt-4 max-w-3xl italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(3.6rem * ${theme.headingScale})`, fontWeight: 600, lineHeight: 1.02 }}>
+      <h1 className="mx-auto mt-4 max-w-3xl italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 3.6, 2.1), fontWeight: 600, lineHeight: 1.02 }}>
         {str(content.title, "Ember & Oak")}
       </h1>
       <p className="mx-auto mt-3 max-w-xl text-[15px] opacity-80">{str(content.description)}</p>
@@ -50,7 +50,7 @@ const About: C = ({ content, theme }) => (
     <div className={`mx-auto grid items-center gap-8 px-6 md:grid-cols-2 ${containerWidth(theme)}`}>
       <div className="border p-8 md:p-10" style={{ borderRadius: theme.radius * 1.4, borderColor: theme.accent, background: theme.surface }}>
         <p className="text-xs font-semibold uppercase" style={{ letterSpacing: "0.24em", color: theme.accent }}>{str(content.heading, "Our story")}</p>
-        <h2 className="mt-3 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 600, lineHeight: 1.15 }}>{str(content.title)}</h2>
+        <h2 className="mt-3 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5), fontWeight: 600, lineHeight: 1.15 }}>{str(content.title)}</h2>
         <p className="mt-4 text-[15px] leading-relaxed" style={{ color: theme.muted }}>{str(content.body)}</p>
         {arr<string>(content.bullets).length > 0 && (
           <p className="mt-5 font-mono text-xs" style={{ color: theme.muted }}>{arr<string>(content.bullets).join("  ·  ")}</p>
@@ -71,7 +71,7 @@ const Menu: C = ({ content, theme }) => {
     <section id="menu" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="text-center text-xs font-semibold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.heading, "The menu")}</p>
-        <h2 className="mt-2 text-center italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 600 }}>{str(content.title, "Eat & drink")}</h2>
+        <h2 className="mt-2 text-center italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.4, 1.65), fontWeight: 600 }}>{str(content.title, "Eat & drink")}</h2>
         <div className="mx-auto mt-10 grid max-w-4xl gap-x-12 gap-y-10 md:grid-cols-2">
           {groups.map((g, i) => (
             <div key={i}>
@@ -101,7 +101,7 @@ const Gallery: C = ({ content, theme }) => {
   return (
     <section className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
-        <h2 className="text-center italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})` }}>{str(content.title, "From the pass")}</h2>
+        <h2 className="text-center italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5) }}>{str(content.title, "From the pass")}</h2>
         <div className="mt-8 columns-2 gap-3 md:columns-3 [&>*]:mb-3">
           {images.map((img, i) => (
             <div key={i} className="break-inside-avoid overflow-hidden" style={{ borderRadius: theme.radius, background: theme.surface, aspectRatio: i % 3 === 1 ? "3/4" : "1/1" }}>
@@ -123,7 +123,7 @@ const Hours: C = ({ content, theme }) => {
       <div className={`mx-auto grid gap-8 px-6 md:grid-cols-2 ${containerWidth(theme)}`}>
         <div>
           <p className="text-xs font-semibold uppercase" style={{ letterSpacing: "0.3em", color: "#f5c98a" }}>{str(content.heading, "Find us")}</p>
-          <h2 className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})` }}>{str(content.title, "Hours & location")}</h2>
+          <h2 className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55) }}>{str(content.title, "Hours & location")}</h2>
           <p className="mt-4">{str(content.address)}</p>
           <p className="opacity-80">{str(content.phone)}</p>
           <a href="#contact" className={`${btnRadius(theme)} mt-6 inline-block px-6 py-3 text-sm font-bold`} style={{ background: "#fff8ef", color: theme.primary }}>Reserve a table</a>
@@ -164,17 +164,17 @@ const Contact: C = ({ content, theme }) => (
     <div className={`mx-auto grid gap-8 px-6 md:grid-cols-2 ${containerWidth(theme)}`}>
       <div>
         <p className="text-xs font-semibold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.heading, "Reservations")}</p>
-        <h2 className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})` }}>{str(content.title)}</h2>
+        <h2 className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55) }}>{str(content.title)}</h2>
         <p className="mt-3 text-sm" style={{ color: theme.muted }}>{str(content.body)}</p>
         <p className="mt-5 font-semibold">{str(content.phone)}</p>
         <p className="text-sm" style={{ color: theme.muted }}>{str(content.email)} · {str(content.location)}</p>
       </div>
       <form action="#contact" className="space-y-3 border bg-white p-6" style={{ borderRadius: theme.radius * 1.3, borderColor: theme.surface }}>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <input required name="name" placeholder="Name" className="rounded-lg border bg-white px-3 py-2.5 text-sm" />
           <input required name="guests" placeholder="Guests" className="rounded-lg border bg-white px-3 py-2.5 text-sm" />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <input required name="date" type="date" className="rounded-lg border bg-white px-3 py-2.5 text-sm" />
           <input required name="phone" placeholder="Phone" className="rounded-lg border bg-white px-3 py-2.5 text-sm" />
         </div>

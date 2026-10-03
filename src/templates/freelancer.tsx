@@ -3,7 +3,7 @@
  * Rate-card system: mono labels, tabular numbers, availability ledger.
  */
 import type { SectionType } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
+import { fontStack, fluid, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";
 
@@ -22,6 +22,9 @@ const Navbar: C = ({ content, theme, pages }) => {
           <i className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Open for Magh
         </span>
       </div>
+      <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap border-t px-6 py-2.5 font-mono text-xs md:hidden" style={{ borderColor: theme.surface, color: theme.muted }}>
+        {links.map((l, i) => <a key={i} href={l.href}>{String(i + 1).padStart(2, "0")} {l.label}</a>)}
+      </div>
     </nav>
   );
 };
@@ -32,7 +35,7 @@ const Hero: C = ({ content, theme }) => {
     <section className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs uppercase" style={{ letterSpacing: "0.2em", color: theme.muted }}>{str(content.eyebrow)}</p>
-        <h1 className="mt-3" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(3.4rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.98 }}>
+        <h1 className="mt-3" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 3.4, 2.05), fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.98 }}>
           {str(content.title)}
         </h1>
         <p className="mt-3 max-w-xl text-[15px]" style={{ color: theme.muted }}>{str(content.description)}</p>
@@ -72,7 +75,7 @@ const Services: C = ({ content, theme }) => {
     <section id="work" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs uppercase" style={{ letterSpacing: "0.2em", color: theme.muted }}>01 — {str(content.heading, "Services")}</p>
-        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.03em" }}>{str(content.title)}</h2>
+        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800, letterSpacing: "-0.03em" }}>{str(content.title)}</h2>
         <div className="mt-8 space-y-3">
           {items.map((it, i) => (
             <div key={i} className="grid gap-3 border bg-white p-6 md:grid-cols-[1fr_auto] md:items-center" style={{ borderRadius: theme.radius, borderColor: theme.background }}>
@@ -98,13 +101,13 @@ const Projects: C = ({ content, theme }) => {
     <section className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs uppercase" style={{ letterSpacing: "0.2em", color: theme.muted }}>02 — {str(content.heading, "Work log")}</p>
-        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.03em" }}>{str(content.title)}</h2>
+        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800, letterSpacing: "-0.03em" }}>{str(content.title)}</h2>
         <div className="mt-8 font-mono text-[13px]">
           <div className="hidden grid-cols-[70px_1fr_1fr_auto] gap-4 border-b pb-2 text-[11px] uppercase md:grid" style={{ borderColor: theme.text, color: theme.muted }}>
             <span>Year</span><span>Project</span><span>Scope</span><span>Link</span>
           </div>
           {items.map((p, i) => (
-            <a key={i} href={p.url || "#"} className="grid grid-cols-[70px_1fr_auto] items-baseline gap-4 border-b py-4 hover:opacity-70 md:grid-cols-[70px_1fr_1fr_auto]" style={{ borderColor: theme.surface }}>
+            <a key={i} href={p.url || "#"} className="grid grid-cols-[54px_1fr_auto] items-baseline gap-3 border-b py-4 hover:opacity-70 md:grid-cols-[70px_1fr_1fr_auto]" style={{ borderColor: theme.surface }}>
               <span style={{ color: theme.muted }}>208{i % 3}/09</span>
               <span className="font-sans font-bold" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: "1rem" }}>{p.title}</span>
               <span className="hidden truncate md:inline" style={{ color: theme.muted }}>{p.description}</span>
@@ -144,17 +147,17 @@ const Pricing: C = ({ content, theme }) => {
       <div className={`mx-auto grid gap-8 px-6 md:grid-cols-[1fr_1.5fr] ${containerWidth(theme)}`}>
         <div>
           <p className="font-mono text-xs uppercase" style={{ letterSpacing: "0.2em", color: theme.muted }}>04 — {str(content.heading, "Rates")}</p>
-          <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.03em" }}>{str(content.title)}</h2>
+          <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800, letterSpacing: "-0.03em" }}>{str(content.title)}</h2>
           <p className="mt-3 text-sm" style={{ color: theme.muted }}>Fixed quotes after a free 20-minute call. VAT bills provided.</p>
         </div>
         <div className="space-y-3">
           {items.map((p, i) => (
             <div key={i} className="flex items-center justify-between gap-4 border p-5" style={{ borderRadius: theme.radius, borderColor: theme.surface, background: i === 1 ? theme.surface : undefined }}>
-              <div>
+              <div className="min-w-0">
                 <h3 className="font-bold">{p.name}</h3>
                 <p className="text-[13px]" style={{ color: theme.muted }}>{p.description}</p>
               </div>
-              <p className="whitespace-nowrap font-mono text-lg font-bold">{p.price}<span className="text-xs font-normal" style={{ color: theme.muted }}>/{p.period}</span></p>
+              <p className="shrink-0 whitespace-nowrap font-mono text-lg font-bold">{p.price}<span className="text-xs font-normal" style={{ color: theme.muted }}>/{p.period}</span></p>
             </div>
           ))}
         </div>
@@ -167,7 +170,7 @@ const Contact: C = ({ content, theme }) => (
   <section id="contact" className={sectionPad(theme)} style={{ background: theme.surface }}>
     <div className={`mx-auto max-w-2xl px-6 text-center ${containerWidth(theme)}`}>
       <p className="font-mono text-xs uppercase" style={{ letterSpacing: "0.2em", color: theme.muted }}>{str(content.heading, "Booking")}</p>
-      <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.6rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.03em" }}>{str(content.title, "One email away")}</h2>
+      <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.6, 1.75), fontWeight: 800, letterSpacing: "-0.03em" }}>{str(content.title, "One email away")}</h2>
       <a href={`mailto:${str(content.email)}`} className={`${btnRadius(theme)} mt-6 inline-block px-8 py-3.5 font-mono text-lg font-bold text-white`} style={{ background: theme.primary }}>{str(content.email)}</a>
       <p className="mt-4 font-mono text-xs" style={{ color: theme.muted }}>{str(content.phone)} · {str(content.location)} · replies within a day</p>
     </div>

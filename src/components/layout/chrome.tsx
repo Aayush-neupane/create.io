@@ -52,11 +52,11 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
         boxShadow: scrolled ? "0 12px 32px -20px rgba(23,23,27,.35)" : "none",
       }}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-7 px-6">
+      <div className="relative mx-auto flex h-16 max-w-7xl items-center gap-7 px-6">
         <Link href="/" aria-label="create.io home">
           <BrandMark />
         </Link>
-        <nav className="ml-2 hidden items-center gap-0.5 md:flex">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-0.5 md:flex">
           {NAV.map((n) => (
             <Link
               key={n.href}
@@ -149,16 +149,36 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
   );
 }
 
+/** Session-aware navbar for client pages (templates, demo): resolves the
+ *  logged-in user via /api/auth/me so members see Dashboard, not Log in. */
+export function SiteNavbar() {
+  const [user, setUser] = useState<{ name: string } | null>(null);
+  useEffect(() => {
+    let live = true;
+    fetch("/api/auth/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (live && d?.user?.name) setUser({ name: d.user.name });
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, []);
+  return <Navbar user={user} />;
+}
+
 export function Footer() {
   const cols: { h: string; links: { href: string; label: string }[] }[] = [
     { h: "Product", links: [{ href: "/templates", label: "Templates" }, { href: "/new", label: "Create a site" }, { href: "/dashboard", label: "Dashboard" }] },
     { h: "Library", links: [{ href: "/templates", label: "Portfolio" }, { href: "/templates", label: "Business" }, { href: "/templates", label: "Restaurant" }] },
     { h: "Account", links: [{ href: "/login", label: "Log in" }, { href: "/signup", label: "Sign up" }, { href: "/settings", label: "Settings" }] },
+    { h: "Legal", links: [{ href: "/privacy", label: "Privacy policy" }, { href: "/terms", label: "Terms of use" }, { href: "/cookies", label: "Cookie policy" }] },
   ];
   const styleCount = Object.values(SECTION_META).reduce((n, m) => n + m.variants.length, 0);
   return (
     <footer style={{ borderTop: "1px solid var(--line)", marginTop: 96 }}>
-      <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[1.7fr_1fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[1.6fr_1fr_1fr_1fr_1fr]">
         <div>
           <BrandMark />
           <p className="mt-4 max-w-[330px] text-sm" style={{ color: "var(--ink-2)" }}>
@@ -182,7 +202,12 @@ export function Footer() {
         ))}
       </div>
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 pb-6 pt-5 text-[13px]" style={{ borderTop: "1px solid var(--line)", color: "var(--ink-3)" }}>
-        <span>© 2026 create.io — No code · No canvas · No kidding.</span>
+        <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <span>© 2026 create.io — No code · No canvas · No kidding.</span>
+          <Link href="/privacy" className="transition-colors hover:text-neutral-900">Privacy</Link>
+          <Link href="/terms" className="transition-colors hover:text-neutral-900">Terms</Link>
+          <Link href="/cookies" className="transition-colors hover:text-neutral-900">Cookies</Link>
+        </span>
         <span className="flex items-center gap-4">
           <span className="mono-meta hidden text-xs sm:inline">paper · jakarta · newsreader · mono</span>
           <a href="#top" className="inline-flex items-center gap-1 rounded-md font-medium transition-all hover:-translate-y-0.5 hover:text-neutral-900" style={{ color: "var(--ink-2)" }}>

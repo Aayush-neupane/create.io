@@ -3,7 +3,7 @@
  * Launch system: floating pill nav, product frame hero, logo cloud, checklist pricing.
  */
 import type { SectionType } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
+import { fontStack, fluid, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";
 
@@ -23,6 +23,9 @@ const Navbar: C = ({ content, theme, pages }) => {
         </div>
         {str(content.cta) ? <a href="#contact" className="rounded-full px-4 py-2 text-[13px] font-bold text-white" style={{ background: theme.primary }}>{str(content.cta)}</a> : null}
       </nav>
+      <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap px-5 py-2 text-[13px] font-medium md:hidden" style={{ color: theme.muted }}>
+        {links.map((l, i) => <a key={i} href={l.href} className="flex-none">{l.label}</a>)}
+      </div>
     </div>
   );
 };
@@ -36,7 +39,7 @@ const Hero: C = ({ content, theme }) => {
           <span className="rounded-full px-1.5 py-0.5 text-[10px] font-bold text-white" style={{ background: theme.primary }}>NEW</span>
           {str(content.eyebrow, "Launchpad 2.0 is live →")}
         </a>
-        <h1 className="mx-auto mt-5 max-w-3xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(3.2rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.04 }}>
+        <h1 className="mx-auto mt-5 max-w-3xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 3.2, 2), fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.04 }}>
           {str(content.title)}
         </h1>
         <p className="mx-auto mt-4 max-w-xl" style={{ color: theme.muted }}>{str(content.description)}</p>
@@ -51,8 +54,8 @@ const Hero: C = ({ content, theme }) => {
             <span className="ml-2 font-mono text-[11px]" style={{ color: theme.muted }}>app.launchpad.io</span>
           </div>
           {str(content.image) ? <img src={str(content.image)} alt="" className="aspect-[16/8] w-full object-cover" /> : (
-            <div className="grid aspect-[16/8] grid-cols-[180px_1fr]">
-              <div className="border-r p-4 text-left" style={{ borderColor: theme.background, background: theme.background }}>
+            <div className="grid aspect-[16/10] sm:aspect-[16/8] sm:grid-cols-[180px_1fr]">
+              <div className="hidden border-r p-4 text-left sm:block" style={{ borderColor: theme.background, background: theme.background }}>
                 <div className="h-2 w-16 rounded" style={{ background: theme.primary }} />
                 {[0, 1, 2, 3].map((i) => <div key={i} className="mt-2.5 h-6 rounded" style={{ background: i === 1 ? theme.surface : "transparent", border: `1px solid ${theme.surface}` }} />)}
               </div>
@@ -87,7 +90,7 @@ const Services: C = ({ content, theme }) => {
     <section id="work" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="text-center font-mono text-xs uppercase tracking-[0.2em]" style={{ color: theme.accent }}>{str(content.heading, "Features")}</p>
-        <h2 className="mx-auto mt-2 max-w-xl text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.02em" }}>{str(content.title)}</h2>
+        <h2 className="mx-auto mt-2 max-w-xl text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800, letterSpacing: "-0.02em" }}>{str(content.title)}</h2>
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {items.map((it, i) => (
             <div key={i} className="border bg-white p-7 transition hover:shadow-lg" style={{ borderRadius: theme.radius * 1.3, borderColor: theme.surface }}>
@@ -107,7 +110,7 @@ const Projects: C = ({ content, theme }) => {
   return (
     <section id="work" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto max-w-3xl px-6 ${containerWidth(theme)}`}>
-        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "Loved by modern teams")}</h2>
+        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5), fontWeight: 800 }}>{str(content.title, "Loved by modern teams")}</h2>
         <div className="mt-8 space-y-3">
           {items.map((p, i) => (
             <a key={i} href={p.url || "#"} className="flex items-center gap-4 border bg-white p-5 transition hover:shadow-md" style={{ borderRadius: theme.radius, borderColor: theme.background }}>
@@ -130,7 +133,7 @@ const Pricing: C = ({ content, theme }) => {
   return (
     <section id="pricing" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
-        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.02em" }}>{str(content.title)}</h2>
+        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800, letterSpacing: "-0.02em" }}>{str(content.title)}</h2>
         <p className="mt-2 text-center text-sm" style={{ color: theme.muted }}>Start free. Upgrade when it hurts not to.</p>
         <div className="mx-auto mt-10 grid max-w-4xl gap-4 md:grid-cols-3">
           {items.map((p, i) => (
@@ -155,7 +158,7 @@ const Faq: C = ({ content, theme }) => {
     <section id="faq" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className="mx-auto grid max-w-4xl gap-8 px-6 md:grid-cols-[1fr_1.6fr]">
         <div>
-          <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.8rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title)}</h2>
+          <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 1.8, 1.4), fontWeight: 800 }}>{str(content.title)}</h2>
           <p className="mt-2 text-sm" style={{ color: theme.muted }}>Still curious? <a href="#contact" className="font-semibold underline">Talk to us →</a></p>
         </div>
         <div className="space-y-2.5">
@@ -176,7 +179,7 @@ const Cta: C = ({ content, theme }) => (
     <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
       <div className="relative overflow-hidden px-8 py-16 text-center text-white" style={{ borderRadius: theme.radius * 1.6, background: theme.primary }}>
         <div aria-hidden className="absolute inset-x-0 top-0 h-1.5" style={{ background: theme.accent }} />
-        <h2 className="relative mx-auto max-w-xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.02em" }}>{str(content.title)}</h2>
+        <h2 className="relative mx-auto max-w-xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.4, 1.65), fontWeight: 800, letterSpacing: "-0.02em" }}>{str(content.title)}</h2>
         <p className="relative mx-auto mt-3 max-w-md text-sm opacity-80">{str(content.description)}</p>
         {str(content.primaryCta) ? <a href="#contact" className="relative mt-7 inline-block rounded-full bg-white px-8 py-3.5 text-sm font-bold" style={{ color: theme.primary }}>{str(content.primaryCta)}</a> : null}
       </div>

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Navbar, Footer } from "@/components/layout/chrome";
+import { SiteNavbar, Footer } from "@/components/layout/chrome";
 import { LiveCard } from "@/components/templates/LiveCard";
 import { TEMPLATES } from "@/lib/templates";
 
@@ -43,7 +43,7 @@ export default function TemplatesPage() {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <SiteNavbar />
       <div style={{ background: "var(--surface-2)", borderBottom: "1px solid var(--line)" }}>
         <div className="mx-auto max-w-7xl px-6 pb-8 pt-10">
           <p className="eyebrow">
@@ -160,8 +160,8 @@ export default function TemplatesPage() {
                     <span className="mono-meta text-[10.5px] uppercase" style={{ letterSpacing: "0.08em", color: "var(--ink-3)" }}>{t.category} · {t.sections.length} sections</span>
                   </div>
                   <span className="flex flex-none gap-1" aria-hidden>
-                    {[t.theme.primary, t.theme.accent, t.theme.surface].map((c) => (
-                      <i key={c} className="h-4 w-4 rounded-full border" style={{ background: c, borderColor: "var(--line-2)" }} />
+                    {[t.theme.primary, t.theme.accent, t.theme.surface].map((c, i) => (
+                      <i key={i} className="h-4 w-4 rounded-full border" style={{ background: c, borderColor: "var(--line-2)" }} />
                     ))}
                   </span>
                 </div>

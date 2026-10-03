@@ -1,17 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { MouseEvent as RMouseEvent, ReactNode } from "react";
+import type { MouseEvent as RMouseEvent, PointerEvent as RPointerEvent, ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { PageConfig, SectionInstance, SectionType, ThemeConfig, WebsiteConfig, WebsiteRecord } from "@/types/builder";
-import { TemplateRenderer, SECTION_META } from "@/components/templates/Renderer";
+import type { ElementStyle, FloatElement, PageConfig, SectionInstance, SectionType, ThemeConfig, WebsiteConfig, WebsiteRecord } from "@/types/builder";
+import { sectionTheme, TemplateRenderer, SECTION_META } from "@/components/templates/Renderer";
 import { LogoTile } from "@/components/layout/chrome";
 import { isBespoke } from "@/templates";
 import { FONT_CHOICES, THEME_PRESETS, defaultSection, normalizeConfig, sanitizePagePath, sid } from "@/lib/website-defaults";
 import { getTemplate } from "@/lib/templates";
 import { TextField, AreaField, ImageField, ListShell, ItemCard, FieldGroup, summaryOf } from "./fields";
-import { describeTag, tagSectionElements } from "./elements";
+import { clearSnapGuides, describeTag, showSnapGuides, snapToLines, collectSnapLines, tagSectionElements } from "./elements";
+import type { AlignKind, GuideLine } from "./elements";
 
 type Tab = "content" | "sections" | "pages" | "design" | "seo" | "settings";
 type SaveState = "saved" | "saving" | "dirty" | "error";
@@ -54,9 +55,20 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
   });
   const [tab, setTab] = useState<Tab>(VALID_TABS.includes(initialTab as Tab) ? (initialTab as Tab) : "content");
   const [device, setDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
-  const [selectedId, setSelectedId] = useState<string | null>(
-    Array.isArray(initial.config?.sections) ? (initial.config.sections[1]?.id ?? initial.config.sections[0]?.id ?? null) : null,
-  );
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Default-select the hero (or first section) once the real config is known.
+  // Must run after mount: demo configs load from this browser, whose section
+  // ids differ from the freshly built seed — selecting from `initial` would
+  // point at ids that don't exist and silently break selection.
+  useEffect(() => {
+    setSelectedId((prev) => {
+      if (prev) return prev;
+      const secs = Array.isArray(config.sections) ? config.sections : [];
+      return secs[1]?.id ?? secs[0]?.id ?? null;
+    });
+    // Runs once: `config` here is the resolved initial config (never stale).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [dragId, setDragId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
   // Element mode: pick single buttons / headers / text / photos on the canvas.
@@ -65,6 +77,23 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
   const [elSel, setElSel] = useState<{ sectionId: string; key: string; x: number; y: number } | null>(null);
   const hotRef = useRef<Element | null>(null);
   const itemDragRef = useRef<string | null>(null);
+  // Native listeners attached to tagged canvas nodes (rewound on every
+  // tagging pass; section markers themselves persist so styled sections
+  // keep their look when you edit elsewhere).
+  const elListenersRef = useRef<(() => void)[]>([]);
+  function teardownElListeners() {
+    elListenersRef.current.forEach((fn) => fn());
+    elListenersRef.current = [];
+    if (hotRef.current) { hotRef.current.classList.remove("el-hot"); hotRef.current = null; }
+  }
+  function stripElTags(scope: ParentNode) {
+    scope.querySelectorAll("[data-el]").forEach((el) => el.removeAttribute("data-el"));
+  }
+  // Singleton free-move drag session (pointer-based, Canva-style nudge).
+  const elDragRef = useRef<{ sectionId: string; key: string; startX: number; startY: number; baseDx: number; baseDy: number; baseR: number; moved: boolean; el: HTMLElement; x?: number; y?: number } | null>(null);
+  // Free-floating overlay elements (Canva-style): selection + drag session.
+  const [floatSel, setFloatSel] = useState<{ sectionId: string; floatId: string; x: number; y: number } | null>(null);
+  const floatDragRef = useRef<{ sectionId: string; floatId: string; startX: number; startY: number; moved: boolean; el: HTMLElement; x?: number; y?: number; w?: number; h?: number } | null>(null);
   const [saveState, setSaveState] = useState<SaveState>("saved");
   const [saveMsg, setSaveMsg] = useState("");
   const [publishing, setPublishing] = useState(false);
@@ -125,13 +154,14 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
       else if (mod && e.key.toLowerCase() === "s") { e.preventDefault(); saveNow(); }
       else if (e.key === "Escape") {
         if (elSel) setElSel(null);
+        else if (floatSel) setFloatSel(null);
         else setSelectedId(null);
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config, elSel]);
+  }, [config, elSel, floatSel]);
 
   // autosave (debounced; demo writes to this browser instead of the server)
   useEffect(() => {
@@ -236,74 +266,157 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     document.querySelector(`[data-section-id="${selectedId}"]`)?.scrollIntoView({ block: "nearest" });
   }, [selectedId]);
 
-  // Element mode: tag the selected section's editable nodes, wire list-item
-  // dragging, and clean everything up on change/unmount.
+  // Element mode: tag the selected section's editable nodes and wire
+  // list-item dragging + singleton free-move. Markers persist across section
+  // switches (only listeners rewind) so styled sections keep their look.
   useEffect(() => {
-    if (!elMode) return;
+    teardownElListeners();
+    if (!elMode) {
+      stripElTags(document);
+      return;
+    }
     const sel = activeSections.find((s) => s.id === selectedId);
     if (!sel) return;
     const root = document.querySelector(`[data-section-id="${sel.id}"]`);
     if (!root) return;
-    const cleanupTags = tagSectionElements(root, sel);
-    const listeners: (() => void)[] = [];
+    stripElTags(root);
+    tagSectionElements(root, sel);
+    const listeners = elListenersRef.current;
     root.querySelectorAll("[data-el]").forEach((el) => {
       const raw = el.getAttribute("data-el") || "";
-      const m = raw.match(/^.+:[a-zA-Z0-9_.]+:(\d+)$/);
-      if (!m) return;
-      const to = Number(m[1]);
-      const keyMatch = raw.slice(sel.id.length + 1).match(/^(.+):(\d+)$/);
-      if (!keyMatch) return;
+      const key = raw.slice(sel.id.length + 1);
+      const desc = describeTag(sel, key);
+      if (!desc) return;
       const html = el as HTMLElement;
-      html.draggable = true;
-      const start = (e: DragEvent) => {
-        e.stopPropagation();
-        try { e.dataTransfer?.setData("text/plain", `${sel.id}|${keyMatch[1]}|${keyMatch[2]}`); } catch {}
-        if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
-        itemDragRef.current = `${sel.id}|${keyMatch[1]}|${keyMatch[2]}`;
+      if (desc.kind === "item" && desc.arrayKey !== undefined && desc.index !== undefined) {
+        // List item: HTML5 drag to reorder within its array.
+        const to = desc.index;
+        const arrayKey = desc.arrayKey;
+        const index = desc.index;
+        html.draggable = true;
+        const start = (e: DragEvent) => {
+          e.stopPropagation();
+          try { e.dataTransfer?.setData("text/plain", `${sel.id}|${arrayKey}|${index}`); } catch {}
+          if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
+          itemDragRef.current = `${sel.id}|${arrayKey}|${index}`;
+        };
+        const over = (e: DragEvent) => {
+          const cur = itemDragRef.current;
+          if (!cur) return;
+          const [cs, ca, cf] = cur.split("|");
+          if (cs !== sel.id || ca !== arrayKey || Number(cf) === to) return;
+          e.preventDefault();
+          if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+          html.classList.add("el-drop");
+        };
+        const leave = () => html.classList.remove("el-drop");
+        const drop = (e: DragEvent) => {
+          e.preventDefault();
+          e.stopPropagation();
+          html.classList.remove("el-drop");
+          const cur = itemDragRef.current;
+          itemDragRef.current = null;
+          if (!cur) return;
+          const [cs, ca, cf] = cur.split("|");
+          if (cs !== sel.id || ca !== arrayKey || Number(cf) === to) return;
+          moveListItem(sel.id, ca, Number(cf), to);
+        };
+        const end = () => {
+          itemDragRef.current = null;
+          root.querySelectorAll(".el-drop").forEach((x) => x.classList.remove("el-drop"));
+        };
+        el.addEventListener("dragstart", start as EventListener);
+        el.addEventListener("dragover", over as EventListener);
+        el.addEventListener("dragleave", leave as EventListener);
+        el.addEventListener("drop", drop as EventListener);
+        el.addEventListener("dragend", end as EventListener);
+        listeners.push(() => {
+          el.removeEventListener("dragstart", start as EventListener);
+          el.removeEventListener("dragover", over as EventListener);
+          el.removeEventListener("dragleave", leave as EventListener);
+          el.removeEventListener("drop", drop as EventListener);
+          el.removeEventListener("dragend", end as EventListener);
+          html.draggable = false;
+        });
+        return;
+      }
+      // Singleton (header / button / text / photo): pointer-drag to move freely.
+      const prevDraggable = html.draggable;
+      html.draggable = false;
+      const preventNative = (e: Event) => e.preventDefault();
+      el.addEventListener("dragstart", preventNative);
+      const down = (e: PointerEvent) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        if (html.closest?.('[draggable="true"]')) return; // inside a list card → card wins
+        // NOTE: no preventDefault here — it would cancel the click that opens
+        // the popover. Text selection is suppressed via CSS; native link/image
+        // dragging is blocked by the dragstart preventer above.
+        elDragRef.current = {
+          sectionId: sel.id, key,
+          startX: e.clientX, startY: e.clientY,
+          baseDx: sel.elementStyle?.[key]?.dx ?? 0,
+          baseDy: sel.elementStyle?.[key]?.dy ?? 0,
+          baseR: sel.elementStyle?.[key]?.r ?? 0,
+          moved: false, el: html,
+        };
+        const move = (ev: PointerEvent) => {
+          const d = elDragRef.current;
+          if (!d) return;
+          if (!d.moved && Math.hypot(ev.clientX - d.startX, ev.clientY - d.startY) < 5) return;
+          d.moved = true;
+          let dx = Math.min(500, Math.max(-500, Math.round((d.baseDx + ev.clientX - d.startX) * 10) / 10));
+          let dy = Math.min(500, Math.max(-500, Math.round((d.baseDy + ev.clientY - d.startY) * 10) / 10));
+          const apply = () => {
+            d.el.style.transform = `translate(${dx}px,${dy}px)${d.baseR ? ` rotate(${d.baseR}deg)` : ""}`;
+          };
+          apply();
+          // Magnetic guides: snap edges/center to section edges, parent
+          // padding and sibling components.
+          const wrel = document.querySelector(`[data-section-id="${CSS.escape(d.sectionId)}"]`);
+          const r = d.el.getBoundingClientRect();
+          const wr = wrel?.getBoundingClientRect();
+          const vHits: GuideLine[] = [];
+          const hHits: GuideLine[] = [];
+          if (wrel && wr && wr.width > 0 && wr.height > 0) {
+            const { v, h } = collectSnapLines(wrel, d.el);
+            const sx = snapToLines(r.left - wr.left, r.right - wr.left, v);
+            if (sx) { dx = Math.min(500, Math.max(-500, Math.round((dx + sx.delta) * 10) / 10)); vHits.push(sx.line); }
+            const sy = snapToLines(r.top - wr.top, r.bottom - wr.top, h);
+            if (sy) { dy = Math.min(500, Math.max(-500, Math.round((dy + sy.delta) * 10) / 10)); hHits.push(sy.line); }
+            if (vHits.length > 0 || hHits.length > 0) {
+              apply();
+              showSnapGuides(wrel, vHits, hHits, wr.width, wr.height);
+            } else {
+              clearSnapGuides(wrel);
+            }
+          }
+          d.x = dx; d.y = dy;
+        };
+        const up = () => {
+          window.removeEventListener("pointermove", move);
+          window.removeEventListener("pointerup", up);
+          window.removeEventListener("pointercancel", up);
+          const d = elDragRef.current;
+          elDragRef.current = null;
+          const wrapEl = document.querySelector(`[data-section-id="${CSS.escape(d?.sectionId ?? "")}"]`);
+          clearSnapGuides(wrapEl);
+          if (!d || !d.moved || d.x === undefined || d.y === undefined) return;
+          d.el.style.transform = "";
+          patchElStyle(d.sectionId, d.key, { dx: d.x, dy: d.y });
+        };
+        window.addEventListener("pointermove", move);
+        window.addEventListener("pointerup", up);
+        window.addEventListener("pointercancel", up);
       };
-      const over = (e: DragEvent) => {
-        const cur = itemDragRef.current;
-        if (!cur) return;
-        const [cs, ca, cf] = cur.split("|");
-        if (cs !== sel.id || ca !== keyMatch[1] || Number(cf) === to) return;
-        e.preventDefault();
-        if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
-        html.classList.add("el-drop");
-      };
-      const leave = () => html.classList.remove("el-drop");
-      const drop = (e: DragEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        html.classList.remove("el-drop");
-        const cur = itemDragRef.current;
-        itemDragRef.current = null;
-        if (!cur) return;
-        const [cs, ca, cf] = cur.split("|");
-        if (cs !== sel.id || ca !== keyMatch[1] || Number(cf) === to) return;
-        moveListItem(sel.id, ca, Number(cf), to);
-      };
-      const end = () => {
-        itemDragRef.current = null;
-        root.querySelectorAll(".el-drop").forEach((x) => x.classList.remove("el-drop"));
-      };
-      el.addEventListener("dragstart", start as EventListener);
-      el.addEventListener("dragover", over as EventListener);
-      el.addEventListener("dragleave", leave as EventListener);
-      el.addEventListener("drop", drop as EventListener);
-      el.addEventListener("dragend", end as EventListener);
+      el.addEventListener("pointerdown", down as EventListener);
       listeners.push(() => {
-        el.removeEventListener("dragstart", start as EventListener);
-        el.removeEventListener("dragover", over as EventListener);
-        el.removeEventListener("dragleave", leave as EventListener);
-        el.removeEventListener("drop", drop as EventListener);
-        el.removeEventListener("dragend", end as EventListener);
-        html.draggable = false;
+        el.removeEventListener("dragstart", preventNative);
+        el.removeEventListener("pointerdown", down as EventListener);
+        html.draggable = prevDraggable;
       });
     });
     return () => {
-      listeners.forEach((fn) => fn());
-      cleanupTags();
-      if (hotRef.current) { hotRef.current.classList.remove("el-hot"); hotRef.current = null; }
+      teardownElListeners();
     };
     // `mounted` matters: demo first renders a loader, so tag once the preview exists.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -383,6 +496,89 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
       return setC(s, { [arrayKey]: arr });
     });
   }
+  // ── free-floating overlay elements (Canva-style place / drag / edit) ──
+  function patchFloat(sectionId: string, floatId: string, patch: Partial<FloatElement>) {
+    patchSection(sectionId, (s) => ({
+      ...s,
+      floats: (s.floats ?? []).map((f) => (f.id === floatId ? { ...f, ...patch } : f)),
+    }));
+  }
+  function addFloat(kind: "text" | "button") {
+    const sel = activeSections.find((s) => s.id === selectedId);
+    if (!sel) return;
+    const f: FloatElement = {
+      id: sid("float"),
+      kind,
+      text: kind === "button" ? "New button" : "New text",
+      ...(kind === "button" ? { href: "#contact" } : {}),
+      x: 50,
+      y: 24,
+      size: kind === "button" ? 16 : 24,
+    };
+    patchSection(sel.id, (s) => ({ ...s, floats: [...(s.floats ?? []), f] }));
+    setElSel(null);
+    const cx = typeof window !== "undefined" ? window.innerWidth / 2 : 600;
+    setFloatSel({ sectionId: sel.id, floatId: f.id, x: cx + 220, y: 300 });
+  }
+  function deleteFloat(sectionId: string, floatId: string) {
+    if (!confirm("Delete this element?")) return;
+    patchSection(sectionId, (s) => ({ ...s, floats: (s.floats ?? []).filter((f) => f.id !== floatId) }));
+    setFloatSel(null);
+  }
+  function onFloatSelect(sectionId: string, floatId: string, x: number, y: number) {
+    setElSel(null);
+    // Offset so the popover opens beside the float instead of covering it.
+    setFloatSel({ sectionId, floatId, x: x + 28, y });
+  }
+  function onFloatPointerDown(sectionId: string, floatId: string, e: RPointerEvent) {
+    if (e.button !== undefined && e.button !== 0) return;
+    const el = document.querySelector(`[data-float="${CSS.escape(sectionId)}:${CSS.escape(floatId)}"]`) as HTMLElement | null;
+    const wrap = document.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`);
+    if (!el || !wrap) return;
+    e.preventDefault();
+    floatDragRef.current = {
+      sectionId, floatId, startX: e.clientX, startY: e.clientY, moved: false, el,
+      w: el.offsetWidth, h: el.offsetHeight,
+    };
+    const move = (ev: PointerEvent) => {
+      const d = floatDragRef.current;
+      if (!d) return;
+      if (!d.moved && Math.hypot(ev.clientX - d.startX, ev.clientY - d.startY) < 4) return;
+      d.moved = true;
+      const wrel = document.querySelector(`[data-section-id="${CSS.escape(d.sectionId)}"]`);
+      const r = wrel?.getBoundingClientRect();
+      if (!r || r.width === 0 || r.height === 0 || !wrel) return;
+      let x = Math.min(100, Math.max(0, Math.round(((ev.clientX - r.left) / r.width) * 1000) / 10));
+      let y = Math.min(100, Math.max(0, Math.round(((ev.clientY - r.top) / r.height) * 1000) / 10));
+      const { v, h } = collectSnapLines(wrel, d.el);
+      const vHits: GuideLine[] = [];
+      const hHits: GuideLine[] = [];
+      const sx = snapToLines((x / 100) * r.width - (d.w ?? 0) / 2, (x / 100) * r.width + (d.w ?? 0) / 2, v);
+      if (sx) { x = Math.min(100, Math.max(0, Math.round((x + (sx.delta / r.width) * 100) * 10) / 10)); vHits.push(sx.line); }
+      const sy = snapToLines((y / 100) * r.height - (d.h ?? 0) / 2, (y / 100) * r.height + (d.h ?? 0) / 2, h);
+      if (sy) { y = Math.min(100, Math.max(0, Math.round((y + (sy.delta / r.height) * 100) * 10) / 10)); hHits.push(sy.line); }
+      if (vHits.length > 0 || hHits.length > 0) showSnapGuides(wrel, vHits, hHits, r.width, r.height);
+      else clearSnapGuides(wrel);
+      d.x = x; d.y = y;
+      d.el.style.left = `${x}%`;
+      d.el.style.top = `${y}%`;
+      d.el.style.cursor = "grabbing";
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+      const d = floatDragRef.current;
+      floatDragRef.current = null;
+      clearSnapGuides(document.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`));
+      if (!d || !d.moved || d.x === undefined || d.y === undefined) return;
+      d.el.style.cursor = "";
+      patchFloat(d.sectionId, d.floatId, { x: d.x, y: d.y });
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+  }
   function toggleSection(id: string) {
     patchSection(id, (s) => ({ ...s, enabled: !s.enabled }));
   }
@@ -432,14 +628,74 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
     });
   }
   function stepElZoom(sectionId: string, key: string, dir: -1 | 1) {
+    const sel = activeSections.find((s) => s.id === sectionId);
+    const cur = sel?.elementStyle?.[key]?.z ?? 1;
+    patchElStyle(sectionId, key, { z: Math.min(2, Math.max(0.5, Math.round((cur + dir * 0.1) * 100) / 100)) });
+  }
+  /** Merge a free-transform patch, dropping default values so overrides stay minimal. */
+  function patchElStyle(sectionId: string, key: string, patch: Partial<ElementStyle>) {
     patchSection(sectionId, (s) => {
-      const cur = s.elementZoom?.[key] ?? 1;
-      const next = Math.min(2, Math.max(0.5, Math.round((cur + dir * 0.1) * 100) / 100));
-      const zoom = { ...(s.elementZoom ?? {}) };
-      if (next === 1) delete zoom[key];
-      else zoom[key] = next;
-      return { ...s, ...(Object.keys(zoom).length > 0 ? { elementZoom: zoom } : { elementZoom: undefined }) };
+      const next: ElementStyle = { ...(s.elementStyle?.[key] ?? {}), ...patch };
+      if (next.z === 1 || next.z === undefined) delete next.z;
+      if (!next.dx) delete next.dx;
+      if (!next.dy) delete next.dy;
+      if (!next.r) delete next.r;
+      if (typeof next.color !== "string") delete next.color;
+      if (typeof next.background !== "string") delete next.background;
+      if (typeof next.radius !== "number") delete next.radius;
+      const map = { ...(s.elementStyle ?? {}) };
+      if (Object.keys(next).length > 0) map[key] = next;
+      else delete map[key];
+      return { ...s, ...(Object.keys(map).length > 0 ? { elementStyle: map } : { elementStyle: undefined }) };
     });
+  }
+  function resetElStyle(sectionId: string, key: string) {
+    patchSection(sectionId, (s) => {
+      if (!s.elementStyle?.[key]) return s;
+      const map = { ...(s.elementStyle ?? {}) };
+      delete map[key];
+      return { ...s, ...(Object.keys(map).length > 0 ? { elementStyle: map } : { elementStyle: undefined }) };
+    });
+  }
+  /** Canva-style alignment of one tagged element inside its section. */
+  function alignSingleton(sectionId: string, key: string, kind: AlignKind) {
+    const el = document.querySelector(`[data-el="${CSS.escape(sectionId)}:${CSS.escape(key)}"]`) as HTMLElement | null;
+    const wrap = document.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`);
+    const r = el?.getBoundingClientRect();
+    const wr = wrap?.getBoundingClientRect();
+    if (!r || !wr || wr.width === 0 || wr.height === 0) return;
+    const sel = activeSections.find((s) => s.id === sectionId);
+    const base = sel?.elementStyle?.[key] ?? {};
+    let dx = base.dx ?? 0;
+    let dy = base.dy ?? 0;
+    if (kind === "left") dx += wr.left - r.left;
+    else if (kind === "center-x") dx += (wr.left + wr.right) / 2 - (r.left + r.right) / 2;
+    else if (kind === "right") dx += wr.right - r.right;
+    else if (kind === "top") dy += wr.top - r.top;
+    else if (kind === "middle") dy += (wr.top + wr.bottom) / 2 - (r.top + r.bottom) / 2;
+    else if (kind === "bottom") dy += wr.bottom - r.bottom;
+    patchElStyle(sectionId, key, {
+      dx: Math.min(500, Math.max(-500, Math.round(dx * 10) / 10)),
+      dy: Math.min(500, Math.max(-500, Math.round(dy * 10) / 10)),
+    });
+  }
+  /** Canva-style alignment of a floating overlay (center-anchored math). */
+  function alignFloat(sectionId: string, floatId: string, kind: AlignKind) {
+    const el = document.querySelector(`[data-float="${CSS.escape(sectionId)}:${CSS.escape(floatId)}"]`) as HTMLElement | null;
+    const wrap = document.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`);
+    const r = el?.getBoundingClientRect();
+    const wr = wrap?.getBoundingClientRect();
+    if (!r || !wr || wr.width === 0 || wr.height === 0) return;
+    const patch: Partial<FloatElement> = {};
+    if (kind === "left") patch.x = (r.width / 2 / wr.width) * 100;
+    else if (kind === "center-x") patch.x = 50;
+    else if (kind === "right") patch.x = 100 - (r.width / 2 / wr.width) * 100;
+    else if (kind === "top") patch.y = (r.height / 2 / wr.height) * 100;
+    else if (kind === "middle") patch.y = 50;
+    else if (kind === "bottom") patch.y = 100 - (r.height / 2 / wr.height) * 100;
+    if (patch.x !== undefined) patch.x = Math.min(100, Math.max(0, Math.round(patch.x * 10) / 10));
+    if (patch.y !== undefined) patch.y = Math.min(100, Math.max(0, Math.round(patch.y * 10) / 10));
+    patchFloat(sectionId, floatId, patch);
   }
   // ── docked selection bar: variant / text size / spacing without the panel ──
   const SPACING_ORDER = ["compact", "comfortable", "spacious"] as const;
@@ -519,14 +775,14 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
   return (
     <div className="builder flex h-screen flex-col" style={{ background: "var(--paper)" }}>
       {/* Top bar */}
-      <header className="flex h-14 shrink-0 items-center gap-3 border-b bg-white px-4" style={{ borderColor: "var(--line)" }}>
+      <header className="no-bar flex h-14 shrink-0 items-center gap-3 overflow-x-auto border-b bg-white px-4 [&>*]:shrink-0" style={{ borderColor: "var(--line)" }}>
         <Link href={demo ? "/demo" : "/dashboard"} className="flex items-center gap-2" aria-label={demo ? "Back to demo sites" : "Back to dashboard"} title={demo ? "All demo sites" : "Dashboard"}>
           <LogoTile size={28} />
         </Link>
         <input
           value={config.siteName}
           onChange={(e) => commit({ ...config, siteName: e.target.value })}
-          className="mono-meta w-48 rounded-md px-2 py-1 text-[13px] font-semibold focus:outline-none"
+          className="mono-meta w-28 rounded-md px-2 py-1 text-[13px] font-semibold focus:outline-none sm:w-48"
           style={{ color: "var(--ink)" }}
         />
         <span className="mono-meta hidden text-[11px] sm:inline" style={{ color: "var(--ink-3)" }}>/s/{site.slug}</span>
@@ -573,9 +829,9 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
       </header>
       {saveMsg && <p className="border-b border-red-200 bg-red-50 px-4 py-2 text-[13px] text-red-700">{saveMsg}</p>}
 
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         {/* Left sidebar */}
-        <aside className="flex w-64 shrink-0 flex-col border-r bg-white" style={{ borderColor: "var(--line)" }}>
+        <aside className="flex max-h-[46vh] w-full shrink-0 flex-col border-b bg-white md:max-h-none md:w-64 md:border-b-0 md:border-r" style={{ borderColor: "var(--line)" }}>
           <div className="grid grid-cols-3 gap-1 border-b p-2" style={{ borderColor: "var(--line)", background: "var(--paper)" }}>
             {TABS.map((t) => (
               <button key={t.id} onClick={() => setTab(t.id)} aria-current={tab === t.id ? "page" : undefined} className="mono-meta rounded-lg px-1 py-2 text-[11px] font-semibold uppercase transition-colors" style={tab === t.id ? { background: "var(--ink)", color: "#fff" } : { color: "var(--ink-3)" }}>
@@ -594,9 +850,9 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
         </aside>
 
         {/* Preview */}
-        <main className="flex min-w-0 flex-1 flex-col" style={{ background: "var(--paper-2)" }}>
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col" style={{ background: "var(--paper-2)" }}>
           <div className="flex-1 overflow-auto p-4 md:p-6" onMouseOver={handleElHover} onClickCapture={handleElClick}>
-            {selected && <SelectionBar selected={selected} siteTheme={config.theme} elMode={elMode} onToggleEl={() => { setElMode((v) => !v); setElSel(null); }} onVariant={cycleVariant} onText={stepText} onSpacing={cycleSpacing} onToggle={() => toggleSection(selected.id)} onDelete={() => removeSection(selected.id)} />}
+            {selected && <SelectionBar selected={selected} siteTheme={config.theme} elMode={elMode} onToggleEl={() => { setElMode((v) => !v); setElSel(null); }} onVariant={cycleVariant} onText={stepText} onSpacing={cycleSpacing} onToggle={() => toggleSection(selected.id)} onDelete={() => removeSection(selected.id)} onAddFloat={addFloat} />}
             <div className={`relative mx-auto overflow-hidden rounded-2xl border bg-white transition-all ${previewWidth}`} style={{ borderColor: "var(--line-2)", boxShadow: "0 30px 80px -40px rgba(23,23,27,.35)" }}>
               {!selected && (
                 <p className="mono-meta absolute left-1/2 top-3 z-30 -translate-x-1/2 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-semibold" style={{ background: "var(--ink)", color: "#fff" }}>
@@ -619,7 +875,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
                     </button>
                   </div>
                 ) : (
-                  <TemplateRenderer config={config} templateId={site.templateId} slug={site.slug} pagePath={activePage?.path} selectedId={selectedId} showHidden dnd={{ dragId, overId, onStart: onDndStart, onOver: onDndOver, onDrop: onDndDrop, onEnd: onDndEnd }} onSelect={(id) => { setSelectedId(id); setTab("content"); }} />
+                  <TemplateRenderer config={config} templateId={site.templateId} slug={site.slug} pagePath={activePage?.path} selectedId={selectedId} showHidden dnd={{ dragId, overId, onStart: onDndStart, onOver: onDndOver, onDrop: onDndDrop, onEnd: onDndEnd }} floatSel={floatSel ? { sectionId: floatSel.sectionId, floatId: floatSel.floatId } : null} onFloatSelect={onFloatSelect} onFloatPointerDown={onFloatPointerDown} onSelect={(id) => { setSelectedId(id); setTab("content"); }} />
                 )}
               </div>
             </div>
@@ -661,6 +917,28 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
             onField={(k, v) => setElField(sec.id, k, v)}
             onItemField={(ak, i, fk, v) => setElItemField(sec.id, ak, i, fk, v)}
             onZoom={(dir) => stepElZoom(sec.id, elSel.key, dir)}
+            onStyle={(p) => patchElStyle(sec.id, elSel.key, p)}
+            onResetStyle={() => resetElStyle(sec.id, elSel.key)}
+            onAlign={(a) => alignSingleton(sec.id, elSel.key, a)}
+            elStyle={sec.elementStyle?.[elSel.key] ?? {}}
+          />
+        );
+      })()}
+      {floatSel && (() => {
+        const sec = activeSections.find((s) => s.id === floatSel.sectionId);
+        const f = sec?.floats?.find((x) => x.id === floatSel.floatId);
+        if (!sec || !f) return null;
+        const effT = sectionTheme(config.theme, sec);
+        return (
+          <FloatPopover
+            float={f}
+            effColor={f.color ?? (f.kind === "button" ? "#ffffff" : effT.text)}
+            effBg={f.background ?? (f.kind === "button" ? effT.primary : "transparent")}
+            pos={{ x: floatSel.x, y: floatSel.y }}
+            onClose={() => setFloatSel(null)}
+            onPatch={(p) => patchFloat(sec.id, f.id, p)}
+            onDelete={() => deleteFloat(sec.id, f.id)}
+            onAlign={(a) => alignFloat(sec.id, f.id, a)}
           />
         );
       })()}
@@ -677,11 +955,39 @@ function BarBtn({ title, onClick, children }: { title: string; onClick: () => vo
   );
 }
 
-function SelectionBar({ selected, siteTheme, elMode, onToggleEl, onVariant, onText, onSpacing, onToggle, onDelete }: {
+// ─── Canva-style alignment picker (left / center / right, top / middle / bottom) ───
+function AlignRow({ onAlign }: { onAlign: (a: AlignKind) => void }) {
+  const rows: [AlignKind, string][][] = [
+    [["left", "Left"], ["center-x", "Center"], ["right", "Right"]],
+    [["top", "Top"], ["middle", "Middle"], ["bottom", "Bottom"]],
+  ];
+  return (
+    <div className="space-y-1.5 rounded-lg border border-neutral-200 px-2.5 py-2">
+      <p className="text-xs font-medium text-neutral-600">Align in section</p>
+      {rows.map((row, i) => (
+        <div key={i} className="grid grid-cols-3 gap-1.5">
+          {row.map(([kind, label]) => (
+            <button
+              key={kind}
+              onClick={() => onAlign(kind)}
+              title={`Align ${label.toLowerCase()}`}
+              className="rounded-md border border-neutral-200 px-1 py-1 text-[11px] font-medium text-neutral-600 transition-colors hover:border-neutral-900 hover:text-neutral-900"
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SelectionBar({ selected, siteTheme, elMode, onToggleEl, onVariant, onText, onSpacing, onToggle, onDelete, onAddFloat }: {
   selected: SectionInstance; siteTheme: ThemeConfig;
   elMode: boolean; onToggleEl: () => void;
   onVariant: (dir: -1 | 1) => void; onText: (dir: -1 | 1) => void;
   onSpacing: () => void; onToggle: () => void; onDelete: () => void;
+  onAddFloat: (kind: "text" | "button") => void;
 }) {
   const variants = SECTION_META[selected.type]?.variants ?? [];
   const currentLabel = variants.find((v) => v.id === selected.variant)?.label ?? selected.variant;
@@ -723,13 +1029,40 @@ function SelectionBar({ selected, siteTheme, elMode, onToggleEl, onVariant, onTe
             <span className="text-[13px] font-bold text-red-300">✕</span>
           </BarBtn>
         )}
+        <span aria-hidden className="mx-1 h-4 w-px bg-white/20" />
+        <BarBtn title="Drop a text box anywhere on this section" onClick={() => onAddFloat("text")}>
+          <span className="mono-meta text-[11px] font-bold">+ Text</span>
+        </BarBtn>
+        <BarBtn title="Drop a button anywhere on this section" onClick={() => onAddFloat("button")}>
+          <span className="mono-meta text-[11px] font-bold">+ Button</span>
+        </BarBtn>
       </div>
     </div>
   );
 }
 
 // ─── Floating element editor: edit one button / header / text / photo ───
-function ElPopover({ section, desc, tagKey, demo, pos, onClose, onField, onItemField, onZoom }: {
+/** Computed CSS color → #rrggbb (null for transparent / unparsable). */
+function rgbToHex(input: string): string | null {
+  const m = input.match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+))?\s*\)/);
+  if (!m) return null;
+  if (m[4] !== undefined && Number(m[4]) === 0) return null;
+  const h = [1, 2, 3].map((i) => Math.max(0, Math.min(255, Math.round(Number(m[i])))).toString(16).padStart(2, "0")).join("");
+  return `#${h}`;
+}
+
+/** Display-safe 6-digit hex for color inputs (stored value or fallback). */
+function asHex6(v: unknown, fallback: string): string {
+  if (typeof v === "string") {
+    const t = v.trim();
+    if (/^#[0-9a-fA-F]{6}$/.test(t)) return t;
+    if (/^#[0-9a-fA-F]{3}$/.test(t)) return `#${t[1]}${t[1]}${t[2]}${t[2]}${t[3]}${t[3]}`;
+    if (/^#[0-9a-fA-F]{8}$/.test(t)) return t.slice(0, 7);
+  }
+  return fallback;
+}
+
+function ElPopover({ section, desc, tagKey, demo, pos, onClose, onField, onItemField, onZoom, onStyle, onResetStyle, onAlign, elStyle }: {
   section: SectionInstance;
   desc: NonNullable<ReturnType<typeof describeTag>>;
   tagKey: string;
@@ -739,6 +1072,10 @@ function ElPopover({ section, desc, tagKey, demo, pos, onClose, onField, onItemF
   onField: (key: string, value: string) => void;
   onItemField: (arrayKey: string, index: number, fkey: string, value: unknown) => void;
   onZoom: (dir: -1 | 1) => void;
+  onStyle: (patch: Partial<ElementStyle>) => void;
+  onResetStyle: () => void;
+  onAlign: (kind: AlignKind) => void;
+  elStyle: ElementStyle;
 }) {
   const W = 300;
   const vw = typeof window !== "undefined" ? window.innerWidth : 1200;
@@ -746,7 +1083,18 @@ function ElPopover({ section, desc, tagKey, demo, pos, onClose, onField, onItemF
   const left = Math.max(8, Math.min(pos.x - 40, vw - W - 8));
   const top = Math.max(8, Math.min(pos.y + 14, vh - 430));
   const content = (section.content ?? {}) as Record<string, unknown>;
-  const zoom = section.elementZoom?.[tagKey] ?? 1;
+  const zoom = elStyle.z ?? 1;
+  const moved = (elStyle.dx ?? 0) !== 0 || (elStyle.dy ?? 0) !== 0;
+  const tilted = (elStyle.r ?? 0) !== 0;
+  const styled = Object.keys(elStyle).length > 0;
+  // Live computed look of the node, so color inputs show real defaults.
+  const liveNode = typeof document !== "undefined" ? document.querySelector(`[data-el="${CSS.escape(section.id)}:${CSS.escape(tagKey)}"]`) : null;
+  const liveCss = liveNode ? getComputedStyle(liveNode as Element) : null;
+  const liveColor = (liveCss && rgbToHex(liveCss.color)) || "#111111";
+  const liveBgRaw = liveCss ? rgbToHex(liveCss.backgroundColor) : null;
+  const liveRadius = liveCss ? Math.min(48, Math.max(0, Math.round(parseFloat(liveCss.borderTopLeftRadius) || 0))) : 0;
+  const showColor = asHex6(elStyle.color, liveColor);
+  const showRadius = elStyle.radius ?? liveRadius;
   const isItem = desc.kind === "item";
   const item = isItem && desc.arrayKey !== undefined && desc.index !== undefined
     ? ((content[desc.arrayKey] as unknown[])?.[desc.index] as Record<string, unknown> | undefined)
@@ -819,7 +1167,145 @@ function ElPopover({ section, desc, tagKey, demo, pos, onClose, onField, onItemF
             </span>
           </div>
         )}
+        {!isItem && <AlignRow onAlign={onAlign} />}
+        {!isItem && (
+          <div className="space-y-2 rounded-lg border border-neutral-200 px-2.5 py-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-neutral-600">Move</span>
+              <span className="mono-meta text-[11px]" style={{ color: "var(--ink-3)" }}>
+                {moved ? `${elStyle.dx ?? 0}, ${elStyle.dy ?? 0}px — drag on canvas` : "drag it on canvas"}
+              </span>
+            </div>
+            <label className="block">
+              <span className="mb-1 flex items-center justify-between text-xs font-medium text-neutral-600">
+                Tilt <span className="mono-meta text-[11px] font-normal" style={{ color: "var(--ink-3)" }}>{elStyle.r ?? 0}°</span>
+              </span>
+              <input
+                type="range" min={-45} max={45} step={1} value={elStyle.r ?? 0}
+                onChange={(e) => onStyle({ r: Number(e.target.value) })}
+                className="w-full accent-neutral-900" aria-label="Rotation in degrees"
+              />
+            </label>
+            {(moved || tilted || zoom !== 1) && (
+              <button onClick={onResetStyle} className="w-full rounded-md border border-neutral-200 py-1 text-[11px] font-medium text-neutral-500 transition-colors hover:border-neutral-900 hover:text-neutral-900">
+                Reset position, tilt & size
+              </button>
+            )}
+          </div>
+        )}
+        {!isItem && (
+          <div className="space-y-1.5 rounded-xl border border-neutral-200 bg-white p-2.5">
+            <div className="flex items-center gap-2">
+              <input type="color" value={showColor} onChange={(e) => onStyle({ color: e.target.value })} className="h-7 w-9 flex-none cursor-pointer rounded border border-neutral-200" aria-label="Text color" />
+              <span className="w-[86px] flex-none text-xs">
+                <span className="block font-medium text-neutral-700">Text</span>
+                <span className="block text-[10px] text-neutral-400">Label color</span>
+              </span>
+              <input value={showColor} onChange={(e) => onStyle({ color: e.target.value.trim() || undefined as unknown as string })} spellCheck={false} className="w-full rounded-md border border-neutral-200 px-2 py-1 font-mono text-xs" aria-label="Text color hex" />
+              {elStyle.color && <button onClick={() => onStyle({ color: undefined as unknown as string })} title="Reset to theme" className="flex-none text-[11px] text-neutral-400 underline">Reset</button>}
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="color" value={elStyle.background ? asHex6(elStyle.background, "#ffffff") : "#ffffff"} onChange={(e) => onStyle({ background: e.target.value })} className="h-7 w-9 flex-none cursor-pointer rounded border border-neutral-200" aria-label="Fill color" />
+              <span className="w-[86px] flex-none text-xs">
+                <span className="block font-medium text-neutral-700">Fill</span>
+                <span className="block text-[10px] text-neutral-400">Behind text</span>
+              </span>
+              <input value={elStyle.background ?? ""} onChange={(e) => onStyle({ background: e.target.value.trim() || undefined as unknown as string })} spellCheck={false} placeholder={liveBgRaw ? liveBgRaw : "none"} className="w-full rounded-md border border-neutral-200 px-2 py-1 font-mono text-xs" aria-label="Fill hex" />
+              {elStyle.background && <button onClick={() => onStyle({ background: undefined as unknown as string })} title="Remove fill" className="flex-none text-[11px] text-neutral-400 underline">Clear</button>}
+            </div>
+            <label className="block">
+              <span className="mb-1 flex items-center justify-between text-xs font-medium text-neutral-600">
+                Corners <span className="mono-meta text-[11px] font-normal" style={{ color: "var(--ink-3)" }}>{showRadius}px</span>
+              </span>
+              <input
+                type="range" min={0} max={32} step={1} value={showRadius}
+                onChange={(e) => onStyle({ radius: Number(e.target.value) })}
+                className="w-full accent-neutral-900" aria-label="Corner radius in pixels"
+              />
+            </label>
+          </div>
+        )}
+        {styled && (
+          <button onClick={onResetStyle} className="w-full rounded-lg border border-neutral-200 py-1.5 text-xs font-medium text-neutral-500 transition-colors hover:border-neutral-900 hover:text-neutral-900">
+            Reset element
+          </button>
+        )}
         {desc.hint && <p className="text-[11px] leading-snug text-neutral-400">{desc.hint}</p>}
+      </div>
+    </div>
+  );
+}
+
+// ─── Floating element editor: Canva-style text / button overlays ───
+function FloatPopover({ float, effColor, effBg, pos, onClose, onPatch, onDelete, onAlign }: {
+  float: FloatElement;
+  effColor: string;
+  effBg: string;
+  pos: { x: number; y: number };
+  onClose: () => void;
+  onPatch: (patch: Partial<FloatElement>) => void;
+  onDelete: () => void;
+  onAlign: (kind: AlignKind) => void;
+}) {
+  const W = 300;
+  const vw = typeof window !== "undefined" ? window.innerWidth : 1200;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+  const left = Math.max(8, Math.min(pos.x - 40, vw - W - 8));
+  const top = Math.max(8, Math.min(pos.y + 14, vh - 430));
+  const isBtn = float.kind === "button";
+  return (
+    <div
+      className="float-pop fixed z-50 overflow-hidden rounded-2xl border bg-white shadow-2xl"
+      style={{ left, top, width: W, borderColor: "var(--line-2)", boxShadow: "0 24px 70px -20px rgba(23,23,27,.45)" }}
+    >
+      <div className="flex items-center gap-2 border-b px-3 py-2" style={{ borderColor: "var(--line)", background: "var(--paper)" }}>
+        <span className="mono-meta text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.1em", color: "var(--accent-text)" }}>
+          {isBtn ? "Floating button" : "Floating text"}
+        </span>
+        <span className="mono-meta text-[10px]" style={{ color: "var(--ink-3)" }}>· drag it anywhere</span>
+        <button onClick={onClose} aria-label="Close editor" className="ml-auto grid h-6 w-6 place-items-center rounded-full text-xs transition-colors hover:bg-black/[0.06]" style={{ color: "var(--ink-3)" }}>✕</button>
+      </div>
+      <div className="max-h-[330px] space-y-3 overflow-y-auto p-3">
+        <label className="block">
+          <span className="mb-1 block text-xs font-medium text-neutral-700">{isBtn ? "Button label" : "Text"}</span>
+          <input value={float.text} onChange={(e) => onPatch({ text: e.target.value })} placeholder={isBtn ? "New button" : "New text"} className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 text-[13px] focus:border-neutral-900 focus:outline-none" />
+        </label>
+        {isBtn && (
+          <label className="block">
+            <span className="mb-1 block text-xs font-medium text-neutral-700">Button link</span>
+            <input value={float.href ?? ""} onChange={(e) => onPatch({ href: e.target.value })} placeholder="#contact" className="w-full rounded-lg border border-neutral-200 px-2.5 py-1.5 font-mono text-xs focus:border-neutral-900 focus:outline-none" />
+          </label>
+        )}
+        <div className="flex items-center justify-between rounded-lg border border-neutral-200 px-2.5 py-1.5">
+          <span className="text-xs font-medium text-neutral-600">Size</span>
+          <span className="flex items-center gap-1">
+            <button onClick={() => onPatch({ size: Math.max(10, float.size - 2) })} title="Smaller" className="rounded-md border border-neutral-200 px-2 py-0.5 text-xs font-bold transition-colors hover:border-neutral-900">A−</button>
+            <span className="mono-meta w-12 text-center text-[11px]">{float.size}px</span>
+            <button onClick={() => onPatch({ size: Math.min(120, float.size + 2) })} title="Larger" className="rounded-md border border-neutral-200 px-2 py-0.5 text-xs font-bold transition-colors hover:border-neutral-900">A+</button>
+          </span>
+        </div>
+        <div className="space-y-1.5 rounded-xl border border-neutral-200 bg-white p-2.5">
+          <div className="flex items-center gap-2">
+            <input type="color" value={effColor} onChange={(e) => onPatch({ color: e.target.value })} className="h-7 w-9 flex-none cursor-pointer rounded border border-neutral-200" aria-label="Text color" />
+            <span className="w-[86px] flex-none text-xs">
+              <span className="block font-medium text-neutral-700">Text</span>
+              <span className="block text-[10px] text-neutral-400">Label color</span>
+            </span>
+            <input value={effColor} onChange={(e) => onPatch({ color: e.target.value })} spellCheck={false} className="w-full rounded-md border border-neutral-200 px-2 py-1 font-mono text-xs" aria-label="Text color hex" />
+            {float.color && <button onClick={() => onPatch({ color: undefined })} title="Reset to theme" className="flex-none text-[11px] text-neutral-400 underline">Reset</button>}
+          </div>
+          <div className="flex items-center gap-2">
+            <input type="color" value={effBg === "transparent" ? "#ffffff" : effBg} onChange={(e) => onPatch({ background: e.target.value })} className="h-7 w-9 flex-none cursor-pointer rounded border border-neutral-200" aria-label="Background color" />
+            <span className="w-[86px] flex-none text-xs">
+              <span className="block font-medium text-neutral-700">Fill</span>
+              <span className="block text-[10px] text-neutral-400">Behind text</span>
+            </span>
+            <input value={float.background ?? ""} onChange={(e) => onPatch({ background: e.target.value || undefined })} spellCheck={false} placeholder="none" className="w-full rounded-md border border-neutral-200 px-2 py-1 font-mono text-xs" aria-label="Background hex" />
+            {float.background && <button onClick={() => onPatch({ background: undefined })} title="Remove fill" className="flex-none text-[11px] text-neutral-400 underline">Clear</button>}
+          </div>
+        </div>
+        <button onClick={onDelete} className="w-full rounded-lg border border-red-200 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-50">Delete element</button>
+        <AlignRow onAlign={onAlign} />
       </div>
     </div>
   );
@@ -1511,8 +1997,8 @@ function SectionColors({ section, siteTheme, onPatch }: {
           className="flex w-full items-center gap-2 rounded-xl border border-dashed border-neutral-300 px-3 py-2.5 text-left transition-colors hover:border-neutral-900"
         >
           <span className="flex gap-1" aria-hidden>
-            {[siteTheme.background, siteTheme.surface, siteTheme.accent].map((c) => (
-              <i key={c} className="h-4 w-4 rounded-full border border-neutral-200" style={{ background: c }} />
+            {[siteTheme.background, siteTheme.surface, siteTheme.accent].map((c, i) => (
+              <i key={i} className="h-4 w-4 rounded-full border border-neutral-200" style={{ background: c }} />
             ))}
           </span>
           <span className="text-xs font-medium text-neutral-600">Customize this section&apos;s colors<span className="block text-[11px] font-normal text-neutral-400">The rest of the site keeps its colors.</span></span>

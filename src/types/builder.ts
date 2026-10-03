@@ -1,5 +1,23 @@
 // ─── Core website-builder types ─────────────────────────────────────────────
 
+/** Free-transform of a single canvas element. */
+export interface ElementStyle {
+  /** zoom factor, 0.5 – 2 */
+  z?: number;
+  /** nudge in px */
+  dx?: number;
+  /** nudge in px */
+  dy?: number;
+  /** rotation in degrees, -180 – 180 */
+  r?: number;
+  /** text color hex */
+  color?: string;
+  /** fill behind the element hex */
+  background?: string;
+  /** corner radius in px, 0 – 48 */
+  radius?: number;
+}
+
 export type SectionType =
   | "navbar"
   | "banner"
@@ -39,10 +57,33 @@ export interface SectionInstance {
   /** Per-section overrides — only this section changes, the rest of
    *  the site keeps the site theme. Any subset of keys; all optional. */
   themeOverride?: Partial<Pick<ThemeConfig, "primary" | "background" | "surface" | "text" | "muted" | "accent" | "headingScale" | "sectionSpacing">>;
-  /** Per-element resize factors, keyed by content field (e.g. "title" → 1.2).
-   *  Applied as CSS zoom on the tagged element — layout-aware scaling. */
-  elementZoom?: Record<string, number>;
+  /** Per-element free transforms, keyed by content field (e.g. "title").
+   *  z = zoom (0.5–2), dx/dy = nudge in px, r = rotation in degrees.
+   *  Lets any header / button / text move, scale and tilt Canva-style. */
+  elementStyle?: Record<string, ElementStyle>;
+  /** Free-floating overlays (text / buttons) placed anywhere on the section,
+   *  Canva-style. x/y are % of the section box (center-anchored). */
+  floats?: FloatElement[];
   content: SectionContent;
+}
+
+/** One free-floating overlay element on a section. */
+export interface FloatElement {
+  id: string;
+  kind: "text" | "button";
+  /** Visible label. */
+  text: string;
+  /** Buttons only. */
+  href?: string;
+  /** % across the section (center point). */
+  x: number;
+  /** % down the section (center point). */
+  y: number;
+  /** Font size in px. */
+  size: number;
+  /** Optional overrides; defaults come from the section theme. */
+  color?: string;
+  background?: string;
 }
 
 export interface ThemeConfig {

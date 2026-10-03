@@ -29,18 +29,18 @@ export default async function TemplatePreviewPage({
   return (
     <div className="flex min-h-screen flex-col bg-[#fafafa]">
       <div className="sticky top-0 z-40 border-b border-neutral-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-6 py-3">
-          <Link href="/templates" className="text-sm text-neutral-600 hover:text-neutral-900">← Back</Link>
-          <span className="font-semibold">{tpl.name}</span>
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 sm:px-6">
+          <Link href="/templates" className="shrink-0 text-sm text-neutral-600 hover:text-neutral-900">← Back</Link>
+          <span className="min-w-0 flex-1 truncate font-semibold">{tpl.name}</span>
           <span className="hidden rounded-full border border-neutral-200 px-2 py-0.5 text-[11px] text-neutral-600 sm:inline">{tpl.category}</span>
-          <div className="ml-auto flex items-center gap-1 rounded-lg border border-neutral-200 p-1">
+          <div className="flex items-center gap-1 rounded-lg border border-neutral-200 p-1">
             {(["desktop", "tablet", "mobile"] as const).map((d) => (
-              <Link key={d} href={`/templates/${tpl.id}?device=${d}`} className={`rounded-md px-3 py-1 text-xs font-medium capitalize ${device === d ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100"}`}>
+              <Link key={d} href={`/templates/${tpl.id}?device=${d}`} className={`rounded-md px-2 py-1 text-[11px] font-medium capitalize sm:px-3 sm:text-xs ${device === d ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100"}`}>
                 {d}
               </Link>
             ))}
           </div>
-          <Link href={`/new?template=${tpl.id}`}>
+          <Link href={`/new?template=${tpl.id}`} className="shrink-0">
             <Button size="sm">Use This Template</Button>
           </Link>
         </div>

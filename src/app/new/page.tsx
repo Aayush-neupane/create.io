@@ -84,8 +84,8 @@ function Flow() {
                       <span className="mono-meta block text-[10.5px] uppercase" style={{ letterSpacing: "0.08em", color: t.theme.muted }}>{t.category} · {t.sections.length} sections</span>
                     </span>
                     <span className="flex flex-none gap-1" aria-hidden>
-                      {[t.theme.primary, t.theme.accent].map((c) => (
-                        <i key={c} className="h-4 w-4 rounded-full border" style={{ background: c, borderColor: "var(--line-2)" }} />
+                      {[t.theme.primary, t.theme.accent].map((c, i) => (
+                        <i key={i} className="h-4 w-4 rounded-full border" style={{ background: c, borderColor: "var(--line-2)" }} />
                       ))}
                     </span>
                     {active && <span className="mono-meta flex-none text-[11px] font-bold" style={{ color: t.theme.accent }}>✓</span>}

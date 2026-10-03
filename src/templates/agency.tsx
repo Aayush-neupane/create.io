@@ -3,7 +3,7 @@
  * Studio system: sticker badges, oversized grotesk, alternating case rows, violet current.
  */
 import type { SectionType } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
+import { fontStack, fluid, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";
 
@@ -23,6 +23,9 @@ const Navbar: C = ({ content, theme, pages }) => {
         </div>
         {str(content.cta) ? <a href="#contact" className="rounded-full bg-white px-4 py-2 text-[13px] font-bold" style={{ color: theme.primary }}>{str(content.cta)}</a> : null}
       </div>
+      <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap border-t border-white/15 px-6 py-2.5 text-[13px] font-semibold md:hidden">
+        {links.map((l, i) => <a key={i} href={l.href} className="opacity-80">{l.label}</a>)}
+      </div>
     </nav>
   );
 };
@@ -38,7 +41,7 @@ const Hero: C = ({ content, theme }) => {
         </h1>
         <div className="mt-6 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <p className="max-w-xl text-[15px] leading-relaxed opacity-75">{str(content.description)}</p>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             {str(content.primaryCta) ? <a href="#work" className="rounded-full bg-white px-6 py-3 text-sm font-bold" style={{ color: theme.primary }}>{str(content.primaryCta)}</a> : null}
             {str(content.secondaryCta) && <a href="#contact" className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold">{str(content.secondaryCta)}</a>}
           </div>
@@ -48,7 +51,7 @@ const Hero: C = ({ content, theme }) => {
             {stats.map((st, i) => (
               <div key={i} className="p-4 sm:p-5" style={{ background: theme.primary }}>
                 <dt className="text-2xl font-bold sm:text-3xl" style={{ fontFamily: fontStack(theme.fontHeading) }}>{st.value}</dt>
-                <dd className="mt-1 text-xs uppercase tracking-widest opacity-60">{st.label}</dd>
+                <dd className="mt-1 break-words text-xs uppercase tracking-widest opacity-60">{st.label}</dd>
               </div>
             ))}
           </dl>
@@ -65,7 +68,7 @@ const Services: C = ({ content, theme }) => {
       <div className={`mx-auto grid gap-10 px-6 md:grid-cols-[1fr_1.5fr] ${containerWidth(theme)}`}>
         <div className="md:sticky md:top-8 md:self-start">
           <p className="font-mono text-xs uppercase tracking-[0.2em]" style={{ color: theme.accent }}>◼ {str(content.heading, "Capabilities")}</p>
-          <h2 className="mt-3" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 700, lineHeight: 1.05 }}>{str(content.title)}</h2>
+          <h2 className="mt-3" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.4, 1.65), fontWeight: 700, lineHeight: 1.05 }}>{str(content.title)}</h2>
           <p className="mt-3 text-sm opacity-60">{str(content.description)}</p>
         </div>
         <div className="space-y-3">
@@ -90,7 +93,7 @@ const Projects: C = ({ content, theme }) => {
     <section id="work" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <div className="flex items-end justify-between">
-          <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.6rem * ${theme.headingScale})`, fontWeight: 700, letterSpacing: "-0.03em" }}>{str(content.title, "Case work")}</h2>
+          <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.6, 1.75), fontWeight: 700, letterSpacing: "-0.03em" }}>{str(content.title, "Case work")}</h2>
           <span className="rounded-full px-3 py-1 font-mono text-[11px] font-bold" style={{ background: theme.surface }}>{items.length} cases</span>
         </div>
         <div className="mt-10 space-y-10">
@@ -121,7 +124,7 @@ const Process: C = ({ content, theme }) => {
   return (
     <section className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
-        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(content.title, "How we'll work")}</h2>
+        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 700 }}>{str(content.title, "How we'll work")}</h2>
         <div className="mt-10 grid gap-4 md:grid-cols-4">
           {steps.map((st, i) => (
             <div key={i} className="relative bg-white p-6 pt-8" style={{ borderRadius: theme.radius * 1.2 }}>
@@ -141,7 +144,7 @@ const Team: C = ({ content, theme }) => {
   return (
     <section id="team" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
-        <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(content.title, "No juniors, no hand-offs")}</h2>
+        <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 700 }}>{str(content.title, "No juniors, no hand-offs")}</h2>
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           {members.map((m, i) => (
             <div key={i} className="group">
@@ -184,7 +187,7 @@ const Cta: C = ({ content, theme }) => (
   <section id="contact" className={sectionPad(theme)}>
     <div className={`mx-auto px-6 text-center ${containerWidth(theme)}`}>
       <span className="inline-block rotate-2 rounded-full px-3 py-1 text-xs font-bold text-white" style={{ background: theme.accent }}>● 2 slots left for Q3</span>
-      <h2 className="mx-auto mt-4 max-w-2xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.8rem * ${theme.headingScale})`, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.02 }}>{str(content.title)}</h2>
+      <h2 className="mx-auto mt-4 max-w-2xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.8, 1.9), fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.02 }}>{str(content.title)}</h2>
       <p className="mx-auto mt-3 max-w-lg text-sm" style={{ color: theme.muted }}>{str(content.description)}</p>
       {str(content.primaryCta) ? <a href="#contact" className={`${btnRadius(theme)} mt-7 inline-block px-8 py-3.5 text-sm font-bold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta)}</a> : null}
     </div>

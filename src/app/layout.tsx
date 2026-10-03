@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Newsreader, JetBrains_Mono, Inter, Fraunces, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { CookieBanner } from "@/components/layout/CookieBanner";
 
 const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className={`${sans.variable} ${serif.variable} ${mono.variable} ${inter.variable} ${fraunces.variable} ${grotesk.variable} min-h-full`}><div id="top" className="min-h-full">{children}</div></body>
+      <body className={`${sans.variable} ${serif.variable} ${mono.variable} ${inter.variable} ${fraunces.variable} ${grotesk.variable} min-h-full`}><div id="top" className="min-h-full">{children}</div><CookieBanner /></body>
     </html>
   );
 }

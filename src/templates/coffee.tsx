@@ -4,7 +4,7 @@
  * brew menu, closing-hours footer. Smells like cardamom.
  */
 import type { SectionType } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
+import { fontStack, fluid, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";
 
@@ -28,6 +28,9 @@ const Navbar: C = ({ content, theme, pages }) => {
           </a>
         ) : null}
       </div>
+      <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap border-t px-6 py-2.5 text-sm md:hidden" style={{ borderColor: theme.surface, color: theme.muted }}>
+        {links.map((l, i) => <a key={i} href={l.href}>{l.label}</a>)}
+      </div>
     </nav>
   );
 };
@@ -40,7 +43,7 @@ const Hero: C = ({ content, theme }) => (
         <p className="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold" style={{ borderColor: theme.accent, color: theme.accent }}>
           <span className="h-1.5 w-1.5 rounded-full" style={{ background: theme.accent }} />{str(content.eyebrow, "Roasted in small batches")}
         </p>
-        <h1 className="mt-4 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(3.2rem * ${theme.headingScale})`, fontWeight: 600, lineHeight: 1.02 }}>
+        <h1 className="mt-4 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 3.2, 2), fontWeight: 600, lineHeight: 1.02 }}>
           {str(content.title, "Slow mornings, strong chiya")}
         </h1>
         <p className="mt-4 max-w-md text-[15px] leading-relaxed" style={{ color: theme.muted }}>{str(content.description)}</p>
@@ -69,7 +72,7 @@ const Menu: C = ({ content, theme }) => {
     <section id="menu" className={sectionPad(theme)} style={{ background: theme.primary, color: "#faf3e8" }}>
       <div className={`mx-auto max-w-2xl px-6 ${containerWidth(theme)}`}>
         <p className="text-center text-xs font-semibold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.heading, "The brew board")}</p>
-        <h2 className="mt-2 text-center italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})` }}>{str(content.title, "Poured & brewed")}</h2>
+        <h2 className="mt-2 text-center italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.4, 1.65) }}>{str(content.title, "Poured & brewed")}</h2>
         <div className="mt-10 space-y-10">
           {groups.map((g, i) => (
             <div key={i}>
@@ -113,7 +116,7 @@ const Hours: C = ({ content, theme }) => {
         <div className="border-2 border-dashed p-8 text-center md:p-10" style={{ borderRadius: theme.radius * 1.6, borderColor: theme.accent, background: theme.surface }}>
           <p className="text-4xl">☕</p>
           <p className="mt-3 text-xs font-bold uppercase" style={{ letterSpacing: "0.28em", color: theme.accent }}>{str(content.heading, "Visit")}</p>
-          <h2 className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})` }}>{str(content.title)}</h2>
+          <h2 className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5) }}>{str(content.title)}</h2>
           <p className="mt-3 font-medium">{str(content.address)}</p>
           <p className="font-mono text-sm font-bold" style={{ color: theme.accent }}>{str(content.phone)}</p>
           <a href="#contact" className={`${btnRadius(theme)} t-btn mt-6 inline-block px-6 py-3 text-sm font-bold text-white`} style={{ background: theme.primary }}>Plan your visit</a>
@@ -141,7 +144,7 @@ const Gallery: C = ({ content, theme }) => {
     <section className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="text-center text-xs font-bold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.heading, "Inside")}</p>
-        <h2 className="mt-2 text-center italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})` }}>{str(content.title, "The corner")}</h2>
+        <h2 className="mt-2 text-center italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55) }}>{str(content.title, "The corner")}</h2>
         <div className="no-bar snap-row mt-8 flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
           {images.map((img, i) => (
             <figure key={i} className={`w-[78%] flex-none sm:w-[46%] md:w-auto ${i % 3 === 1 ? "md:mt-10" : ""}`}>
@@ -171,7 +174,7 @@ const Testimonials: C = ({ content, theme }) => {
     <section className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="text-center text-xs font-bold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.heading, "Regulars")}</p>
-        <h2 className="mt-2 text-center italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})` }}>{str(content.title)}</h2>
+        <h2 className="mt-2 text-center italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55) }}>{str(content.title)}</h2>
         <div className="mx-auto mt-8 grid max-w-4xl gap-5 md:grid-cols-2">
           {items.map((t0, i) => (
             <figure key={i} className="border bg-white p-6 transition-transform duration-300 hover:-translate-y-1 hover:rotate-[0.5deg]" style={{ borderRadius: theme.radius * 1.3, borderColor: theme.surface }}>
@@ -193,7 +196,7 @@ const Contact: C = ({ content, theme }) => (
     <div className={`mx-auto grid gap-10 px-6 md:grid-cols-2 ${containerWidth(theme)}`}>
       <div>
         <p className="text-xs font-bold uppercase" style={{ letterSpacing: "0.3em", color: theme.accent }}>{str(content.heading, "Visit")}</p>
-        <h2 className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})` }}>{str(content.title)}</h2>
+        <h2 className="mt-2 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.4, 1.65) }}>{str(content.title)}</h2>
         <p className="mt-3 text-sm leading-relaxed opacity-80">{str(content.body)}</p>
         <div className="mt-6 space-y-2 text-sm">
           <p><span className="opacity-60">Find us — </span><span className="font-semibold">{str(content.location)}</span></p>

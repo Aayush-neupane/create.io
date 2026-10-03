@@ -3,7 +3,7 @@
  * Darkroom system: near-black canvas, serif display, frame numbers, white-on-dark poster.
  */
 import type { SectionType } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
+import { fontStack, fluid, containerWidth, sectionPad, btnRadius, str, arr, EmptyArt } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";
 
@@ -19,6 +19,9 @@ const Navbar: C = ({ content, theme, pages }) => {
           {links.map((l, i) => <a key={i} href={l.href} className="opacity-70 hover:opacity-100">{l.label}</a>)}
         </div>
         <span className="rounded-full border border-white/30 px-3 py-1 font-mono text-[11px]">EST. 2017</span>
+      </div>
+      <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap px-6 pb-5 text-[13px] uppercase tracking-[0.14em] md:hidden">
+        {links.map((l, i) => <a key={i} href={l.href} className="opacity-70">{l.label}</a>)}
       </div>
     </nav>
   );
@@ -67,7 +70,7 @@ const Gallery: C = ({ content, theme }) => {
     <section id="work" className={sectionPad(theme)} style={{ background: "#0c0c0c", color: "#fff" }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <div className="mb-8 flex items-baseline justify-between">
-          <h2 className="italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})` }}>{str(content.title, "Selected frames")}</h2>
+          <h2 className="italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5) }}>{str(content.title, "Selected frames")}</h2>
           <span className="font-mono text-xs text-white/40">{images.length} frames</span>
         </div>
         <div className="grid gap-3 md:grid-cols-3">
@@ -85,8 +88,8 @@ const About: C = ({ content, theme }) => {
     <section id="about" className={sectionPad(theme)} style={{ background: "#0c0c0c", color: "#fff" }}>
       <div className={`mx-auto grid gap-10 px-6 md:grid-cols-[70px_1fr_1fr] ${containerWidth(theme)}`}>
         <span className="font-mono text-xs text-white/40">( 02 )</span>
-        <blockquote className="italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.9rem * ${theme.headingScale})`, lineHeight: 1.3 }}>
-          “{str(content.body).slice(0, 150) || str(content.title)}”
+        <blockquote className="italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 1.9, 1.35), lineHeight: 1.3 }}>
+          “{str(content.body).length > 150 ? `${str(content.body).slice(0, 150).split(" ").slice(0, -1).join(" ")}…` : str(content.body) || str(content.title)}”
         </blockquote>
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/40">{str(content.heading)}</p>
@@ -110,7 +113,7 @@ const Testimonials: C = ({ content, theme }) => {
     <section className={sectionPad(theme)} style={{ background: theme.surface, color: "#fff" }}>
       <div className={`mx-auto px-6 text-center ${containerWidth(theme)}`}>
         <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/40">Field notes</p>
-        <blockquote className="mx-auto mt-6 max-w-3xl italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.8rem * ${theme.headingScale})`, lineHeight: 1.35 }}>“{t0.message}”</blockquote>
+        <blockquote className="mx-auto mt-6 max-w-3xl italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 1.8, 1.35), lineHeight: 1.35 }}>“{t0.message}”</blockquote>
         <p className="mt-6 text-sm text-white/50">{t0.name} — {t0.role}, {t0.company}</p>
         {items.length > 1 && <p className="mt-2 font-mono text-[11px] text-white/30">+ {items.length - 1} more in the book</p>}
       </div>
@@ -123,7 +126,7 @@ const Contact: C = ({ content, theme }) => (
     <div className={`mx-auto grid gap-10 px-6 md:grid-cols-2 ${containerWidth(theme)}`}>
       <div>
         <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/40">{str(content.heading, "Bookings")}</p>
-        <h2 className="mt-3 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, lineHeight: 1.1 }}>{str(content.title, "Let's make something honest")}</h2>
+        <h2 className="mt-3 italic" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.4, 1.65), lineHeight: 1.1 }}>{str(content.title, "Let's make something honest")}</h2>
         <p className="mt-4 max-w-sm text-sm text-white/60">{str(content.body)}</p>
         <p className="mt-6 text-sm"><a className="underline underline-offset-4" href={`mailto:${str(content.email)}`}>{str(content.email)}</a></p>
         <p className="mt-1 font-mono text-xs text-white/40">{str(content.location)}</p>

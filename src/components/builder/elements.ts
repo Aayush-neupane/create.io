@@ -242,3 +242,117 @@ export function describeTag(
   }
   return null;
 }
+
+/* ─── Smart guides + alignment (Figma-style magnets) ─── */
+
+export type AlignKind = "left" | "center-x" | "right" | "top" | "middle" | "bottom";
+
+export const SNAP_PX = 6;
+
+/** Indigo = section bounds + parent padding · brick = sibling components. */
+export const GUIDE_SECTION = "var(--accent)";
+export const GUIDE_SIBLING = "#e4572e";
+
+export interface GuideLine {
+  pos: number;
+  color: string;
+}
+
+/** Snap an element span [a0,a1] (px, relative to wrap origin) onto any line
+ *  (element edges/center may match). Returns the px delta plus guide line. */
+export function snapToLines(a0: number, a1: number, lines: GuideLine[], threshold = SNAP_PX): { delta: number; line: GuideLine } | null {
+  const anchors = [a0, (a0 + a1) / 2, a1];
+  let best: { delta: number; line: GuideLine } | null = null;
+  for (const L of lines) {
+    for (const a of anchors) {
+      const delta = L.pos - a;
+      if (Math.abs(delta) <= threshold && (!best || Math.abs(delta) < Math.abs(best.delta))) best = { delta, line: L };
+    }
+  }
+  return best;
+}
+
+/** Collect snap lines for a drag: section bounds + parent padding (indigo)
+ *  plus every sibling component's edges and centers (brick). `self` and its
+ *  kin are excluded, as are full-bleed containers. All px, wrap-relative. */
+export function collectSnapLines(wrap: Element, self: Element | null): { v: GuideLine[]; h: GuideLine[] } {
+  const wr = wrap.getBoundingClientRect();
+  const W = wr.width;
+  const H = wr.height;
+  const v: GuideLine[] = [
+    { pos: 0, color: GUIDE_SECTION },
+    { pos: W / 2, color: GUIDE_SECTION },
+    { pos: W, color: GUIDE_SECTION },
+  ];
+  const h: GuideLine[] = [
+    { pos: 0, color: GUIDE_SECTION },
+    { pos: H / 2, color: GUIDE_SECTION },
+    { pos: H, color: GUIDE_SECTION },
+  ];
+  // Parent padding: the section's own padding box inside the wrapper.
+  const secEl = [...wrap.children].find(
+    (c) => !c.classList.contains("snap-guides") && !c.classList.contains("builder-tag") && !c.classList.contains("builder-grip") && c.tagName !== "STYLE",
+  );
+  if (secEl) {
+    const sr = secEl.getBoundingClientRect();
+    const cs = getComputedStyle(secEl);
+    const pl = parseFloat(cs.paddingLeft) || 0;
+    const pr = parseFloat(cs.paddingRight) || 0;
+    const pt = parseFloat(cs.paddingTop) || 0;
+    const pb = parseFloat(cs.paddingBottom) || 0;
+    const ox = sr.left - wr.left;
+    const oy = sr.top - wr.top;
+    if (pl > 1) v.push({ pos: ox + pl, color: GUIDE_SECTION });
+    if (pr > 1) v.push({ pos: ox + sr.width - pr, color: GUIDE_SECTION });
+    if (pt > 1) h.push({ pos: oy + pt, color: GUIDE_SECTION });
+    if (pb > 1) h.push({ pos: oy + sr.height - pb, color: GUIDE_SECTION });
+  }
+  // Siblings: every other tagged node or float in this section.
+  wrap.querySelectorAll("[data-el],[data-float]").forEach((el) => {
+    if (!el || el === self) return;
+    if (self && (el.contains(self) || (self.contains && self.contains(el)))) return;
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 && r.height === 0) return;
+    const x0 = r.left - wr.left;
+    const x1 = r.right - wr.left;
+    const y0 = r.top - wr.top;
+    const y1 = r.bottom - wr.top;
+    if (x0 <= 1 && x1 >= W - 1 && y0 <= 1 && y1 >= H - 1) return; // full-bleed container
+    v.push({ pos: x0, color: GUIDE_SIBLING }, { pos: (x0 + x1) / 2, color: GUIDE_SIBLING }, { pos: x1, color: GUIDE_SIBLING });
+    h.push({ pos: y0, color: GUIDE_SIBLING }, { pos: (y0 + y1) / 2, color: GUIDE_SIBLING }, { pos: y1, color: GUIDE_SIBLING });
+  });
+  return { v, h };
+}
+
+const GUIDE_RESET = "margin:0!important;border:0!important;padding:0!important;";
+
+/** Imperative magnetic-guide overlay inside a section wrapper (builder-only,
+ *  shown during drags). Lines are % positioned; resets guard against the
+ *  host section's own child selectors (space-y, dividers, mb rules). */
+export function showSnapGuides(wrap: Element, v: GuideLine[], h: GuideLine[], W: number, H: number) {
+  let box = wrap.querySelector(":scope > .snap-guides");
+  if (!box) {
+    box = document.createElement("div");
+    box.className = "snap-guides";
+    box.setAttribute("aria-hidden", "true");
+    wrap.appendChild(box);
+  }
+  const el = box as HTMLElement;
+  el.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:40;${GUIDE_RESET}`;
+  el.innerHTML = "";
+  for (const L of v) {
+    const d = document.createElement("div");
+    d.style.cssText = `position:absolute;top:0;bottom:0;left:${(L.pos / W) * 100}%;width:1px;background:${L.color};${GUIDE_RESET}`;
+    el.appendChild(d);
+  }
+  for (const L of h) {
+    const d = document.createElement("div");
+    d.style.cssText = `position:absolute;left:0;right:0;top:${(L.pos / H) * 100}%;height:1px;background:${L.color};${GUIDE_RESET}`;
+    el.appendChild(d);
+  }
+}
+
+export function clearSnapGuides(wrap: Element | null) {
+  if (!wrap) return;
+  wrap.querySelector(":scope > .snap-guides")?.remove();
+}

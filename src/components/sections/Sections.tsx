@@ -4,6 +4,13 @@ export function fontStack(name: string): string {
   return `'${name}', ui-sans-serif, system-ui, sans-serif`;
 }
 
+/** Fluid display size: clamps a `calc(base * headingScale)` heading so it
+ *  never overflows a 360px phone, while keeping full size on desktop. */
+export function fluid(theme: ThemeConfig, base: number, min: number): string {
+  const vw = Math.min(11, Math.round(base * 2.9 * 10) / 10);
+  return `clamp(${min}rem, ${vw}vw, calc(${base}rem * ${theme.headingScale}))`;
+}
+
 export function sectionShell(theme: ThemeConfig, extra?: string): React.CSSProperties & { className?: string } {
   return { backgroundColor: theme.surface, color: theme.text, borderRadius: theme.radius, className: extra };
 }
@@ -46,7 +53,7 @@ export function H({ theme, children, className = "" }: { theme: ThemeConfig; chi
   return (
     <h2
       className={className}
-      style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 700, letterSpacing: "-0.035em", lineHeight: 1.08, textWrap: "balance" }}
+      style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5), fontWeight: 700, letterSpacing: "-0.035em", lineHeight: 1.08, textWrap: "balance" }}
     >
       {children}
     </h2>
@@ -108,6 +115,9 @@ export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: 
           <span style={{ fontFamily: fontStack(theme.fontHeading), fontWeight: 700 }}>{str(c.logo, "Studio")}</span>
           <div className="hidden gap-6 text-sm md:flex">{links.map((l, i) => <a key={i} href={l.href} className="opacity-80 transition-opacity hover:opacity-100">{l.label}</a>)}</div>
         </div>
+        <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap px-6 pb-4 text-sm md:hidden">
+          {links.map((l, i) => <a key={i} href={l.href} className="opacity-80">{l.label}</a>)}
+        </div>
       </nav>
     );
   }
@@ -127,6 +137,9 @@ export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: 
               {str(c.cta)}
             </a>
           ) : null}
+        </div>
+        <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap border-t border-white/15 px-6 py-2.5 text-[13px] font-medium md:hidden">
+          {links.map((l, i) => <a key={i} href={l.href} className="opacity-80">{l.label}</a>)}
         </div>
         <div className="h-px bg-white/15" />
       </nav>
@@ -161,6 +174,9 @@ export function NavbarSection({ s, theme, pages }: { s: SectionInstance; theme: 
             {str(c.cta)}
           </a>
         )}
+      </div>
+      <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap border-t px-6 py-2.5 text-sm md:hidden" style={{ borderColor: theme.surface, color: theme.muted }}>
+        {links.map((l, i) => <a key={i} href={l.href}>{l.label}</a>)}
       </div>
     </nav>
   );
@@ -202,12 +218,12 @@ export function HeroSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
       <section className={sectionPad(theme)}>
         <div className={`mx-auto px-6 text-center ${containerWidth(theme)}`}>
           {str(c.eyebrow) && <Eyebrow theme={theme}>{str(c.eyebrow)}</Eyebrow>}
-          <h1 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(3rem * ${theme.headingScale})`, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.05 }}>
+          <h1 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 3, 2), fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.05 }}>
             {str(c.title, "Headline")}
           </h1>
           {str(c.subtitle) && <p className="mx-auto mt-4 max-w-2xl text-lg" style={{ color: theme.muted }}>{str(c.subtitle)}</p>}
           {str(c.description) && <p className="mx-auto mt-3 max-w-2xl" style={{ color: theme.muted }}>{str(c.description)}</p>}
-          <div className="mt-8 flex justify-center gap-3">{primary}{secondary}</div>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">{primary}{secondary}</div>
         </div>
       </section>
     );
@@ -217,11 +233,11 @@ export function HeroSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
       <section className="relative overflow-hidden" style={{ background: theme.surface }}>
         <div className={`relative mx-auto px-6 pb-16 pt-24 text-center md:pt-32 ${containerWidth(theme)}`}>
           {str(c.eyebrow) && <Eyebrow theme={theme}>{str(c.eyebrow)}</Eyebrow>}
-          <h1 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(3.25rem * ${theme.headingScale})`, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.02 }}>
+          <h1 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 3.25, 2), fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.02 }}>
             {str(c.title)}
           </h1>
           {str(c.subtitle) && <p className="mx-auto mt-4 max-w-xl text-lg" style={{ color: theme.muted }}>{str(c.subtitle)}</p>}
-          <div className="mt-8 flex justify-center gap-3">{primary}{secondary}</div>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">{primary}{secondary}</div>
           <div className="mx-auto mt-12 aspect-[16/8] max-w-4xl overflow-hidden" style={{ borderRadius: theme.radius * 1.5, background: theme.surface }}>
             {str(c.image) ? <img src={str(c.image)} alt={str(c.title, "Featured work")} loading="lazy" decoding="async" className="h-full w-full object-cover" /> : (
               <div className="flex h-full items-center justify-center text-sm" style={{ color: theme.muted }}>Add a hero image in the builder</div>
@@ -239,7 +255,7 @@ export function HeroSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
             <span className="h-px w-10 bg-white/40" />
             {str(c.eyebrow) || str(c.subtitle) || "Portfolio"}
           </div>
-          <h1 className="mt-5 max-w-5xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(3.6rem * ${theme.headingScale})`, fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.98 }}>
+          <h1 className="mt-5 max-w-5xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 3.6, 2.1), fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.98 }}>
             {str(c.title, "Work that speaks louder")}
           </h1>
           {str(c.description) && <p className="mt-5 max-w-xl text-[15px] leading-relaxed opacity-75">{str(c.description)}</p>}
@@ -270,13 +286,13 @@ export function HeroSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
             <span className="h-px flex-1" style={{ background: theme.surface }} />
             <span className="text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: theme.muted }}>{str(c.eyebrow) || str(c.subtitle) || "Introduction"}</span>
           </div>
-          <h1 className="mt-6 max-w-4xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.9rem * ${theme.headingScale})`, fontWeight: 600, letterSpacing: "-0.025em", lineHeight: 1.08 }}>
+          <h1 className="mt-6 max-w-4xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.9, 1.9), fontWeight: 600, letterSpacing: "-0.025em", lineHeight: 1.08 }}>
             {str(c.title, "Headline")}
           </h1>
           <div className="mt-6 grid gap-8 md:grid-cols-[1.4fr_1fr]">
             {str(c.description) && <p className="max-w-xl text-[15px] leading-relaxed" style={{ color: theme.muted }}>{str(c.description)}</p>}
             <div className="flex flex-col items-start gap-3">
-              <div className="flex gap-3">{primary}{secondary}</div>
+              <div className="flex flex-wrap gap-3">{primary}{secondary}</div>
               {stats.length > 0 && (
                 <ul className="mt-2 space-y-1.5">
                   {stats.map((st, i) => (
@@ -297,11 +313,11 @@ export function HeroSection({ s, theme }: { s: SectionInstance; theme: ThemeConf
         <div>
           {str(c.eyebrow) && <Eyebrow theme={theme}>{str(c.eyebrow)}</Eyebrow>}
           <p className="text-sm font-medium" style={{ color: theme.muted }}>{str(c.subtitle)}</p>
-          <h1 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.75rem * ${theme.headingScale})`, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.05 }}>
+          <h1 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.75, 1.85), fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.05 }}>
             {str(c.title)}
           </h1>
           {str(c.description) && <p className="mt-4 max-w-lg" style={{ color: theme.muted }}>{str(c.description)}</p>}
-          <div className="mt-7 flex gap-3">{primary}{secondary}</div>
+          <div className="mt-7 flex flex-wrap gap-3">{primary}{secondary}</div>
           {stats.length > 0 && (
             <dl className="mt-10 grid grid-cols-3 gap-6 border-t pt-6" style={{ borderColor: theme.surface }}>
               {stats.map((st, i) => (
@@ -333,8 +349,8 @@ export function AboutSection({ s, theme }: { s: SectionInstance; theme: ThemeCon
         <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
           <div className="grid gap-10 md:grid-cols-[80px_1fr_1fr]">
             <span className="font-mono text-sm" style={{ color: theme.muted }}>(02)</span>
-            <blockquote style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.9rem * ${theme.headingScale})`, fontWeight: 550, lineHeight: 1.25, letterSpacing: "-0.02em" }}>
-              “{str(c.body).slice(0, 140) || str(c.title, "Good work is a mix of taste, systems and care.")}”
+            <blockquote style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 1.9, 1.35), fontWeight: 550, lineHeight: 1.25, letterSpacing: "-0.02em" }}>
+              “{str(c.body).length > 140 ? `${str(c.body).slice(0, 140).split(" ").slice(0, -1).join(" ")}…` : str(c.body) || str(c.title, "Good work is a mix of taste, systems and care.")}”
             </blockquote>
             <div>
               {str(c.heading) && <Eyebrow theme={theme}>{str(c.heading)}</Eyebrow>}
@@ -471,7 +487,7 @@ export function ServicesSection({ s, theme }: { s: SectionInstance; theme: Theme
         <div className={`mx-auto grid gap-10 px-6 md:grid-cols-[1fr_1.4fr] ${containerWidth(theme)}`}>
           <div className="md:sticky md:top-28 md:self-start">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] opacity-60">{str(c.heading) || "Services"}</p>
-            <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 700, lineHeight: 1.1 }}>{str(c.title, "Services")}</h2>
+            <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 700, lineHeight: 1.1 }}>{str(c.title, "Services")}</h2>
             {str(c.description) && <p className="mt-3 text-sm leading-relaxed opacity-70">{str(c.description)}</p>}
           </div>
           <div className="space-y-4">
@@ -585,7 +601,7 @@ export function ProjectsSection({ s, theme }: { s: SectionInstance; theme: Theme
                 </div>
                 <div>
                   <p className="font-mono text-xs" style={{ color: theme.muted }}>{String(i + 1).padStart(2, "0")} — {arr<string>(p.tags).join(" · ")}</p>
-                  <h3 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.6rem * ${theme.headingScale})`, fontWeight: 650 }}>{p.title}</h3>
+                  <h3 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 1.6, 1.25), fontWeight: 650 }}>{p.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed" style={{ color: theme.muted }}>{p.description}</p>
                   <a href={p.url || "#"} className="group/l mt-3 inline-block text-sm font-semibold underline underline-offset-4">View case <span className="inline-block transition-transform duration-300 group-hover/l:translate-x-1">→</span></a>
                 </div>
@@ -701,7 +717,7 @@ export function TestimonialsSection({ s, theme }: { s: SectionInstance; theme: T
           <div className="mx-auto mt-8 max-w-3xl space-y-10">{items.map((t0, qi) => (
             <figure key={qi}>
               {t0.photo ? <img src={t0.photo} alt={t0.name} loading="lazy" decoding="async" className="mx-auto h-14 w-14 rounded-full object-cover" /> : null}
-              <blockquote className="mx-auto max-w-3xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.75rem * ${theme.headingScale})`, lineHeight: 1.3 }}>“{t0.message}”</blockquote>
+              <blockquote className="mx-auto max-w-3xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 1.75, 1.3), lineHeight: 1.3 }}>“{t0.message}”</blockquote>
               <p className="mt-6 text-sm" style={{ color: theme.muted }}>{t0.name} — {t0.role}, {t0.company}</p>
             </figure>
           ))}</div>
@@ -913,7 +929,7 @@ export function StatsSection({ s, theme }: { s: SectionInstance; theme: ThemeCon
       <section id="stats" className={sectionPad(theme)} style={{ background: theme.primary, color: "#fff" }}>
       <div className={`mx-auto px-6 text-center ${containerWidth(theme)}`}>
         {str(c.heading) && <p className="mb-3 font-mono text-xs font-medium uppercase opacity-70" style={{ letterSpacing: "0.2em" }}>{str(c.heading)}</p>}
-        <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.8rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(c.title, "By the numbers")}</h2>
+        <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 1.8, 1.4), fontWeight: 700 }}>{str(c.title, "By the numbers")}</h2>
         <dl className="mx-auto mt-8 grid max-w-4xl grid-cols-2 gap-8 md:grid-cols-4">
           {items.map((st, i) => (
             <div key={i}>
@@ -1080,7 +1096,7 @@ export function CtaSection({ s, theme }: { s: SectionInstance; theme: ThemeConfi
     <section className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <div className="px-8 py-14 text-center md:py-16" style={{ borderRadius: theme.radius * 1.6, background: theme.primary, color: "#fff" }}>
-          <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2rem * ${theme.headingScale})`, fontWeight: 700 }}>{str(c.title, "Have a project in mind?")}</h2>
+          <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2, 1.5), fontWeight: 700 }}>{str(c.title, "Have a project in mind?")}</h2>
           {str(c.description) && <p className="mx-auto mt-3 max-w-xl opacity-80">{str(c.description)}</p>}
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             {str(c.primaryCta) ? <a href={primaryHref} className={`${btnRadius(theme)} t-btn bg-white px-5 py-2.5 text-sm font-semibold`} style={{ color: theme.primary }}>{str(c.primaryCta)}</a> : null}
@@ -1102,7 +1118,7 @@ export function ContactSection({ s, theme }: { s: SectionInstance; theme: ThemeC
           <H theme={theme}>{str(c.title, "Contact")}</H>
           {str(c.body) && <p className="mx-auto mt-3 max-w-md" style={{ color: theme.muted }}>{str(c.body)}</p>}
           {str(c.email) && (
-            <a href={`mailto:${str(c.email)}`} className="mt-6 inline-block font-semibold underline underline-offset-8" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.4rem * ${theme.headingScale})`, letterSpacing: "-0.02em" }}>
+            <a href={`mailto:${str(c.email)}`} className="mt-6 inline-block font-semibold underline underline-offset-8" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 1.4, 1.1), letterSpacing: "-0.02em" }}>
               {str(c.email)}
             </a>
           )}

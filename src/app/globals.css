@@ -322,6 +322,7 @@ details[open] .faq-a { grid-template-rows: 1fr; }
 
 .builder-preview a, .published-site a { text-decoration: none; }
 .builder-preview h1, .builder-preview h2, .published-site h1, .published-site h2 { overflow-wrap: break-word; }
+.builder-preview a[href^="mailto:"], .published-site a[href^="mailto:"] { overflow-wrap: anywhere; }
 
 /* builder preview click-to-select: flat accent outline + section tag */
 .builder-selectable { position: relative; cursor: pointer; }
@@ -373,6 +374,9 @@ details[open] .faq-a { grid-template-rows: 1fr; }
 /* element mode: hovered editable node + list-item drop target */
 .el-hot { outline: 2px dashed var(--accent) !important; outline-offset: 2px; cursor: pointer; }
 .el-drop { outline: 2px solid var(--accent) !important; outline-offset: -2px; }
+/* tagged canvas nodes are directly draggable in element mode */
+.builder-preview [data-el] { cursor: grab; user-select: none; -webkit-user-select: none; }
+.builder-preview [data-el]:active { cursor: grabbing; }
 
 /* ─── builder surface reskin: map generic neutrals onto paper tokens ─── */
 .builder .border-neutral-200 { border-color: var(--line); }
@@ -389,3 +393,7 @@ details[open] .faq-a { grid-template-rows: 1fr; }
 .builder .text-neutral-400 { color: var(--ink-3); }
 .builder input, .builder textarea, .builder select { font-family: var(--font-sans), sans-serif; }
 .builder input:focus, .builder textarea:focus, .builder select:focus { border-color: var(--accent-line) !important; }
+
+/* mobile safety: never allow page-level horizontal scroll.
+ * clip (not hidden) preserves position:sticky navbars. */
+html, body { overflow-x: clip; }

@@ -4,7 +4,7 @@
  * dark membership pricing. No soft corners, no apologies.
  */
 import type { SectionType } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
+import { fontStack, fluid, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";
 
@@ -27,6 +27,9 @@ const Navbar: C = ({ content, theme, pages }) => {
             {str(content.cta)}
           </a>
         ) : null}
+      </div>
+      <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap border-t border-white/10 px-6 py-2.5 text-[13px] font-bold uppercase tracking-wider md:hidden" style={{ color: theme.muted }}>
+        {links.map((l, i) => <a key={i} href={l.href}>{l.label}</a>)}
       </div>
     </nav>
   );
@@ -64,7 +67,7 @@ const Pricing: C = ({ content, theme }) => {
     <section id="pricing" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.22em", color: theme.accent }}>{str(content.heading, "Membership")}</p>
-        <h2 className="mt-2 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "Pick your poison")}</h2>
+        <h2 className="mt-2 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.4, 1.65), fontWeight: 800 }}>{str(content.title, "Pick your poison")}</h2>
         <div className="mt-10 grid gap-4 md:grid-cols-3">
           {items.map((p, i) => (
             <div key={i} className="relative border border-white/15 p-7 transition-transform duration-300 hover:-translate-y-1" style={{ borderRadius: theme.radius, background: p.featured ? theme.accent : theme.surface, color: p.featured ? "#0b0d0c" : undefined }}>
@@ -110,7 +113,7 @@ const Team: C = ({ content, theme }) => {
     <section id="team" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.22em", color: theme.accent }}>{str(content.heading, "Coaches")}</p>
-        <h2 className="mt-2 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.4rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title)}</h2>
+        <h2 className="mt-2 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.4, 1.65), fontWeight: 800 }}>{str(content.title)}</h2>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {members.map((m, i) => (
             <article key={i} className="group border border-white/15 transition-all duration-300 hover:-translate-y-1" style={{ borderRadius: theme.radius, background: theme.surface }}>
@@ -141,7 +144,7 @@ const Gallery: C = ({ content, theme }) => {
     <section id="gallery" className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <h2 className="uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "The floor")}</h2>
+          <h2 className="uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800 }}>{str(content.title, "The floor")}</h2>
           <p className="font-mono text-xs font-bold uppercase" style={{ color: theme.muted }}>{images.length} frames</p>
         </div>
         <div className="no-bar snap-row mt-8 flex gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-4 md:overflow-visible md:pb-0">
@@ -167,7 +170,7 @@ const Faq: C = ({ content, theme }) => {
     <section className={sectionPad(theme)}>
       <div className={`mx-auto max-w-3xl px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs font-bold uppercase" style={{ letterSpacing: "0.22em", color: theme.accent }}>{str(content.heading, "No excuses")}</p>
-        <h2 className="mt-2 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title)}</h2>
+        <h2 className="mt-2 uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800 }}>{str(content.title)}</h2>
         <div className="mt-8 space-y-3">
           {items.map((f, i) => (
             <details key={i} className="group border border-white/15" style={{ borderRadius: theme.radius, background: theme.surface }}>
@@ -189,7 +192,7 @@ const Cta: C = ({ content, theme }) => (
     <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
       <div className="relative overflow-hidden px-8 py-14 text-center md:py-20" style={{ borderRadius: theme.radius, background: theme.accent, color: "#0b0d0c" }}>
         <p aria-hidden className="pointer-events-none absolute inset-x-0 top-3 whitespace-nowrap font-mono text-xs font-black uppercase opacity-40" style={{ letterSpacing: "0.3em" }}>No card · No excuses · No card · No excuses</p>
-        <h2 className="mx-auto mt-4 max-w-2xl uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.6rem * ${theme.headingScale})`, fontWeight: 800, lineHeight: 0.98 }}>{str(content.title)}</h2>
+        <h2 className="mx-auto mt-4 max-w-2xl uppercase" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.6, 1.75), fontWeight: 800, lineHeight: 0.98 }}>{str(content.title)}</h2>
         {str(content.description) && <p className="mx-auto mt-4 max-w-xl font-medium opacity-80">{str(content.description)}</p>}
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           {str(content.primaryCta) ? <a href={str(content.primaryHref) || "#contact"} className="t-btn rounded-sm bg-black px-7 py-3.5 text-sm font-black uppercase tracking-wide text-white">{str(content.primaryCta)}</a> : null}

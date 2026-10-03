@@ -7,6 +7,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const urls: MetadataRoute.Sitemap = [
     { url: `${base}/`, lastModified: new Date() },
     { url: `${base}/templates`, lastModified: new Date() },
+    { url: `${base}/privacy`, lastModified: new Date() },
+    { url: `${base}/terms`, lastModified: new Date() },
+    { url: `${base}/cookies`, lastModified: new Date() },
   ];
   try {
     const all = await listWebsites();

@@ -3,7 +3,7 @@
  * Quiet editorial system: hairline rules, index numerals, single-column rhythm.
  */
 import type { SectionType, ThemeConfig } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
+import { fontStack, fluid, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
 
 export interface BespokeProps {
   content: Record<string, unknown>;
@@ -47,7 +47,7 @@ const Navbar: C = ({ content, theme, pages }) => {
         <span className="text-[15px] font-semibold tracking-tight" style={{ fontFamily: fontStack(theme.fontHeading) }}>
           {str(content.logo, "A. Morgan")}
         </span>
-        <div className="flex gap-6 text-[13px]" style={{ color: theme.muted }}>
+        <div className="flex max-w-[64%] flex-wrap justify-end gap-x-5 gap-y-1 text-[13px]" style={{ color: theme.muted }}>
           {links.map((l, i) => (
             <a key={i} href={l.href} className="hover:opacity-70">
               <span className="mr-1 font-mono text-[10px]">0{i + 1}</span>{l.label}
@@ -65,12 +65,12 @@ const Hero: C = ({ content, theme }) => {
     <section className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-xs" style={{ color: theme.muted }}>{str(content.eyebrow, "Folio — 2026")}</p>
-        <h1 className="mt-4 max-w-3xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(3.4rem * ${theme.headingScale})`, fontWeight: 600, letterSpacing: "-0.035em", lineHeight: 1.02 }}>
+        <h1 className="mt-4 max-w-3xl" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 3.4, 2.05), fontWeight: 600, letterSpacing: "-0.035em", lineHeight: 1.02 }}>
           {str(content.title, "Alex Morgan")}
         </h1>
         <p className="mt-2 text-lg" style={{ color: theme.muted }}>{str(content.subtitle, "Product Designer & Developer")}</p>
         <div className="mt-6 max-w-xl text-[15px] leading-relaxed" style={{ color: theme.muted }}>{str(content.description)}</div>
-        <div className="mt-8 flex gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           {str(content.primaryCta) ? <a href="#work" className={`${btnRadius(theme)} px-5 py-2.5 text-sm font-semibold text-white`} style={{ background: theme.primary }}>{str(content.primaryCta)}</a> : null}
           {str(content.secondaryCta) && <a href="#contact" className={`${btnRadius(theme)} border px-5 py-2.5 text-sm font-semibold`} style={{ borderColor: theme.surface }}>{str(content.secondaryCta)}</a>}
         </div>
@@ -96,7 +96,7 @@ const About: C = ({ content, theme }) => {
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <IndexLabel theme={theme} n="01" label={str(content.heading, "Profile")} />
         <div className="grid gap-10 md:grid-cols-[1fr_1.6fr]">
-          <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.5rem * ${theme.headingScale})`, fontWeight: 600, lineHeight: 1.25 }}>{str(content.title)}</h2>
+          <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 1.5, 1.2), fontWeight: 600, lineHeight: 1.25 }}>{str(content.title)}</h2>
           <div>
             <p className="max-w-xl leading-relaxed" style={{ color: theme.muted }}>{str(content.body)}</p>
             {bullets.length > 0 && (
@@ -189,7 +189,7 @@ const Contact: C = ({ content, theme }) => {
     <section id="contact" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <IndexLabel theme={theme} n="05" label={str(content.heading, "Contact")} />
-        <a href={`mailto:${str(content.email, "hello@example.com")}`} className="block" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 600, letterSpacing: "-0.03em" }}>
+        <a href={`mailto:${str(content.email, "hello@example.com")}`} className="block" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.5), fontWeight: 600, letterSpacing: "-0.03em" }}>
           {str(content.email, "hello@example.com")}
         </a>
         <p className="mt-3 max-w-md text-sm" style={{ color: theme.muted }}>{str(content.body)} {str(content.location) && `Based in ${str(content.location)}.`}</p>

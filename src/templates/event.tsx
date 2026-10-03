@@ -3,7 +3,7 @@
  * Festival system: date badges, marquee ticker, ticket stubs, lineup grid.
  */
 import type { SectionType } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
+import { fontStack, fluid, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";
 
@@ -22,6 +22,9 @@ const Navbar: C = ({ content, theme, pages }) => {
           {links.map((l, i) => <a key={i} href={l.href} className="opacity-80 hover:opacity-100">{l.label}</a>)}
         </div>
         {str(content.cta) ? <a href="#contact" className="rounded-full bg-white px-4 py-2 text-[13px] font-bold" style={{ color: theme.primary }}>{str(content.cta)}</a> : null}
+      </div>
+      <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap px-6 py-2.5 text-[13px] font-semibold md:hidden" style={{ background: theme.primary, color: "#fff" }}>
+        {links.map((l, i) => <a key={i} href={l.href} className="opacity-80">{l.label}</a>)}
       </div>
       <div className="marquee overflow-hidden whitespace-nowrap border-t border-white/20 py-1.5 font-mono text-[11px] uppercase" style={{ letterSpacing: "0.2em" }}>
         <div className="marquee-track">
@@ -63,7 +66,7 @@ const Gallery: C = ({ content, theme }) => {
   return (
     <section id="work" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
-        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "Last year was loud")}</h2>
+        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800 }}>{str(content.title, "Last year was loud")}</h2>
         <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {images.slice(0, 8).map((img, i) => (
             <figure key={i} className={`border bg-white p-2 pb-6 ${i % 2 ? "rotate-1" : "-rotate-1"}`} style={{ borderRadius: 6, borderColor: theme.surface, boxShadow: "0 10px 24px -14px rgba(0,0,0,.3)" }}>
@@ -87,10 +90,10 @@ const Schedule: C = ({ content, theme }) => {
     <section className={sectionPad(theme)} style={{ background: theme.surface }}>
       <div className={`mx-auto max-w-3xl px-6 ${containerWidth(theme)}`}>
         <p className="text-center font-mono text-xs uppercase" style={{ letterSpacing: "0.2em", color: theme.muted }}>{str(content.heading, "Running order")}</p>
-        <h2 className="mt-2 text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "The day, hour by hour")}</h2>
+        <h2 className="mt-2 text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800 }}>{str(content.title, "The day, hour by hour")}</h2>
         <ol className="mt-8 space-y-0 border-t-2" style={{ borderColor: theme.primary }}>
           {steps.map((st, i) => (
-            <li key={i} className="grid grid-cols-[90px_1fr] gap-4 border-b py-5" style={{ borderColor: theme.background }}>
+            <li key={i} className="grid grid-cols-[74px_1fr] gap-3 border-b py-5 sm:grid-cols-[90px_1fr] sm:gap-4" style={{ borderColor: theme.background }}>
               <span className="font-mono text-sm font-bold" style={{ color: theme.primary }}>{st.title}</span>
               <span className="text-sm" style={{ color: theme.muted }}>{st.description}</span>
             </li>
@@ -106,7 +109,7 @@ const Lineup: C = ({ content, theme }) => {
   return (
     <section className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
-        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "On stage")}</h2>
+        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800 }}>{str(content.title, "On stage")}</h2>
         <div className="mx-auto mt-8 grid max-w-4xl gap-4 sm:grid-cols-2 md:grid-cols-4">
           {members.map((m, i) => (
             <div key={i} className="border bg-white p-5 text-center" style={{ borderRadius: theme.radius, borderColor: theme.surface }}>
@@ -129,10 +132,10 @@ const Tickets: C = ({ content, theme }) => {
   return (
     <section id="tickets" className={sectionPad(theme)} style={{ background: theme.primary, color: "#fff" }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
-        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "Pick your ticket")}</h2>
+        <h2 className="text-center" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800 }}>{str(content.title, "Pick your ticket")}</h2>
         <div className="mx-auto mt-8 grid max-w-4xl gap-4 md:grid-cols-3">
           {items.map((p, i) => (
-            <div key={i} className="relative border border-dashed p-6" style={{ borderRadius: theme.radius, borderColor: theme.accent, background: "#3a1d71" }}>
+            <div key={i} className="relative overflow-hidden border border-dashed p-6" style={{ borderRadius: theme.radius, borderColor: theme.accent, background: "#3a1d71" }}>
               <span className="absolute -left-2.5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full" style={{ background: theme.primary }} />
               <span className="absolute -right-2.5 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full" style={{ background: theme.primary }} />
               <h3 className="font-mono text-xs uppercase" style={{ letterSpacing: "0.2em", color: theme.accent }}>{p.name}</h3>
@@ -153,7 +156,7 @@ const Faq: C = ({ content, theme }) => {
   return (
     <section className={sectionPad(theme)}>
       <div className="mx-auto grid max-w-4xl gap-8 px-6 md:grid-cols-[1fr_1.6fr]">
-        <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(1.8rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "Good to know")}</h2>
+        <h2 style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 1.8, 1.4), fontWeight: 800 }}>{str(content.title, "Good to know")}</h2>
         <div className="space-y-2.5">
           {items.map((f, i) => (
             <details key={i} className="border bg-white px-5 py-4" style={{ borderRadius: theme.radius, borderColor: theme.surface }}>
@@ -172,13 +175,13 @@ const Contact: C = ({ content, theme }) => (
     <div className={`mx-auto grid gap-8 px-6 md:grid-cols-2 ${containerWidth(theme)}`}>
       <div>
         <p className="font-mono text-xs uppercase" style={{ letterSpacing: "0.2em", color: theme.muted }}>{str(content.heading, "Venue")}</p>
-        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 800 }}>{str(content.title, "Find your way")}</h2>
+        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 800 }}>{str(content.title, "Find your way")}</h2>
         <p className="mt-3 font-semibold">{str(content.location)}</p>
         <p className="text-sm" style={{ color: theme.muted }}>{str(content.body)}</p>
         <p className="mt-4 font-mono text-sm">{str(content.phone)} · {str(content.email)}</p>
       </div>
       <form action="#contact" className="space-y-3 border bg-white p-6" style={{ borderRadius: theme.radius, borderColor: theme.background }}>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <input required name="name" placeholder="Name" className="rounded-lg border px-3 py-2.5 text-sm" />
           <input required name="tickets" placeholder="Tickets" className="rounded-lg border px-3 py-2.5 text-sm" />
         </div>

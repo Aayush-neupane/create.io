@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Navbar, Footer } from "@/components/layout/chrome";
+import { SiteNavbar, Footer } from "@/components/layout/chrome";
 import { Reveal } from "@/components/layout/Reveal";
 import { TEMPLATES } from "@/lib/templates";
 
@@ -17,7 +17,7 @@ const TINTS = [
 export default function DemoChooserPage() {
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <SiteNavbar />
       <Reveal>
         <div style={{ background: "var(--surface-2)", borderBottom: "1px solid var(--line)" }}>
           <div className="mx-auto max-w-7xl px-6 pb-10 pt-14">
@@ -68,8 +68,8 @@ export default function DemoChooserPage() {
                     <p className="mono-meta text-[10.5px] uppercase" style={{ letterSpacing: "0.08em", color: t.theme.muted }}>{t.category} · {t.sections.length} sections</p>
                   </div>
                   <span className="ml-auto flex flex-none gap-1.5" aria-hidden>
-                    {[t.theme.primary, t.theme.accent, t.theme.background].map((c) => (
-                      <i key={c} className="h-5 w-5 rounded-full border" style={{ background: c, borderColor: "var(--line-2)" }} />
+                    {[t.theme.primary, t.theme.accent, t.theme.background].map((c, i) => (
+                      <i key={i} className="h-5 w-5 rounded-full border" style={{ background: c, borderColor: "var(--line-2)" }} />
                     ))}
                   </span>
                 </div>

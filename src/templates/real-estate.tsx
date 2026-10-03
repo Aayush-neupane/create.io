@@ -4,7 +4,7 @@
  * brass-on-forest details. Trust, but make it beautiful.
  */
 import type { SectionType } from "@/types/builder";
-import { fontStack, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
+import { fontStack, fluid, containerWidth, sectionPad, btnRadius, str, arr } from "@/components/sections/Sections";
 import type { BespokeProps } from "./minimal-portfolio";
 import { withPages } from "./minimal-portfolio";
 
@@ -32,6 +32,9 @@ const Navbar: C = ({ content, theme, pages }) => {
           </a>
         ) : null}
       </div>
+      <div className="no-bar flex gap-5 overflow-x-auto whitespace-nowrap border-t px-6 py-2.5 text-sm font-medium md:hidden" style={{ borderColor: theme.background, color: theme.muted }}>
+        {links.map((l, i) => <a key={i} href={l.href}>{l.label}</a>)}
+      </div>
     </nav>
   );
 };
@@ -41,7 +44,7 @@ const Hero: C = ({ content, theme }) => (
     <div className={`mx-auto grid items-center gap-10 px-6 lg:grid-cols-[1.1fr_1fr] ${containerWidth(theme)}`}>
       <div>
         <p className="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 font-mono text-[11px] font-bold uppercase" style={{ borderColor: theme.accent, color: theme.accent, letterSpacing: "0.16em" }}>{str(content.eyebrow, "Kathmandu valley · 120+ listings")}</p>
-        <h1 className="mt-4" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.9rem * ${theme.headingScale})`, fontWeight: 750, letterSpacing: "-0.02em", lineHeight: 1.05 }}>
+        <h1 className="mt-4" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.9, 1.9), fontWeight: 750, letterSpacing: "-0.02em", lineHeight: 1.05 }}>
           {str(content.title, "Find the home your mornings deserve")}
         </h1>
         <p className="mt-4 max-w-lg text-[15px] leading-relaxed" style={{ color: theme.muted }}>{str(content.description)}</p>
@@ -80,7 +83,7 @@ const Gallery: C = ({ content, theme }) => {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="font-mono text-[11px] font-bold uppercase" style={{ letterSpacing: "0.24em", color: theme.accent }}>{str(content.heading, "Fresh on the market")}</p>
-            <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 750 }}>{str(content.title)}</h2>
+            <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 750 }}>{str(content.title)}</h2>
           </div>
           <a href="#contact" className="text-sm font-bold underline underline-offset-4" style={{ color: theme.primary }}>Get the full list →</a>
         </div>
@@ -133,7 +136,7 @@ const Services: C = ({ content, theme }) => {
       <div className={`mx-auto grid gap-10 px-6 md:grid-cols-[1fr_1.6fr] ${containerWidth(theme)}`}>
         <div className="md:sticky md:top-28 md:self-start">
           <p className="font-mono text-[11px] font-bold uppercase" style={{ letterSpacing: "0.24em", color: theme.accent }}>{str(content.heading, "Full service")}</p>
-          <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 750 }}>{str(content.title)}</h2>
+          <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 750 }}>{str(content.title)}</h2>
           {str(content.description) && <p className="mt-3 text-sm leading-relaxed" style={{ color: theme.muted }}>{str(content.description)}</p>}
           <a href="#contact" className={`${btnRadius(theme)} t-btn mt-6 inline-block px-6 py-3 text-sm font-bold text-white`} style={{ background: theme.primary }}>Book a consultation</a>
         </div>
@@ -159,7 +162,7 @@ const Testimonials: C = ({ content, theme }) => {
     <section className={sectionPad(theme)} style={{ background: theme.primary, color: "#fff" }}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-[11px] font-bold uppercase" style={{ letterSpacing: "0.24em", color: theme.accent }}>{str(content.heading, "Moved in")}</p>
-        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 750 }}>{str(content.title)}</h2>
+        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 750 }}>{str(content.title)}</h2>
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           {items.map((t0, i) => (
             <figure key={i} className="flex flex-col border border-white/15 p-6 transition-transform duration-300 hover:-translate-y-1" style={{ borderRadius: theme.radius, background: "#22392c" }}>
@@ -183,7 +186,7 @@ const Team: C = ({ content, theme }) => {
     <section id="team" className={sectionPad(theme)}>
       <div className={`mx-auto px-6 ${containerWidth(theme)}`}>
         <p className="font-mono text-[11px] font-bold uppercase" style={{ letterSpacing: "0.24em", color: theme.accent }}>{str(content.heading, "Agents")}</p>
-        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 750 }}>{str(content.title)}</h2>
+        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 750 }}>{str(content.title)}</h2>
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           {members.map((m, i) => (
             <article key={i} className="group border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl" style={{ borderRadius: theme.radius, borderColor: theme.surface }}>
@@ -212,7 +215,7 @@ const Contact: C = ({ content, theme }) => (
     <div className={`mx-auto grid gap-8 px-6 md:grid-cols-2 ${containerWidth(theme)}`}>
       <div className="border bg-white p-8 md:p-10" style={{ borderRadius: theme.radius * 1.4, borderColor: theme.background }}>
         <p className="font-mono text-[11px] font-bold uppercase" style={{ letterSpacing: "0.24em", color: theme.accent }}>{str(content.heading, "Visit")}</p>
-        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: `calc(2.2rem * ${theme.headingScale})`, fontWeight: 750 }}>{str(content.title)}</h2>
+        <h2 className="mt-2" style={{ fontFamily: fontStack(theme.fontHeading), fontSize: fluid(theme, 2.2, 1.55), fontWeight: 750 }}>{str(content.title)}</h2>
         <p className="mt-3 text-sm leading-relaxed" style={{ color: theme.muted }}>{str(content.body)}</p>
         <div className="mt-6 space-y-2 border-t border-dashed pt-5 text-sm" style={{ borderColor: theme.surface }}>
           <p><span className="font-mono text-xs uppercase tracking-widest" style={{ color: theme.muted }}>Office — </span><span className="font-semibold">{str(content.location)}</span></p>

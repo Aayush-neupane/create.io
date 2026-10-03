@@ -6,6 +6,7 @@ import { findWebsiteBySlug, listWebsites } from "@/lib/db";
 import { sessionUserId } from "@/lib/auth";
 import { normalizeConfig } from "@/lib/website-defaults";
 import { TemplateRenderer } from "@/components/templates/Renderer";
+import { PublishedTagger } from "@/components/templates/Tagger";
 
 async function isOwner(siteUserId: string): Promise<boolean> {
   try {
@@ -58,6 +59,7 @@ export default async function PublishedPage({ params }: { params: Promise<{ slug
         </div>
       )}
       <TemplateRenderer config={cfg} templateId={site.templateId} slug={site.slug} />
+      <PublishedTagger sections={cfg.sections} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: cfg.siteName, description: cfg.siteDescription }) }}

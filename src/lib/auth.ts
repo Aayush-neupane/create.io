@@ -16,6 +16,15 @@ function secret(): Uint8Array {
   return new TextEncoder().encode(s);
 }
 
+/** Non-throwing version of the production check above, so API routes can
+ *  fail fast with a user-safe 500 instead of a half-completed signup. */
+export function authConfigError(): string | null {
+  if (!process.env.AUTH_SECRET && process.env.NODE_ENV === "production") {
+    return "AUTH_SECRET is not set. Set a long random value in your environment.";
+  }
+  return null;
+}
+
 export async function hashPassword(pw: string) {
   return bcrypt.hash(pw, 10);
 }

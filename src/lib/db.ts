@@ -20,7 +20,10 @@ async function blobStore(): Promise<BlobStore | null> {
     const { getStore } = await import("@netlify/blobs");
     return getStore("create-io") as unknown as BlobStore;
   } catch (e) {
-    console.error("[db:blobs-unavailable]", e);
+    // On Netlify without a working blob store, JSON writes would silently
+    // land on the ephemeral filesystem and vanish — shout instead.
+    if (process.env.NETLIFY) console.error("[db:blobs-unavailable] Netlify Blobs unreachable — data will NOT persist.", e);
+    else console.error("[db:blobs-unavailable]", e);
     return null;
   }
 }

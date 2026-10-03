@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import { loginSchema, safeError } from "@/lib/validation";
 import { findUserByEmail } from "@/lib/db";
-import { verifyPassword, createSession } from "@/lib/auth";
+import { authConfigError, verifyPassword, createSession } from "@/lib/auth";
 
 export async function POST(req: Request) {
+  const misconfigured = authConfigError();
+  if (misconfigured) {
+    console.error("[api:auth/login]", misconfigured);
+    return NextResponse.json({ error: "Login is temporarily unavailable. Please try again later." }, { status: 500 });
+  }
   try {
     const body = await req.json();
     const data = loginSchema.parse(body);

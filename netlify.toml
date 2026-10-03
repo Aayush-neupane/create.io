@@ -1,0 +1,6 @@
+[build.environment]
+  # Turbopack's persistent build cache stores env values on disk. It is never
+  # deployed, so it's safe to exclude from secrets scanning.
+  SECRETS_SCAN_OMIT_PATHS = ".netlify/.next/cache/**,.next/cache/**"
+  # The public site URL is intentionally inlined into the sitemap/robots output.
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_BASE_URL"

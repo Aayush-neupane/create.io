@@ -29,7 +29,7 @@ export function LibraryPreview() {
       <div className="mx-auto max-w-shell">
         <div className="grid border-b border-border lg:grid-cols-[0.62fr_1.38fr]">
           <div className="px-6 py-10 sm:px-10 lg:border-r lg:border-border lg:px-16 lg:py-16 xl:px-20">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Inside the library</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Ch. 03 — Inside the library</p>
             <div className="mt-8 hidden h-24 w-px bg-border/35 lg:block" />
           </div>
           <div className="px-6 py-10 sm:px-10 lg:px-16 lg:py-16 xl:px-20">

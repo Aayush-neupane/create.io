@@ -31,7 +31,7 @@ export function UseCases() {
         <div className="grid border-b border-border lg:grid-cols-[0.82fr_1.18fr]">
           <div className="px-6 py-12 sm:px-10 lg:border-r lg:border-border lg:px-16 lg:py-20 xl:px-20">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              Built for the moment shipping matters
+              Ch. 05 — Who it&apos;s for
             </p>
             <h2 className="mt-7 max-w-[12ch] font-serif text-[clamp(3rem,5vw,5.8rem)] font-normal leading-[0.94] tracking-[-0.05em]">
               Start with a better starting point.

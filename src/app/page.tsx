@@ -32,7 +32,7 @@ function LibraryGrid() {
         <div className="grid border-b border-border lg:grid-cols-[0.62fr_1.38fr]">
           <div className="px-6 py-10 sm:px-10 lg:border-r lg:border-border lg:px-16 lg:py-16 xl:px-20">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              The library · {TEMPLATES.length} sites
+              Ch. 04 — The shortlist · {TEMPLATES.length} on the shelf
             </p>
           </div>
           <div className="px-6 py-10 sm:px-10 lg:px-16 lg:py-16 xl:px-20">

@@ -5,38 +5,49 @@ const steps = [
   ["04", "SHIP", "Publish in one click", "A fast public page with SEO built in. Edit and republish whenever."],
 ];
 
+/** The process as an open drafting table — giant ghost numerals on paper,
+ *  not another dark band. Deliberately the airiest chapter on the page. */
 export function Workflow() {
   return (
-    <section id="how" className="scroll-mt-20 border-b border-border bg-[#292721] text-[#f4efe4]">
-      <div className="mx-auto max-w-shell px-6 py-20 sm:px-10 lg:px-16 lg:py-28 xl:px-20">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#aaa398]">
-              From blank tab to live site
-            </p>
-            <h2 className="mt-7 max-w-[11ch] font-serif text-[clamp(3rem,5.5vw,6rem)] font-normal leading-[0.94] tracking-[-0.045em]">
+    <section id="how" className="scroll-mt-20 border-b border-border">
+      <div className="mx-auto max-w-shell">
+        <div className="grid border-b border-border lg:grid-cols-[0.62fr_1.38fr]">
+          <div className="px-6 py-10 sm:px-10 lg:border-r lg:border-border lg:px-16 lg:py-16 xl:px-20">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Ch. 06 — How it works</p>
+          </div>
+          <div className="px-6 py-10 sm:px-10 lg:px-16 lg:py-16 xl:px-20">
+            <h2 className="max-w-[14ch] font-serif text-[clamp(2.7rem,5.2vw,5.6rem)] font-normal leading-[0.98] tracking-[-0.045em]">
               Live in four moves.
             </h2>
           </div>
-
-          <ol className="border-t border-white/25">
-            {steps.map(([number, stage, title, body]) => (
-              <li key={number} className="grid gap-4 border-b border-white/25 py-7 sm:grid-cols-[4rem_1fr] sm:gap-7">
-                <span className="font-mono text-[10px] tracking-[0.16em] text-[#d97757]">{number}</span>
-                <div>
-                  <div className="flex flex-wrap items-baseline justify-between gap-3">
-                    <h3 className="text-lg font-medium tracking-[-0.02em] sm:text-xl">{title}</h3>
-                    <span className="font-mono text-[8px] tracking-[0.15em] text-[#858176]">{stage}</span>
-                  </div>
-                  <p className="mt-2 max-w-2xl text-sm leading-7 text-[#bdb7ac]">{body}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
         </div>
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-white/20 pt-5 font-mono text-[8px] uppercase tracking-[0.14em] text-[#aaa398]">
-          <span>Structured fields first</span>
-          <span className="text-[#d97757]">Taste built in second</span>
+
+        <ol className="grid sm:grid-cols-2 lg:grid-cols-4">
+          {steps.map(([number, stage, title, body], i) => (
+            <li
+              key={number}
+              data-scroll-reveal
+              style={{ transitionDelay: `${i * 80}ms` }}
+              className={`relative overflow-hidden p-7 sm:p-10 lg:p-10 ${
+                i === 0 ? "sm:border-r sm:border-border" : ""
+              } ${i === 1 ? "border-t border-border sm:border-t-0 lg:border-r" : ""} ${
+                i === 2 ? "border-t border-border sm:border-r sm:border-border lg:border-t-0" : ""
+              } ${i === 3 ? "border-t border-border lg:border-t-0" : ""}`}
+            >
+              <p aria-hidden="true" className="pointer-events-none absolute -top-4 right-2 font-serif text-[7rem] leading-none text-primary/15 sm:text-[8rem]">
+                {number}
+              </p>
+              <p className="relative font-mono text-[9px] tracking-[0.16em] text-primary-strong">{stage}</p>
+              <h3 className="relative mt-6 font-serif text-3xl leading-[1.05] tracking-[-0.03em]">{title}</h3>
+              <p className="relative mt-3 max-w-[30ch] text-sm leading-7 text-[#5e5952]">{body}</p>
+              <span className="relative mt-6 block h-px w-12 bg-primary" aria-hidden="true" />
+            </li>
+          ))}
+        </ol>
+
+        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border px-6 py-4 sm:px-10 lg:px-16 xl:px-20">
+          <span className="font-mono text-[8px] uppercase tracking-[0.14em] text-muted">Structured fields first</span>
+          <span className="font-mono text-[8px] uppercase tracking-[0.14em] text-primary-strong">Taste built in second</span>
         </div>
       </div>
     </section>

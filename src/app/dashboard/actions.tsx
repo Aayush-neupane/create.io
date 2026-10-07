@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { confirmPopup } from "@/components/ui/confirm";
@@ -61,19 +60,16 @@ export function DashboardActions({ compact, id, slug }: { compact?: boolean; id?
 
   if (compact && id) {
     return (
-      <div className="mt-2 text-[13px]">
-        <div className="flex gap-2">
-          <button onClick={duplicate} disabled={busy} className="flex-1 rounded-lg bg-neutral-100 py-1.5 font-medium text-neutral-700 hover:bg-neutral-200 disabled:opacity-60">Duplicate</button>
-          <button onClick={remove} disabled={busy} className="flex-1 rounded-lg bg-neutral-100 py-1.5 font-medium text-red-700 hover:bg-red-100 disabled:opacity-60">Delete</button>
-          {slug && <Link href={`/s/${slug}`} target="_blank" className="flex-1 rounded-lg bg-neutral-100 py-1.5 text-center font-medium text-neutral-700">Visit</Link>}
-        </div>
-        {err && <p className="mt-1.5 text-xs text-red-600">{err}</p>}
-      </div>
+      <>
+        <button onClick={duplicate} disabled={busy} className="inline-flex h-10 items-center rounded-full border border-border px-4 text-[13px] font-medium transition hover:bg-foreground hover:text-background disabled:opacity-60">Duplicate</button>
+        <button onClick={remove} disabled={busy} className="inline-flex h-10 items-center rounded-full border border-red-900/40 px-4 text-[13px] font-medium text-red-700 transition hover:bg-red-700 hover:text-white disabled:opacity-60">Delete</button>
+        {err && <p className="basis-full text-xs text-red-600">{err}</p>}
+      </>
     );
   }
 
   return (
-    <button onClick={logout} className="rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-600 hover:border-neutral-400">
+    <button onClick={logout} className="inline-flex h-9 items-center rounded-full border border-border px-4 text-[13px] font-medium transition hover:bg-foreground hover:text-background">
       Log out
     </button>
   );

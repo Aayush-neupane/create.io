@@ -16,10 +16,10 @@ export function LogoTile({ size = 28 }: { size?: number }) {
   return (
     <span
       aria-hidden="true"
-      className="grid flex-none place-items-center rounded-md bg-primary font-serif leading-none text-white"
-      style={{ width: size, height: size, fontSize: size * 0.62 }}
+      className="block flex-none overflow-hidden rounded-md border border-border/25 bg-surface"
+      style={{ width: size, height: size }}
     >
-      {site.mark}
+      <Image src="/logo.png" alt="" width={size} height={size} className="h-full w-full object-cover" />
     </span>
   );
 }
@@ -278,12 +278,13 @@ export function Footer() {
         <div className="grid gap-14 border-b border-white/20 pb-16 md:grid-cols-2 lg:grid-cols-[1.35fr_0.65fr_0.65fr_0.65fr_0.65fr]">
           <div>
             <Link href="/" className="inline-flex items-center gap-3 text-lg font-semibold tracking-[-0.025em]">
-              <span
-                aria-hidden="true"
-                className="grid h-8 w-8 place-items-center rounded-md bg-[#d97757] font-serif text-xl text-white"
-              >
-                {site.mark}
-              </span>
+              <Image
+                src="/logo.png"
+                alt=""
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded-md border border-white/20 object-cover"
+              />
               {site.brand}
             </Link>
             <p className="mt-6 max-w-md font-serif text-3xl leading-[1.12] tracking-[-0.03em] sm:text-4xl">
@@ -328,7 +329,6 @@ export function Footer() {
               width={40}
               height={40}
               className="h-10 w-10 rounded-full border border-white/20 object-cover"
-              style={{ filter: "invert(1)" }}
             />
             <span>
               Developed by <span className="underline-offset-4 hover:underline">Aayush Neupane</span>

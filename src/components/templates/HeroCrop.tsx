@@ -61,17 +61,15 @@ export function LazyMount({ children }: { children: ReactNode }) {
  *  primitive. The parent fixes the visible height. */
 export function SiteCrop({ config, templateId }: { config: WebsiteConfig; templateId: string }) {
   const ref = useRef<HTMLDivElement>(null);
+  // Start at an approximately-right scale so server output is already
+  // visible; the layout effect corrects it before first client paint.
   const [scale, setScale] = useState(0.5);
-  const [ready, setReady] = useState(false);
   useStripCropIds(ref, [config, templateId]);
 
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const update = () => {
-      setScale(el.clientWidth / STAGE_W);
-      setReady(true);
-    };
+    const update = () => setScale(el.clientWidth / STAGE_W);
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
@@ -79,7 +77,7 @@ export function SiteCrop({ config, templateId }: { config: WebsiteConfig; templa
   }, []);
 
   return (
-    <div ref={ref} className="relative h-full w-full overflow-hidden bg-surface transition-opacity duration-500" style={{ opacity: ready ? 1 : 0 }}>
+    <div ref={ref} className="relative h-full w-full overflow-hidden bg-surface">
       <div
         className="pointer-events-none absolute left-0 top-0 origin-top-left select-none"
         style={{ width: STAGE_W, transform: `scale(${scale})` }}

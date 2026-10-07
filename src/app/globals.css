@@ -518,6 +518,16 @@ html, body { overflow-x: clip; }
   .kit-scroll[data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
 
+/* ─── route entrance: one breath per page ─── */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.page-enter { animation: page-in 480ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .page-enter { animation: none; }
+}
+
 /* ─── auth switch: halves trade places with directional entrances ─── */
 @keyframes auth-from-left {
   from { opacity: 0; transform: translateX(-28px); }

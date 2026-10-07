@@ -13,7 +13,7 @@ export function Hero() {
   return (
     <>
       <section className="relative overflow-hidden border-b border-border">
-        <div className="marketing-grid absolute inset-0 opacity-50" aria-hidden="true" />
+        <div className="marketing-grid absolute inset-0 opacity-80" aria-hidden="true" />
         <div className="relative mx-auto max-w-shell px-6 pb-14 pt-16 text-center sm:px-10 sm:pt-24 lg:px-16 xl:px-20">
           <p className="reveal font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
             {site.eyebrow}

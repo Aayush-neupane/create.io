@@ -122,7 +122,7 @@ export function FieldsDemo() {
           </div>
 
           <div className="relative bg-surface-2 px-4 py-10 sm:px-8 lg:px-12">
-            <div className="marketing-grid pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
+            <div className="marketing-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true" />
             <div className="relative mx-auto max-w-[46rem]">
               <div className="mb-4 flex items-center justify-between font-mono text-[8px] uppercase tracking-[0.15em] text-muted">
                 <span>Live render · {tpl.name}</span>

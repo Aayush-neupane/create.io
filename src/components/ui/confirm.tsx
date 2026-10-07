@@ -57,8 +57,7 @@ function Shell({ label, onCancel, children }: { label: string; onCancel: () => v
         role="alertdialog"
         aria-modal="true"
         aria-label={label}
-        className="w-full max-w-sm rounded-2xl border bg-white p-6 shadow-2xl"
-        style={{ borderColor: "var(--line-2)" }}
+        className="w-full max-w-sm border border-border bg-surface p-6 shadow-2xl"
       >
         {children}
       </div>
@@ -118,8 +117,8 @@ export function confirmPopup({
     };
     cleanup = mount(
       <Shell label={title} onCancel={() => settle(false)}>
-        <h2 className="font-semibold" style={{ letterSpacing: "-0.015em" }}>{title}</h2>
-        {message && <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{message}</p>}
+        <h2 className="font-serif text-2xl tracking-[-0.02em]">{title}</h2>
+        {message && <p className="mt-2 text-sm leading-relaxed text-muted">{message}</p>}
         <Buttons
           onCancel={() => settle(false)}
           onConfirm={() => settle(true)}
@@ -145,8 +144,8 @@ export function alertPopup(title: string, message?: string): Promise<void> {
     };
     cleanup = mount(
       <Shell label={title} onCancel={settle}>
-        <h2 className="font-semibold" style={{ letterSpacing: "-0.015em" }}>{title}</h2>
-        {message && <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{message}</p>}
+        <h2 className="font-serif text-2xl tracking-[-0.02em]">{title}</h2>
+        {message && <p className="mt-2 text-sm leading-relaxed text-muted">{message}</p>}
         <div className="mt-6">
           <button onClick={settle} autoFocus className="btn-primary w-full" style={{ height: 42, fontSize: 13 }}>
             OK
@@ -183,8 +182,8 @@ export function promptPopup({
       const submit = () => settle(areaRef.current?.value ?? "");
       return (
         <>
-          <h2 className="font-semibold" style={{ letterSpacing: "-0.015em" }}>{title}</h2>
-          {message && <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>{message}</p>}
+          <h2 className="font-serif text-2xl tracking-[-0.02em]">{title}</h2>
+          {message && <p className="mt-2 text-sm leading-relaxed text-muted">{message}</p>}
           <textarea
             ref={areaRef}
             defaultValue={initial}
@@ -193,8 +192,7 @@ export function promptPopup({
             onKeyDown={(e) => {
               if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
             }}
-            className="mt-4 w-full resize-y rounded-lg border px-3 py-2 font-mono text-xs outline-none transition-colors focus:border-neutral-400"
-            style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}
+            className="mt-4 w-full resize-y border border-border bg-background px-3 py-2 font-mono text-xs text-foreground outline-none transition-colors placeholder:text-muted/70 focus:border-primary"
           />
           <Buttons
             onCancel={() => settle(null)}

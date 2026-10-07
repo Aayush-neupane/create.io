@@ -834,16 +834,16 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
 
   if (demo && !mounted) {
     return (
-      <div className="flex h-screen items-center justify-center" style={{ background: "var(--paper)" }}>
-        <p className="mono-meta text-xs uppercase" style={{ letterSpacing: "0.14em", color: "var(--ink-3)" }}>Loading demo…</p>
+      <div className="flex h-screen items-center justify-center" style={{ background: "var(--kit-background)" }}>
+        <p className="font-mono text-xs uppercase tracking-[0.14em] text-muted">Loading demo…</p>
       </div>
     );
   }
 
   return (
-    <div className="builder flex h-screen flex-col" style={{ background: "var(--paper)" }}>
+    <div className="builder flex h-screen flex-col" style={{ background: "var(--kit-background)" }}>
       {/* Top bar */}
-      <header className="no-bar flex h-14 shrink-0 items-center gap-3 overflow-x-auto border-b bg-white px-4 [&>*]:shrink-0" style={{ borderColor: "var(--line)" }}>
+      <header className="no-bar flex h-14 shrink-0 items-center gap-3 overflow-x-auto border-b px-4 [&>*]:shrink-0" style={{ borderColor: "var(--kit-border)", background: "var(--kit-surface)" }}>
         <Link href={demo ? "/demo" : "/dashboard"} className="flex items-center gap-2" aria-label={demo ? "Back to demo sites" : "Back to dashboard"} title={demo ? "All demo sites" : "Dashboard"}>
           <LogoTile size={28} />
         </Link>
@@ -854,9 +854,9 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
           style={{ color: "var(--ink)" }}
         />
         <span className="mono-meta hidden text-[11px] sm:inline" style={{ color: "var(--ink-3)" }}>/s/{site.slug}</span>
-        <div className="mx-auto hidden items-center gap-0.5 rounded-[11px] border p-[3px] md:flex" style={{ borderColor: "var(--line)", background: "var(--paper-2)" }}>
+        <div className="mx-auto hidden items-center gap-0.5 rounded-full border p-[3px] md:flex" style={{ borderColor: "var(--kit-border)", background: "var(--kit-surface-2)" }}>
           {(["desktop", "tablet", "mobile"] as const).map((d) => (
-            <button key={d} onClick={() => setDevice(d)} className="rounded-lg px-3 py-1 text-xs font-medium capitalize transition-all" style={device === d ? { background: "var(--surface)", color: "var(--ink)", boxShadow: "0 1px 3px rgba(0,0,0,.12)" } : { color: "var(--ink-2)" }}>{d}</button>
+            <button key={d} onClick={() => setDevice(d)} className="rounded-full px-3 py-1 text-xs font-medium capitalize transition-all" style={device === d ? { background: "var(--kit-foreground)", color: "var(--kit-background)", boxShadow: "0 1px 3px rgba(0,0,0,.12)" } : { color: "var(--kit-muted)" }}>{d}</button>
           ))}
         </div>
         <div className="ml-auto flex items-center gap-1.5">
@@ -884,24 +884,24 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
           </span>
           )}
           <span className={`h-2 w-2 rounded-full ${saveState === "saved" ? "bg-emerald-500" : saveState === "error" ? "bg-red-500" : "bg-amber-400 animate-pulse"}`} title={saveState === "saving" ? "saving…" : saveState === "dirty" ? "unsaved changes" : saveState === "error" ? "save failed" : "all changes saved"} />
-          <button onClick={undo} disabled={past.current.length === 0} className="rounded-[9px] border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--line-2)" }} title="Undo (Ctrl+Z)">↩</button>
-          <button onClick={redo} disabled={future.current.length === 0} className="rounded-[9px] border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--line-2)" }} title="Redo">↪</button>
+          <button onClick={undo} disabled={past.current.length === 0} className="rounded-full border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--kit-border)" }} title="Undo (Ctrl+Z)">↩</button>
+          <button onClick={redo} disabled={future.current.length === 0} className="rounded-full border px-2.5 py-1.5 text-xs transition-transform active:scale-95 disabled:opacity-40" style={{ borderColor: "var(--kit-border)" }} title="Redo">↪</button>
           {demo ? (
-            <button onClick={() => void guestGate("preview")} className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Preview</button>
+            <button onClick={() => void guestGate("preview")} className="rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors hover:bg-foreground hover:text-background" style={{ borderColor: "var(--kit-border)" }}>Preview</button>
           ) : (
-            <Link href={`/s/${site.slug}`} target="_blank" className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Preview</Link>
+            <Link href={`/s/${site.slug}`} target="_blank" className="rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors hover:bg-foreground hover:text-background" style={{ borderColor: "var(--kit-border)" }}>Preview</Link>
           )}
           {demo ? (
-            <button onClick={() => void guestGate("save")} className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Save</button>
+            <button onClick={() => void guestGate("save")} className="rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors hover:bg-foreground hover:text-background" style={{ borderColor: "var(--kit-border)" }}>Save</button>
           ) : (
-          <button onClick={() => saveNow()} className="rounded-[9px] border px-3 py-1.5 text-[13px] font-medium" style={{ borderColor: "var(--line-2)" }}>Save</button>
+          <button onClick={() => saveNow()} className="rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors hover:bg-foreground hover:text-background" style={{ borderColor: "var(--kit-border)" }}>Save</button>
           )}
           {demo ? (
-            <button onClick={() => void guestGate("publish")} className="btn-primary rounded-[9px] px-3 py-1.5 text-[13px]" style={{ height: 33 }}>Publish</button>
+            <button onClick={() => void guestGate("publish")} className="btn-primary px-3 py-1.5 text-[13px]" style={{ height: 33, borderRadius: 999 }}>Publish</button>
           ) : site.status === "published" ? (
-            <button onClick={unpublish} className="rounded-[9px] px-3 py-1.5 text-[13px] font-medium" style={{ background: "var(--surface-2)" }}>Unpublish</button>
+            <button onClick={unpublish} className="rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors hover:bg-foreground hover:text-background" style={{ background: "var(--kit-surface-2)" }}>Unpublish</button>
           ) : (
-            <button onClick={publish} disabled={publishing || saveState === "saving"} className="btn-primary rounded-[9px] px-3 py-1.5 text-[13px] disabled:opacity-60" style={{ height: 33 }}>
+            <button onClick={publish} disabled={publishing || saveState === "saving"} className="btn-primary px-3 py-1.5 text-[13px] disabled:opacity-60" style={{ height: 33, borderRadius: 999 }}>
               {publishing ? "Publishing…" : "Publish"}
             </button>
           )}
@@ -911,10 +911,10 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
 
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         {/* Left sidebar */}
-        <aside className="flex max-h-[46vh] w-full shrink-0 flex-col border-b bg-white md:max-h-none md:w-64 md:border-b-0 md:border-r" style={{ borderColor: "var(--line)" }}>
-          <div className="grid grid-cols-3 gap-1 border-b p-2" style={{ borderColor: "var(--line)", background: "var(--paper)" }}>
+        <aside className="flex max-h-[46vh] w-full shrink-0 flex-col border-b md:max-h-none md:w-64 md:border-b-0 md:border-r" style={{ borderColor: "var(--kit-border)", background: "var(--kit-surface)" }}>
+          <div className="grid grid-cols-3 gap-1 border-b p-2" style={{ borderColor: "var(--kit-border)", background: "var(--kit-background)" }}>
             {TABS.map((t) => (
-              <button key={t.id} onClick={() => setTab(t.id)} aria-current={tab === t.id ? "page" : undefined} className="mono-meta rounded-lg px-1 py-2 text-[11px] font-semibold uppercase transition-colors" style={tab === t.id ? { background: "var(--ink)", color: "#fff" } : { color: "var(--ink-3)" }}>
+              <button key={t.id} onClick={() => setTab(t.id)} aria-current={tab === t.id ? "page" : undefined} className="rounded-full px-1 py-2 font-mono text-[11px] font-semibold uppercase transition-colors" style={tab === t.id ? { background: "var(--kit-foreground)", color: "var(--kit-background)" } : { color: "var(--kit-muted)" }}>
                 {t.label}
               </button>
             ))}
@@ -938,18 +938,18 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
         </aside>
 
         {/* Preview */}
-        <main className="flex min-h-0 min-w-0 flex-1 flex-col" style={{ background: "var(--paper-2)" }}>
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col" style={{ background: "var(--kit-surface-2)" }}>
           <div className="flex-1 overflow-auto p-4 md:p-6" onMouseOver={handleElHover} onClickCapture={handleElClick}>
             {selected && <SelectionBar selected={selected} siteTheme={config.theme} elMode={elMode} onToggleEl={() => { setElMode((v) => !v); setElSel(null); }} onVariant={cycleVariant} onText={stepText} onSpacing={cycleSpacing} onToggle={() => toggleSection(selected.id)} onDelete={() => removeSection(selected.id)} onAddFloat={addFloat} />}
-            <div className={`relative mx-auto overflow-hidden rounded-2xl border bg-white transition-all ${previewWidth}`} style={{ borderColor: "var(--line-2)", boxShadow: "0 30px 80px -40px rgba(23,23,27,.35)" }}>
+            <div className={`relative mx-auto overflow-hidden rounded-xl border bg-white transition-all ${previewWidth}`} style={{ borderColor: "var(--kit-border)", boxShadow: "0 30px 80px -40px rgba(23,23,27,.35)" }}>
               {!selected && (
-                <p className="mono-meta absolute left-1/2 top-3 z-30 -translate-x-1/2 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[11px] font-semibold" style={{ background: "var(--ink)", color: "#fff" }}>
+                <p className="absolute left-1/2 top-3 z-30 -translate-x-1/2 whitespace-nowrap rounded-full bg-foreground px-3.5 py-1.5 font-mono text-[11px] font-semibold text-background">
                   {elMode ? "Click any button, title or photo to edit it · drag cards to move them" : "Click any section to edit it"}
                 </p>
               )}
               <div className="builder-preview">
                 {activePage && (
-                  <p className="mono-meta mx-auto mb-2 w-fit rounded-full border bg-white px-3 py-1 text-[11px]" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)" }}>
+                  <p className="mx-auto mb-2 w-fit rounded-full border border-border bg-surface px-3 py-1 font-mono text-[11px] text-muted">
                     Editing page: {activePage.title} · /s/{site.slug}/{activePage.path}
                   </p>
                 )}
@@ -958,7 +958,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
                     <p className="max-w-sm text-sm" style={{ color: "var(--ink-2)" }}>
                       {activePage ? "Add sections to this page to start building it out." : "Add your first section to start building."}
                     </p>
-                    <button onClick={() => setTab("sections")} className="btn-primary mt-3" style={{ height: 40, padding: "0 20px", fontSize: 13 }}>
+                    <button onClick={() => setTab("sections")} className="btn-primary mt-3" style={{ height: 40, padding: "0 20px", fontSize: 13, borderRadius: 999 }}>
                       {activePage ? "Add sections" : "Manage sections"}
                     </button>
                   </div>
@@ -971,12 +971,12 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
         </main>
 
         {/* Right panel */}
-        <aside className="hidden w-72 shrink-0 flex-col border-l bg-white lg:flex" style={{ borderColor: "var(--line)" }}>
-          <div className="border-b px-4 py-3" style={{ borderColor: "var(--line)", background: "var(--paper)" }}>
-            <p className="mono-meta text-[10.5px] font-semibold uppercase" style={{ letterSpacing: "0.12em", color: "var(--ink-3)" }}>
+        <aside className="hidden w-72 shrink-0 flex-col border-l lg:flex" style={{ borderColor: "var(--kit-border)", background: "var(--kit-surface)" }}>
+          <div className="border-b px-4 py-3" style={{ borderColor: "var(--kit-border)", background: "var(--kit-background)" }}>
+            <p className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted">
               {selected ? `Editing — ${SECTION_META[selected.type]?.label}` : "Inspector"}
             </p>
-            <h3 className="mt-0.5 text-[14px] font-semibold" style={{ letterSpacing: "-0.015em" }}>
+            <h3 className="mt-0.5 font-serif text-[19px] leading-snug">
               {selected ? (SECTION_META[selected.type]?.variants.length ?? 0) > 1 ? "Style, visibility & content" : "Visibility & content" : "Select a section"}
             </h3>
           </div>
@@ -984,7 +984,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
             {selected ? (
               <SectionInspector section={selected} templateId={site.templateId} demo={demo} siteTheme={config.theme} onPatch={(fn) => patchSection(selected.id, fn)} onMoveUp={() => reorderSection(selected.id, -1)} onMoveDown={() => reorderSection(selected.id, 1)} onDuplicate={() => duplicateSection(selected.id)} />
             ) : (
-              <p className="text-[13px] text-neutral-500">Click any section on the left, or pick one below.</p>
+              <p className="text-[13px] text-muted">Click any section on the left, or pick one below.</p>
             )}
           </div>
         </aside>
@@ -1084,7 +1084,7 @@ function SelectionBar({ selected, siteTheme, elMode, onToggleEl, onVariant, onTe
   const deletable = SECTION_META[selected.type]?.deletable;
   return (
     <div className="builder-bar sticky top-2 z-30 mx-auto mb-3 w-fit max-w-full">
-      <div className="flex flex-wrap items-center justify-center gap-0.5 rounded-full py-1.5 pl-3 pr-1.5 shadow-xl" style={{ background: "var(--ink)" }}>
+      <div className="flex flex-wrap items-center justify-center gap-0.5 rounded-full bg-foreground py-1.5 pl-3 pr-1.5 text-background shadow-xl">
         <span className="mono-meta px-1 text-[11px] font-bold uppercase text-white" style={{ letterSpacing: "0.1em" }}>
           {SECTION_META[selected.type]?.label ?? selected.type}
         </span>

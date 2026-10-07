@@ -533,6 +533,29 @@ html, body { overflow-x: clip; }
   .auth-in-left, .auth-in-right { animation: none; }
 }
 
+/* ─── auth slide: view-transition page glide between login ↔ signup ─── */
+@keyframes auth-page-out-left { to { opacity: 0; transform: translateX(-56px); } }
+@keyframes auth-page-in-right { from { opacity: 0; transform: translateX(56px); } }
+@keyframes auth-page-out-right { to { opacity: 0; transform: translateX(56px); } }
+@keyframes auth-page-in-left { from { opacity: 0; transform: translateX(-56px); } }
+html[data-auth-transition="forward"]::view-transition-old(root) {
+  animation: 440ms cubic-bezier(0.2, 0.8, 0.2, 1) both auth-page-out-left;
+}
+html[data-auth-transition="forward"]::view-transition-new(root) {
+  animation: 440ms cubic-bezier(0.2, 0.8, 0.2, 1) both auth-page-in-right;
+}
+html[data-auth-transition="back"]::view-transition-old(root) {
+  animation: 440ms cubic-bezier(0.2, 0.8, 0.2, 1) both auth-page-out-right;
+}
+html[data-auth-transition="back"]::view-transition-new(root) {
+  animation: 440ms cubic-bezier(0.2, 0.8, 0.2, 1) both auth-page-in-left;
+}
+/* While the page itself glides, silence the halves' own entrances. */
+.auth-switching .auth-in-left, .auth-switching .auth-in-right { animation: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
+}
+
 /* ─── legal prose: auto-numbered serif rows, reference style ─── */
 .legal-doc { counter-reset: legal; }
 .legal-doc h2 {

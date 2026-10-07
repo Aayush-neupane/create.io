@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthSplit } from "@/components/auth/AuthSplit";
+import { AuthSwitchLink } from "@/components/auth/AuthSwitchLink";
 
 /** Return path requested via ?next= — internal paths only, else dashboard. */
 function safeNext(): string {
@@ -71,7 +72,7 @@ export default function LoginPage() {
       <Link href="/demo" className="inline-flex h-13 w-full items-center justify-center rounded-full border border-border text-sm font-medium transition hover:bg-foreground hover:text-background">
         Continue as guest — no signup
       </Link>
-      <p className="mt-5 text-center text-sm text-muted">No account yet? <Link href="/signup" className="font-medium text-foreground underline underline-offset-4">Sign up</Link></p>
+      <p className="mt-5 text-center text-sm text-muted">No account yet? <AuthSwitchLink href="/signup" dir="forward" className="font-medium text-foreground underline underline-offset-4">Sign up</AuthSwitchLink></p>
     </AuthSplit>
   );
 }

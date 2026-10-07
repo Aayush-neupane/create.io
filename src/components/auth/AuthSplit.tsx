@@ -60,12 +60,6 @@ export function AuthSplit({
 
         <div className="relative hidden overflow-hidden bg-surface-2 lg:flex lg:flex-col">
           <div className="marketing-grid pointer-events-none absolute inset-0 opacity-45" aria-hidden="true" />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-6 top-6 font-serif text-[12rem] leading-none text-primary/10"
-          >
-            c
-          </div>
           <div className="relative flex flex-1 flex-col justify-center px-14 py-16 xl:px-20">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
               Whole websites, predesigned

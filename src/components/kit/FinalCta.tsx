@@ -7,12 +7,6 @@ import { TEMPLATES } from "@/lib/templates";
 export function FinalCta() {
   return (
     <section aria-label="Start building" className="relative overflow-hidden border-b border-border">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-10 left-0 select-none whitespace-nowrap font-serif text-[11rem] leading-none text-foreground/[0.05] sm:text-[16rem]"
-      >
-        c — c — c
-      </div>
       <div className="relative mx-auto max-w-shell px-6 py-20 text-center sm:px-10 lg:px-16 lg:py-28 xl:px-20">
         <p data-scroll-reveal className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
           No code · No canvas · No kidding

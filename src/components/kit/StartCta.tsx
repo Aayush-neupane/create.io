@@ -55,9 +55,6 @@ export function StartCta() {
         </div>
         <div className="relative flex min-h-[46rem] items-center overflow-hidden bg-surface-2 px-6 py-14 sm:px-10 lg:px-14 lg:py-16 xl:px-20">
           <div className="marketing-grid pointer-events-none absolute inset-0 opacity-45" aria-hidden="true" />
-          <div className="pointer-events-none absolute -right-8 -top-20 font-serif text-[20rem] leading-none text-primary/10" aria-hidden="true">
-            01
-          </div>
 
           <div data-scroll-reveal className="kit-scroll relative mx-auto w-full max-w-[48rem]" data-reveal="">
             <div className="mb-5 flex items-center justify-between font-mono text-[8px] uppercase tracking-[0.15em] text-muted">

@@ -129,7 +129,7 @@ export function FieldsDemo() {
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Your words, right now
                 </span>
               </div>
-              <div className="overflow-hidden border border-border bg-white shadow-[0_30px_80px_-50px_rgba(41,39,33,.6)]">
+              <div className="overflow-hidden border border-border bg-surface shadow-[0_30px_80px_-50px_rgba(41,39,33,.6)]">
                 <div className="flex items-center gap-1.5 border-b border-border/40 bg-surface px-4 py-2.5" aria-hidden="true">
                   <span className="h-2 w-2 rounded-full bg-border/50" />
                   <span className="h-2 w-2 rounded-full bg-border/50" />

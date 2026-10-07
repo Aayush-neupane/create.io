@@ -41,7 +41,7 @@ export default function DemoChooserPage() {
               ["Keep", "Sign up anytime to save, publish and share."],
             ].map(([t, d], i) => (
               <div key={t} className="rounded-[20px] border p-5 text-center" style={{ background: TINTS[i % TINTS.length].bg, borderColor: TINTS[i % TINTS.length].bg }}>
-                <p className="mono-meta grid mx-auto place-items-center bg-white text-[11px] font-bold" style={{ width: 30, height: 30, borderRadius: 10, color: TINTS[i % TINTS.length].fg }}>0{i + 1}</p>
+                <p className="grid mx-auto place-items-center bg-background font-mono text-[11px] font-bold" style={{ width: 30, height: 30, borderRadius: 10, color: TINTS[i % TINTS.length].fg }}>0{i + 1}</p>
                 <p className="mt-2 font-semibold" style={{ letterSpacing: "-0.015em" }}>{t}</p>
                 <p className="mt-1 text-[13px] leading-relaxed" style={{ color: "var(--ink-2)" }}>{d}</p>
               </div>

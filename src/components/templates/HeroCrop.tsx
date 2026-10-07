@@ -64,7 +64,7 @@ export function SiteCrop({ config, templateId }: { config: WebsiteConfig; templa
   }, []);
 
   return (
-    <div ref={ref} className="relative h-full w-full overflow-hidden bg-white transition-opacity duration-500" style={{ opacity: ready ? 1 : 0 }}>
+    <div ref={ref} className="relative h-full w-full overflow-hidden bg-surface transition-opacity duration-500" style={{ opacity: ready ? 1 : 0 }}>
       <div
         className="pointer-events-none absolute left-0 top-0 origin-top-left select-none"
         style={{ width: STAGE_W, transform: `scale(${scale})` }}

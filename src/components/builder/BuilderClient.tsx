@@ -941,7 +941,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
         <main className="flex min-h-0 min-w-0 flex-1 flex-col" style={{ background: "var(--kit-surface-2)" }}>
           <div className="flex-1 overflow-auto p-4 md:p-6" onMouseOver={handleElHover} onClickCapture={handleElClick}>
             {selected && <SelectionBar selected={selected} siteTheme={config.theme} elMode={elMode} onToggleEl={() => { setElMode((v) => !v); setElSel(null); }} onVariant={cycleVariant} onText={stepText} onSpacing={cycleSpacing} onToggle={() => toggleSection(selected.id)} onDelete={() => removeSection(selected.id)} onAddFloat={addFloat} />}
-            <div className={`relative mx-auto overflow-hidden rounded-xl border bg-white transition-all ${previewWidth}`} style={{ borderColor: "var(--kit-border)", boxShadow: "0 30px 80px -40px rgba(23,23,27,.35)" }}>
+            <div className={`relative mx-auto overflow-hidden rounded-xl border transition-all ${previewWidth}`} style={{ borderColor: "var(--kit-border)", background: "var(--kit-surface)", boxShadow: "0 30px 80px -40px rgba(23,23,27,.35)" }}>
               {!selected && (
                 <p className="absolute left-1/2 top-3 z-30 -translate-x-1/2 whitespace-nowrap rounded-full bg-foreground px-3.5 py-1.5 font-mono text-[11px] font-semibold text-background">
                   {elMode ? "Click any button, title or photo to edit it · drag cards to move them" : "Click any section to edit it"}

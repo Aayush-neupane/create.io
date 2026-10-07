@@ -3,6 +3,7 @@ import { ArrowDownRight, ArrowRight } from "lucide-react";
 import { site } from "@/config/site";
 import { TEMPLATES } from "@/lib/templates";
 import { SECTION_META } from "@/components/templates/Renderer";
+import { LiveCard } from "@/components/templates/LiveCard";
 
 const principles = [
   ["01", "Whole sites", "Complete predesigned websites, not blocks."],
@@ -11,94 +12,55 @@ const principles = [
   ["04", "Publish instantly", "One click to a fast public page."],
 ];
 
-function BuilderCard() {
+/** The product is the visual: two real templates, live-rendered and stacked,
+ *  not a mock. Badges name what makes them different. */
+function LiveStack() {
+  const back = TEMPLATES.find((t) => t.id === "restaurant") ?? TEMPLATES[1];
+  const front = TEMPLATES.find((t) => t.id === "minimal-portfolio") ?? TEMPLATES[0];
   return (
-    <div className="relative mx-auto w-full max-w-[39rem]" aria-label="Illustrative builder preview">
+    <div className="relative mx-auto w-full max-w-[39rem]" aria-label="Live template previews">
       <div className="absolute -left-8 top-8 h-28 w-28 rounded-full bg-primary/35 blur-3xl" aria-hidden="true" />
       <div className="absolute -right-8 bottom-12 h-36 w-36 rounded-full bg-secondary/30 blur-3xl" aria-hidden="true" />
 
-      <div className="relative overflow-hidden rounded-[1.75rem] border border-[#25231f] bg-[#22211d] text-[#f2efe7] shadow-[0_30px_90px_-42px_rgba(38,35,29,.65)]">
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
-          <div className="flex items-center gap-2">
-            <span className="flex gap-[7px]" aria-hidden="true">
-              <i className="h-2.5 w-2.5 rounded-full" style={{ background: "#ff5f57" }} />
-              <i className="h-2.5 w-2.5 rounded-full" style={{ background: "#febc2e" }} />
-              <i className="h-2.5 w-2.5 rounded-full" style={{ background: "#28c840" }} />
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#aaa69b]">
-              create.io / builder
-            </span>
+      <div className="relative">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 translate-x-5 translate-y-5 rotate-[2.5deg] overflow-hidden border border-border bg-surface"
+        >
+          <div className="flex items-center gap-1.5 border-b border-border/40 px-4 py-2.5">
+            <span className="h-2 w-2 rounded-full bg-border/50" />
+            <span className="h-2 w-2 rounded-full bg-border/50" />
+            <span className="ml-2 font-mono text-[9px] uppercase tracking-[0.14em] text-muted">{back.name}</span>
           </div>
-          <span className="flex items-center gap-2 rounded-full border border-white/15 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-[#cdc8bc]">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Live
-          </span>
+          <div className="aspect-[4/3]">
+            <LiveCard templateId={back.id} />
+          </div>
         </div>
 
-        <div className="grid min-h-[30rem] md:grid-cols-[0.86fr_1.4fr]">
-          <div className="border-b border-white/10 p-5 md:border-b-0 md:border-r">
-            <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#858176]">Sections</p>
-            <div className="mt-5 space-y-2.5">
-              {["Content", "Sections", "Design", "SEO", "Settings"].map((t, i) => (
-                <div
-                  key={t}
-                  className={`rounded-[10px] px-2.5 py-2 font-mono text-[10px] ${i === 0 ? "bg-background text-foreground" : "text-[#cbc6ba]"}`}
-                >
-                  {t}
-                </div>
-              ))}
+        <div className="relative overflow-hidden border border-border bg-surface shadow-[0_30px_90px_-42px_rgba(38,35,29,.65)]">
+          <div className="flex items-center justify-between border-b border-border/40 px-4 py-2.5">
+            <div className="flex items-center gap-1.5" aria-hidden="true">
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: "#ff5f57" }} />
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: "#febc2e" }} />
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: "#28c840" }} />
             </div>
-            <div className="mt-8 border-t border-white/10 pt-5">
-              <div className="flex items-end justify-between">
-                <div>
-                  <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-[#858176]">Sections</p>
-                  <p className="mt-1 font-serif text-4xl leading-none">{TEMPLATES[0]?.sections.length ?? 8}</p>
-                </div>
-                <span className="mb-1 text-xs text-[#9aaa91]">Styled</span>
-              </div>
-              <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full w-[92%] rounded-full bg-[#9aaa91]" />
-              </div>
-            </div>
+            <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted">{front.name}</span>
+            <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Live
+            </span>
           </div>
-
-          <div className="relative overflow-hidden p-5 sm:p-7">
-            <div className="flex items-center justify-between">
-              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-[#858176]">Canvas</p>
-              <span className="font-mono text-[9px] text-[#858176]">Hero — Poster</span>
-            </div>
-            <p className="mt-6 font-mono text-[9px] uppercase tracking-[0.16em] text-[#d97757]">Booking Q3 projects</p>
-            <p className="mt-3 font-serif text-4xl leading-[1.02] tracking-[-0.04em] sm:text-5xl">
-              We ship brands that win
-            </p>
-            <p className="mt-3 max-w-md text-xs leading-5 text-[#aaa69b]">
-              Brand, website and product under one roof. Senior team only, no hand-offs, no bloat.
-            </p>
-            <div className="mt-6 flex gap-2.5">
-              <span className="inline-flex h-9 items-center rounded-full bg-[#f2efe7] px-4 text-xs font-medium text-[#22211d]">
-                See the work
-              </span>
-              <span className="inline-flex h-9 items-center rounded-full border border-white/20 px-4 text-xs text-[#cdc8bc]">
-                Our process
-              </span>
-            </div>
-            <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-              <div className="flex gap-3">
-                <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#d97757]" />
-                <div>
-                  <p className="text-sm font-medium text-[#eeeae0]">Click any section to edit its fields</p>
-                  <p className="mt-1.5 text-xs leading-5 text-[#aaa69b]">
-                    Words, photos, prices and hours — nothing to break, undo included.
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="aspect-[4/3]">
+            <LiveCard templateId={front.id} />
           </div>
         </div>
       </div>
 
-      <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-border bg-surface px-4 py-3 text-foreground shadow-xl sm:block">
-        <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-[#777168]">Builder</p>
-        <p className="mt-1 text-sm font-medium">Autosave on · undo ready</p>
+      <div className="absolute -right-2 top-10 hidden rounded-full border border-border bg-surface px-4 py-2 font-mono text-[9px] uppercase tracking-[0.14em] text-foreground shadow-lg sm:block">
+        Live render · not a mock
+      </div>
+      <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-border bg-surface px-4 py-3 shadow-xl sm:block">
+        <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-[#777168]">Editing model</p>
+        <p className="mt-1 text-sm font-medium">Fields, not code · undo ready</p>
       </div>
     </div>
   );
@@ -106,6 +68,7 @@ function BuilderCard() {
 
 export function Hero() {
   const styleCount = Object.values(SECTION_META).reduce((n, m) => n + m.variants.length, 0);
+  const kindCount = new Set(TEMPLATES.map((t) => t.category)).size;
   return (
     <>
       <section className="relative overflow-hidden border-b border-border">
@@ -145,15 +108,16 @@ export function Hero() {
               </div>
             </div>
 
-            <div className="mt-16 grid max-w-xl grid-cols-3 border-t border-border/35 pt-5 text-[#5e5952]">
+            <div className="mt-16 grid max-w-xl grid-cols-2 gap-x-8 gap-y-5 border-t border-border/35 pt-5 text-[#5e5952] sm:grid-cols-4">
               {[
                 [String(TEMPLATES.length), "complete sites"],
                 [`${styleCount}+`, "section styles"],
+                [String(kindCount), "kinds of site"],
                 ["0", "lines of code"],
               ].map(([v, l]) => (
                 <div key={l}>
-                  <p className="font-mono text-[9px] tracking-[0.16em]">{v}</p>
-                  <p className="mt-1.5 text-xs sm:text-sm">{l}</p>
+                  <p className="font-serif text-3xl tabular-nums leading-none">{v}</p>
+                  <p className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.14em]">{l}</p>
                 </div>
               ))}
             </div>
@@ -166,7 +130,7 @@ export function Hero() {
             >
               {site.mark}
             </div>
-            <BuilderCard />
+            <LiveStack />
           </div>
         </div>
       </section>

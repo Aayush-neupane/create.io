@@ -5,6 +5,7 @@ import { Reveal } from "@/components/layout/Reveal";
 import { TemplateRow } from "@/components/templates/TemplateRow";
 import { Hero } from "@/components/kit/Hero";
 import { Ticker } from "@/components/kit/Ticker";
+import { FieldsDemo } from "@/components/kit/FieldsDemo";
 import { Capabilities } from "@/components/kit/Capabilities";
 import { LibraryPreview } from "@/components/kit/LibraryPreview";
 import { UseCases } from "@/components/kit/UseCases";
@@ -82,6 +83,7 @@ export default async function LandingPage() {
         <main id="main-content" className="flex-1">
           <Hero />
           <Ticker />
+          <FieldsDemo />
           <Capabilities />
           <LibraryPreview />
           <LibraryGrid />

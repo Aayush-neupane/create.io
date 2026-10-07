@@ -116,7 +116,7 @@ export function AuthSplit({
     <div className="marketing-theme min-h-screen bg-background text-foreground">
       <a
         href={`#${formId}`}
-        className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background transition focus-visible:translate-y-0"
+        className="pointer-events-none fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background opacity-0 transition focus-visible:pointer-events-auto focus-visible:translate-y-0 focus-visible:opacity-100"
       >
         Skip to form
       </a>

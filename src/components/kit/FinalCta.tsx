@@ -1,50 +1,53 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { TEMPLATES } from "@/lib/templates";
 
+/** The closing argument: one enormous serif line on paper, proof underneath,
+ *  two doors out. No color flood — the type does the shouting. */
 export function FinalCta() {
   return (
-    <section id="pricing" className="scroll-mt-20 bg-primary text-[#201f1b]">
-      <div className="mx-auto grid max-w-shell lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="px-6 py-16 sm:px-10 lg:border-r lg:border-[#201f1b] lg:px-16 lg:py-24 xl:px-20">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em]">Free to start, yours to keep</p>
-          <h2 className="mt-7 max-w-[12ch] font-serif text-[clamp(3.2rem,6vw,6.5rem)] font-normal leading-[0.9] tracking-[-0.05em]">
-            Begin with clarity. Keep it as you grow.
-          </h2>
+    <section aria-label="Start building" className="relative overflow-hidden border-b border-border">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-10 left-0 select-none whitespace-nowrap font-serif text-[11rem] leading-none text-foreground/[0.05] sm:text-[16rem]"
+      >
+        c — c — c
+      </div>
+      <div className="relative mx-auto max-w-shell px-6 py-20 text-center sm:px-10 lg:px-16 lg:py-28 xl:px-20">
+        <p data-scroll-reveal className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+          No code · No canvas · No kidding
+        </p>
+        <h2
+          data-scroll-reveal
+          className="mx-auto mt-6 max-w-[16ch] font-serif text-[clamp(3rem,9vw,8.5rem)] font-normal leading-[0.9] tracking-[-0.05em]"
+        >
+          Your website is <span className="italic text-primary-strong">waiting.</span>
+        </h2>
+        <p data-scroll-reveal className="mx-auto mt-6 max-w-xl text-base leading-7 text-[#5e5952] sm:text-lg sm:leading-8">
+          Pick one of {TEMPLATES.length} finished sites, fill its fields, and
+          publish your first page today. Starting is free.
+        </p>
+        <div data-scroll-reveal className="mt-9 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/new"
+            className="group inline-flex h-14 items-center gap-3 rounded-full bg-foreground px-8 text-[15px] font-medium text-background transition hover:bg-primary"
+          >
+            Start building
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+          <Link
+            href="/templates"
+            className="inline-flex h-14 items-center rounded-full border border-border px-8 text-[15px] font-medium transition hover:bg-foreground hover:text-background"
+          >
+            Browse the shelf
+          </Link>
         </div>
-        <div className="flex flex-col justify-between px-6 py-16 sm:px-10 lg:px-16 lg:py-24">
-          <div>
-            <p className="text-lg leading-8">
-              Starting is free. Premium sites, custom domains and analytics
-              unlock when you need them — no card required to explore today.
-            </p>
-            <div className="mt-8 grid grid-cols-3 border-y border-[#201f1b]/40 py-5">
-              {[
-                ["01", "Free start"],
-                ["02", "Live preview"],
-                ["03", "No code"],
-              ].map(([number, label]) => (
-                <div key={number}>
-                  <p className="font-mono text-[8px] tracking-[0.15em]">{number}</p>
-                  <p className="mt-1.5 text-xs sm:text-sm">{label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="mt-12 flex flex-wrap gap-3">
-            <Link
-              href="/new"
-              className="group inline-flex h-14 w-fit items-center gap-4 rounded-full bg-[#201f1b] px-7 text-sm font-medium text-[#f4efe4] transition hover:bg-[#f4efe4] hover:text-[#201f1b]"
-            >
-              Start building
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-            <Link
-              href="/templates"
-              className="inline-flex h-14 w-fit items-center rounded-full border border-[#201f1b]/40 px-7 text-sm font-medium transition hover:bg-[#201f1b] hover:text-[#f4efe4]"
-            >
-              Browse sites
-            </Link>
-          </div>
+        <div data-scroll-reveal className="mx-auto mt-12 flex max-w-xl flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-border/40 pt-5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted">
+          <span>Free start</span>
+          <span className="h-1 w-1 rounded-full bg-primary" aria-hidden="true" />
+          <span>Live preview</span>
+          <span className="h-1 w-1 rounded-full bg-primary" aria-hidden="true" />
+          <span>Publish in minutes</span>
         </div>
       </div>
     </section>

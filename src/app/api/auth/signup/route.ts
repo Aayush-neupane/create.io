@@ -17,7 +17,8 @@ export async function POST(req: Request) {
     const existing = await findUserByEmail(data.email);
     if (existing) return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 });
     const id = newId("u_");
-    await createSession(id);
+    // Persist the user BEFORE issuing the session: otherwise a store failure
+    // leaves a cookie for an account that doesn't exist (signed in, nothing loads).
     const user = await saveUser({
       id,
       name: data.name,
@@ -25,6 +26,7 @@ export async function POST(req: Request) {
       passwordHash: await hashPassword(data.password),
       createdAt: new Date().toISOString(),
     });
+    await createSession(user.id);
     return NextResponse.json({ id: user.id, name: user.name, email: user.email });
   } catch (e) {
     console.error("[api:api/auth/signup/route.ts]", e);

@@ -51,6 +51,7 @@ export default function SignupPage() {
       title="Your first site starts here."
       sub="Create your account and turn a finished template into your live website in minutes."
       foot="Free start · No card required · Live preview"
+      flip
     >
       <form onSubmit={submit} className="space-y-4">
         <div>

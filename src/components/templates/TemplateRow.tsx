@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { TemplateDefinition } from "@/types/builder";
-import { HeroCrop } from "./HeroCrop";
+import { HeroCrop, LazyMount } from "./HeroCrop";
 
 /** One shelf row: a readable live crop beside big serif details, divided by
  *  full-bleed hairlines. Sides alternate for rhythm. Shared by the home
@@ -23,7 +23,9 @@ export function TemplateRow({
         }`}
       >
         <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.02]">
-          <HeroCrop templateId={t.id} />
+          <LazyMount>
+            <HeroCrop templateId={t.id} />
+          </LazyMount>
         </div>
         <Link href={`/templates/${t.id}`} aria-label={`Open ${t.name}`} className="absolute inset-0" />
         <span className="absolute left-4 top-4 rounded-full border border-border/40 bg-background/90 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.14em] text-muted">

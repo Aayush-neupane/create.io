@@ -1,12 +1,47 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import type { WebsiteConfig } from "@/types/builder";
 import { TemplateRenderer } from "./Renderer";
 import { getTemplate } from "@/lib/templates";
 import { baseTheme, buildConfigFromTemplate } from "@/lib/website-defaults";
 
 const STAGE_W = 1280;
+
+/** Defers heavy live renders until they approach the viewport. The parent
+ *  must fix the visible size so the placeholder reserves the same space and
+ *  nothing shifts when the real render mounts. */
+export function LazyMount({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "240px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="h-full w-full">
+      {inView ? children : <div className="h-full w-full animate-pulse bg-surface-2" aria-hidden="true" />}
+    </div>
+  );
+}
 
 /** Scaled top-crop of an arbitrary site config — the readable preview
  *  primitive. The parent fixes the visible height. */

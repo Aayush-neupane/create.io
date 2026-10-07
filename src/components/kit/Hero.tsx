@@ -3,7 +3,7 @@ import { ArrowDownRight, ArrowRight } from "lucide-react";
 import { site } from "@/config/site";
 import { TEMPLATES } from "@/lib/templates";
 import { SECTION_META } from "@/components/templates/Renderer";
-import { HeroCrop } from "@/components/templates/HeroCrop";
+import { HeroCrop, LazyMount } from "@/components/templates/HeroCrop";
 
 /** Full-width masthead: one giant serif claim, the proof (stats), then the
  *  whole shelf as a swipeable strip of live crops. No split hero, no mock. */
@@ -89,7 +89,9 @@ export function Hero() {
                 </span>
               </div>
               <div className="h-52 overflow-hidden sm:h-60">
-                <HeroCrop templateId={t.id} />
+                <LazyMount>
+                  <HeroCrop templateId={t.id} />
+                </LazyMount>
               </div>
               <div className="flex items-center justify-between border-t border-border/40 px-4 py-2.5">
                 <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted">

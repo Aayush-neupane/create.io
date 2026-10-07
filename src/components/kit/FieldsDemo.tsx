@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { TEMPLATES, getTemplate } from "@/lib/templates";
 import { baseTheme, buildConfigFromTemplate } from "@/lib/website-defaults";
-import { SiteCrop } from "@/components/templates/HeroCrop";
+import { SiteCrop, LazyMount } from "@/components/templates/HeroCrop";
 
 const DEMO_IDS = ["minimal-portfolio", "restaurant", "agency"];
 
@@ -138,7 +138,9 @@ export function FieldsDemo() {
                   </span>
                 </div>
                 <div className="h-[26rem] sm:h-[30rem]">
-                  <SiteCrop config={config} templateId={tpl.id} />
+                  <LazyMount>
+                    <SiteCrop config={config} templateId={tpl.id} />
+                  </LazyMount>
                 </div>
               </div>
               <p className="mt-4 text-center font-mono text-[8px] uppercase tracking-[0.14em] text-[#777168]">

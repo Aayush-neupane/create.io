@@ -73,7 +73,7 @@ export default async function LandingPage() {
     <div className="marketing-theme min-h-screen">
       <a
         href="#main-content"
-        className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background transition focus:translate-y-0"
+        className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background transition focus-visible:translate-y-0"
       >
         Skip to content
       </a>

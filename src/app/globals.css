@@ -517,3 +517,30 @@ html, body { overflow-x: clip; }
   .reveal, .kit-reveal, .kit-float, .kit-dash, .kit-scan-beam { animation: none !important; }
   .kit-scroll[data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
 }
+
+/* ─── legal prose: auto-numbered serif rows, reference style ─── */
+.legal-doc { counter-reset: legal; }
+.legal-doc h2 {
+  counter-increment: legal;
+  border-top: 1px solid var(--kit-border);
+  margin-top: 2.5rem;
+  padding-top: 1.75rem;
+  font-family: var(--font-serif), "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  font-size: 1.75rem;
+  color: var(--kit-foreground);
+}
+.legal-doc h2:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+.legal-doc h2::before {
+  content: "0" counter(legal);
+  display: block;
+  margin-bottom: 0.9rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--kit-primary-strong);
+}
+.legal-doc p + p { margin-top: 1rem; }
+.legal-doc ul { margin-top: 1rem; }

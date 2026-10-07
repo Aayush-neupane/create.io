@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { SiteNavbar, Footer } from "@/components/layout/chrome";
+import { OrbitMark, OrbitRings, TrackLine } from "@/components/layout/Orbit";
 import { TEMPLATES } from "@/lib/templates";
 
 export const metadata: Metadata = {
@@ -17,9 +18,11 @@ export default function NotFound() {
   return (
     <div className="marketing-theme flex min-h-screen flex-col bg-background text-foreground">
       <SiteNavbar />
-      <main className="mx-auto grid w-full max-w-shell flex-1 content-center px-6 py-20 text-center sm:px-10">
-        <p className="mx-auto inline-flex w-fit items-center gap-3 rounded-full border border-border px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-          <span className="grid h-6 w-6 place-items-center rounded-full bg-primary font-bold text-white">!</span>
+      <main className="relative mx-auto grid w-full max-w-shell flex-1 content-center overflow-hidden px-6 py-20 text-center sm:px-10">
+        <OrbitRings />
+        <div className="relative grid justify-items-center">
+        <OrbitMark size={72} />
+        <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
           404 — No such shelf
         </p>
         <h1 className="mx-auto mt-8 max-w-[14ch] font-serif text-[clamp(3rem,9vw,8rem)] font-normal leading-[0.9] tracking-[-0.05em]">
@@ -29,6 +32,9 @@ export default function NotFound() {
           This page was never published — or it moved while the ink was wet.
           The finished sites are all still on the shelf.
         </p>
+        <div className="mx-auto mt-8 w-full max-w-xs">
+          <TrackLine />
+        </div>
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/"
@@ -65,6 +71,7 @@ export default function NotFound() {
               </span>
             </Link>
           ))}
+        </div>
         </div>
       </main>
       <Footer />

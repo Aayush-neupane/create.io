@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { OrbitMark, OrbitRings, TrackLine } from "@/components/layout/Orbit";
 
 /** Full-screen offline takeover. Appears only while the browser reports no
  *  connection and lifts itself the moment it is back — nothing to dismiss,
@@ -26,11 +27,13 @@ export function OfflineGate() {
       role="alertdialog"
       aria-modal="true"
       aria-label="You are offline"
-      className="fixed inset-0 z-[200] grid place-items-center bg-background px-6 text-foreground"
+      className="fixed inset-0 z-[200] grid place-items-center overflow-hidden bg-background px-6 text-foreground"
     >
       <div className="marketing-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true" />
+      <OrbitRings />
       <div className="relative grid max-w-md justify-items-center text-center">
-        <p className="inline-flex items-center gap-3 rounded-full border border-border bg-surface px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+        <OrbitMark size={72} />
+        <p className="mt-6 inline-flex items-center gap-3 rounded-full border border-border bg-surface px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
           <span className="h-2 w-2 animate-pulse rounded-full bg-primary" aria-hidden="true" />
           Offline — signal lost
         </p>
@@ -41,9 +44,12 @@ export function OfflineGate() {
           Your drafts and guest edits stay safe in this browser. Reconnect and
           everything picks up where it left off.
         </p>
+        <div className="mt-7 w-full max-w-xs">
+          <TrackLine />
+        </div>
         <button
           onClick={() => window.location.reload()}
-          className="mt-8 inline-flex h-13 items-center rounded-full bg-foreground px-7 text-sm font-medium text-background transition hover:bg-primary"
+          className="mt-7 inline-flex h-13 items-center rounded-full bg-foreground px-7 text-sm font-medium text-background transition hover:bg-primary"
         >
           Try again
         </button>

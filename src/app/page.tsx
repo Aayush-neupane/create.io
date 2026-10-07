@@ -4,6 +4,7 @@ import { Navbar, Footer } from "@/components/layout/chrome";
 import { Reveal } from "@/components/layout/Reveal";
 import { LiveCard } from "@/components/templates/LiveCard";
 import { Hero } from "@/components/kit/Hero";
+import { Ticker } from "@/components/kit/Ticker";
 import { Capabilities } from "@/components/kit/Capabilities";
 import { LibraryPreview } from "@/components/kit/LibraryPreview";
 import { UseCases } from "@/components/kit/UseCases";
@@ -148,6 +149,7 @@ export default async function LandingPage() {
       <Reveal>
         <main id="main-content" className="flex-1">
           <Hero />
+          <Ticker />
           <Capabilities />
           <LibraryPreview />
           <LibraryGrid />

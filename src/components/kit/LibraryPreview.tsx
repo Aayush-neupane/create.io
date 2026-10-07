@@ -2,13 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { TEMPLATES } from "@/lib/templates";
 
-const views = [
-  ["01", "Portfolio"],
-  ["02", "Business"],
-  ["03", "Restaurant"],
-  ["04", "Agency"],
-  ["05", "SaaS"],
-];
+const SHELF_IDS = ["minimal-portfolio", "restaurant", "agency", "saas-starter", "creative-portfolio"];
 
 const route = [
   ["01", "Pick a finished site", "Start from the site closest to what you need."],
@@ -17,7 +11,19 @@ const route = [
 ];
 
 export function LibraryPreview() {
-  const featured = TEMPLATES.slice(0, 3);
+  const shelf = SHELF_IDS.map((id) => TEMPLATES.find((t) => t.id === id)).filter(
+    (t): t is (typeof TEMPLATES)[number] => Boolean(t),
+  );
+  const free = TEMPLATES.filter((t) => t.tier !== "premium").length;
+  const premium = TEMPLATES.length - free;
+  const sections = TEMPLATES.reduce((n, t) => n + t.sections.length, 0);
+  const signals: [string, number][] = [
+    ["Free sites", free],
+    ["Premium sites", premium],
+    ["Finished sections", sections],
+  ];
+  const max = Math.max(...signals.map(([, n]) => n));
+
   return (
     <section id="library" className="scroll-mt-20 border-b border-border">
       <div className="mx-auto max-w-shell">
@@ -45,7 +51,7 @@ export function LibraryPreview() {
                 <div>
                   <p className="text-sm font-medium">Template library</p>
                   <p className="font-mono text-[8px] uppercase tracking-[0.15em] text-[#aaa398]">
-                    {TEMPLATES.length} finished sites · live render
+                    {TEMPLATES.length} finished sites · live count
                   </p>
                 </div>
               </div>
@@ -61,18 +67,19 @@ export function LibraryPreview() {
 
             <div className="grid lg:grid-cols-[15rem_1fr]">
               <aside className="border-b border-white/20 bg-[#24231f] p-4 lg:border-b-0 lg:border-r lg:p-5">
-                <p className="px-3 font-mono text-[8px] uppercase tracking-[0.16em] text-[#858176]">Library index</p>
-                <nav aria-label="Template categories" className="mt-4 flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
-                  {views.map(([number, label], i) => (
-                    <div
-                      key={number}
-                      className={`flex shrink-0 items-center gap-3 px-3 py-2.5 text-xs ${i === 0 ? "bg-background text-foreground" : "text-[#aaa398]"}`}
+                <p className="px-3 font-mono text-[8px] uppercase tracking-[0.16em] text-[#858176]">Shelf index</p>
+                <nav aria-label="Featured templates" className="mt-4 flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
+                  {shelf.map((t, i) => (
+                    <Link
+                      key={t.id}
+                      href={`/templates/${t.id}`}
+                      className={`flex shrink-0 items-center gap-3 px-3 py-2.5 text-xs transition-colors ${i === 0 ? "bg-background text-foreground" : "text-[#aaa398] hover:text-white"}`}
                     >
                       <span className={`font-mono text-[8px] ${i === 0 ? "text-primary-strong" : "text-[#777168]"}`}>
-                        {number}
+                        {String(i + 1).padStart(2, "0")}
                       </span>
-                      {label}
-                    </div>
+                      {t.name}
+                    </Link>
                   ))}
                 </nav>
                 <div className="mt-8 hidden border-t border-white/15 px-3 pt-5 lg:block">
@@ -89,72 +96,48 @@ export function LibraryPreview() {
                 <div className="flex flex-wrap items-end justify-between gap-5 border-b border-border pb-6">
                   <div>
                     <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-muted">
-                      Library / featured sites
+                      Library / shelf signals
                     </p>
                     <h3 className="mt-3 font-serif text-3xl tracking-[-0.04em] sm:text-4xl">
-                      Three finished starting points
+                      Counted, not claimed.
                     </h3>
                   </div>
                   <p className="max-w-[18rem] text-xs leading-5 text-muted">
-                    Each with its own sections, palette, type and copy.
+                    Real numbers from the shelf, recomputed on every visit.
                   </p>
                 </div>
 
                 <div className="grid gap-px bg-border lg:grid-cols-[1.08fr_0.92fr]">
                   <div className="bg-[#e8dfcf] p-5 sm:p-7">
                     <div className="flex items-center justify-between">
-                      <p className="font-mono text-[8px] uppercase tracking-[0.15em] text-muted">Featured sites</p>
+                      <p className="font-mono text-[8px] uppercase tracking-[0.15em] text-muted">What&apos;s on the shelf</p>
                       <span className="font-mono text-[8px] text-[#777168]">Live data</span>
                     </div>
-                    <div className="mt-5 space-y-3">
-                      {featured.map((t) => (
+                    <div className="mt-6 space-y-5">
+                      {signals.map(([label, n]) => (
+                        <div key={label}>
+                          <div className="flex items-baseline justify-between gap-4">
+                            <span className="text-sm font-medium">{label}</span>
+                            <span className="font-serif text-3xl tabular-nums">{n}</span>
+                          </div>
+                          <div className="mt-2 h-1.5 bg-border/15">
+                            <div className="h-full bg-secondary" style={{ width: `${Math.max(6, Math.round((n / max) * 100))}%` }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {shelf.slice(0, 3).map((t) => (
                         <Link
                           key={t.id}
                           href={`/templates/${t.id}`}
-                          className="flex items-center gap-3 border border-border/40 bg-surface px-4 py-3 transition hover:-translate-y-0.5"
+                          className="flex items-center gap-2 border border-border/40 bg-surface px-3 py-1.5 text-xs font-medium transition hover:-translate-y-0.5"
                         >
-                          <span
-                            className="grid h-9 w-9 flex-none place-items-center rounded-[10px] text-sm font-bold text-white"
-                            style={{ background: t.theme.primary }}
-                            aria-hidden
-                          >
-                            {t.name.slice(0, 1)}
-                          </span>
-                          <span className="min-w-0 flex-1">
-                            <span className="block truncate text-sm font-semibold">{t.name}</span>
-                            <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted">
-                              {t.category} · {t.sections.length} sections
-                            </span>
-                          </span>
-                          <span className="flex flex-none gap-1" aria-hidden>
-                            {[t.theme.primary, t.theme.accent].map((c, i) => (
-                              <i key={i} className="h-4 w-4 rounded-full border border-border/40" style={{ background: c }} />
-                            ))}
-                          </span>
+                          <span className="h-3 w-3 rounded-full" style={{ background: t.theme.primary }} aria-hidden />
+                          {t.name}
                         </Link>
                       ))}
                     </div>
-                    <svg viewBox="0 0 520 120" className="mt-5 w-full" role="img" aria-label="Section graph">
-                      <g fill="none" stroke="#292721" strokeOpacity=".45" strokeWidth="1.4">
-                        <path d="M65 60H168L242 30H350L430 60" />
-                        <path d="M168 60 245 95H355L430 60" />
-                        <path d="M242 30 245 95M350 30 355 95" />
-                      </g>
-                      <g stroke="#292721" strokeWidth="1.4">
-                        <circle cx="65" cy="60" r="18" fill="#F5F0E5" />
-                        <circle cx="168" cy="60" r="24" fill="#D75C3F" />
-                        <circle cx="242" cy="30" r="14" fill="#F5F0E5" />
-                        <circle cx="245" cy="95" r="16" fill="#809177" />
-                        <circle cx="430" cy="60" r="26" fill="#292721" />
-                      </g>
-                      <g fontFamily="ui-monospace, monospace" fontSize="8" textAnchor="middle" fill="#292721">
-                        <text x="65" y="86">NAV</text>
-                        <text x="168" y="64">HERO</text>
-                      </g>
-                      <text x="430" y="64" fill="#F5F0E5" fontFamily="ui-monospace, monospace" fontSize="8" textAnchor="middle">
-                        CTA
-                      </text>
-                    </svg>
                   </div>
 
                   <div className="bg-surface p-5 sm:p-7">

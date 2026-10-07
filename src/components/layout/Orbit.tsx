@@ -36,6 +36,23 @@ export function OrbitMark({ size = 80 }: { size?: number }) {
   );
 }
 
+/** A self-aligning cluster: the rings wrap the mark in one flow box, so the
+ *  composition can never drift apart at any viewport size. */
+export function OrbitCluster({ box = 288, mark = 80 }: { box?: number; mark?: number }) {
+  return (
+    <span className="relative grid place-items-center" style={{ width: box, height: box }} aria-hidden="true">
+      <span className="loader-orbit-spin absolute inset-0 rounded-full border border-border/25">
+        <span className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-primary" />
+      </span>
+      <span
+        className="absolute rounded-full border border-border/15"
+        style={{ inset: Math.round(box * 0.16) }}
+      />
+      <OrbitMark size={mark} />
+    </span>
+  );
+}
+
 /** A journey in one row: origin dot, tracked line, destination node. */
 export function TrackLine({ animate = true }: { animate?: boolean }) {
   return (

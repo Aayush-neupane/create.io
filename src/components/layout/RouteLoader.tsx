@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { TEMPLATES } from "@/lib/templates";
-import { OrbitMark, OrbitRings, TrackLine } from "@/components/layout/Orbit";
+import { OrbitCluster, TrackLine } from "@/components/layout/Orbit";
 
 const STEPS = ["Waking the studio", "Pulling the shelf", "Hanging the sites"];
 
@@ -38,11 +38,10 @@ export function RouteLoader() {
       aria-label="Preparing your shelf"
     >
       <div className="marketing-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true" />
-      <OrbitRings />
 
       <div className="route-loader-in relative grid w-full max-w-sm justify-items-center text-center">
-        <OrbitMark />
-        <p className="mt-7 font-mono text-[9px] uppercase tracking-[0.2em] text-primary-strong">
+        <OrbitCluster />
+        <p className="mt-8 font-mono text-[9px] uppercase tracking-[0.2em] text-primary-strong">
           create.io / Working
         </p>
         <p className="mt-3 min-h-[2.6em] font-serif text-3xl tracking-[-0.03em] sm:text-4xl">

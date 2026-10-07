@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { SiteNavbar, Footer } from "@/components/layout/chrome";
-import { OrbitMark, OrbitRings, TrackLine } from "@/components/layout/Orbit";
+import { OrbitCluster, TrackLine } from "@/components/layout/Orbit";
 import { TEMPLATES } from "@/lib/templates";
 
 export const metadata: Metadata = {
@@ -19,10 +19,9 @@ export default function NotFound() {
     <div className="marketing-theme flex min-h-screen flex-col bg-background text-foreground">
       <SiteNavbar />
       <main className="relative mx-auto grid w-full max-w-shell flex-1 content-center overflow-hidden px-6 py-20 text-center sm:px-10">
-        <OrbitRings />
         <div className="relative grid justify-items-center">
-        <OrbitMark size={72} />
-        <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+        <OrbitCluster box={232} mark={68} />
+        <p className="mt-7 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
           404 — No such shelf
         </p>
         <h1 className="mx-auto mt-8 max-w-[14ch] font-serif text-[clamp(3rem,9vw,8rem)] font-normal leading-[0.9] tracking-[-0.05em]">

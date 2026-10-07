@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { OrbitMark, OrbitRings, TrackLine } from "@/components/layout/Orbit";
+import { OrbitCluster, TrackLine } from "@/components/layout/Orbit";
 
 /** Full-screen offline takeover. Appears only while the browser reports no
  *  connection and lifts itself the moment it is back — nothing to dismiss,
@@ -30,10 +30,9 @@ export function OfflineGate() {
       className="fixed inset-0 z-[200] grid place-items-center overflow-hidden bg-background px-6 text-foreground"
     >
       <div className="marketing-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true" />
-      <OrbitRings />
       <div className="relative grid max-w-md justify-items-center text-center">
-        <OrbitMark size={72} />
-        <p className="mt-6 inline-flex items-center gap-3 rounded-full border border-border bg-surface px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+        <OrbitCluster box={232} mark={68} />
+        <p className="mt-7 inline-flex items-center gap-3 rounded-full border border-border bg-surface px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
           <span className="h-2 w-2 animate-pulse rounded-full bg-primary" aria-hidden="true" />
           Offline — signal lost
         </p>

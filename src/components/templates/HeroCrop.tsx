@@ -30,15 +30,13 @@ function useStripCropIds(root: RefObject<HTMLDivElement | null>, deps: unknown[]
  *  nothing shifts when the real render mounts. */
 export function LazyMount({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
+  const [inView, setInView] = useState<boolean>(
+    () => typeof IntersectionObserver === "undefined",
+  );
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === "undefined") {
-      setInView(true);
-      return;
-    }
+    if (!el || typeof IntersectionObserver === "undefined") return;
     const io = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {

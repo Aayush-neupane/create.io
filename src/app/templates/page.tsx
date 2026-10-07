@@ -55,10 +55,10 @@ export default function TemplatesPage() {
           <p className="mt-2.5 max-w-[520px] text-[15px] text-muted">
             Live renders — what you see is the actual template, components and copy included.
           </p>
-          <div className="mt-5 flex h-[46px] max-w-md items-center gap-2.5 rounded-[13px] border px-3.5 transition-colors focus-within:border-neutral-400 md:hidden" style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}>
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search sites…" aria-label="Search templates" className="w-full bg-transparent text-sm outline-none" />
+          <div className="mt-5 flex h-[46px] max-w-md items-center gap-2.5 rounded-full border border-border bg-surface px-3.5 transition-colors focus-within:border-primary md:hidden">
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search sites…" aria-label="Search templates" className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted/70" />
             {q && (
-              <button onClick={() => setQ("")} aria-label="Clear search" className="grid h-6 w-6 flex-none place-items-center rounded-full text-sm transition-colors hover:bg-black/[0.06]" style={{ color: "var(--ink-3)" }}>
+              <button onClick={() => setQ("")} aria-label="Clear search" className="grid h-6 w-6 flex-none place-items-center rounded-full text-sm text-muted transition-colors hover:bg-foreground/10">
                 ✕
               </button>
             )}
@@ -68,8 +68,7 @@ export default function TemplatesPage() {
               <button
                 key={c}
                 onClick={() => setCat(c)}
-                className="flex-none rounded-full border px-3.5 py-1.5 text-[13px]"
-                style={cat === c ? { background: "var(--ink)", color: "#fff", borderColor: "var(--ink)" } : { borderColor: "var(--line-2)", background: "var(--surface)" }}
+                className={`flex-none rounded-full border px-3.5 py-1.5 text-[13px] transition-colors ${cat === c ? "border-foreground bg-foreground text-background" : "border-border bg-surface"}`}
               >
                 {c}
               </button>
@@ -81,52 +80,49 @@ export default function TemplatesPage() {
         {/* Sidebar */}
         <aside className="hidden w-[236px] shrink-0 md:block">
           <div className="sticky grid gap-2 overflow-auto" style={{ top: 88, maxHeight: "calc(100vh - 112px)", paddingBottom: 20 }}>
-            <div className="mb-2 flex h-[46px] items-center gap-2.5 rounded-[13px] border px-3.5 transition-colors focus-within:border-neutral-400" style={{ borderColor: "var(--line-2)", background: "var(--surface)", color: "var(--ink-3)" }}>
+            <div className="mb-2 flex h-[46px] items-center gap-2.5 rounded-full border border-border bg-surface px-3.5 text-muted transition-colors focus-within:border-primary">
               <span aria-hidden>⌕</span>
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search sites…"
                 aria-label="Search templates"
-                className="w-full bg-transparent text-sm outline-none"
-                style={{ color: "var(--ink)" }}
+                className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted/70"
               />
               {q && (
-                <button onClick={() => setQ("")} aria-label="Clear search" className="grid h-6 w-6 flex-none place-items-center rounded-full text-sm transition-colors hover:bg-black/[0.06]" style={{ color: "var(--ink-3)" }}>
+                <button onClick={() => setQ("")} aria-label="Clear search" className="grid h-6 w-6 flex-none place-items-center rounded-full text-sm transition-colors hover:bg-foreground/10">
                   ✕
                 </button>
               )}
             </div>
-            <h4 className="mono-meta mb-1 ml-2.5 mt-2 text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.14em", color: "var(--ink-3)" }}>Kind</h4>
+            <h4 className="mb-1 ml-2.5 mt-2 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Kind</h4>
             {cats.map((c) => (
               <button
                 key={c}
                 onClick={() => setCat(c)}
                 aria-current={cat === c ? "page" : undefined}
-                className="flex items-center gap-2.5 rounded-[10px] px-2.5 py-2 text-left text-sm transition-colors hover:bg-black/[0.045]"
-                style={cat === c ? { background: "var(--accent-soft)", color: "var(--accent-text)", fontWeight: 600 } : { color: "var(--ink-2)" }}
+                className={`flex items-center gap-2.5 rounded-full px-2.5 py-2 text-left text-sm transition-colors ${cat === c ? "bg-foreground font-semibold text-background" : "text-muted hover:bg-foreground/5"}`}
               >
                 {c === "All" ? (
-                  <i className="h-2 w-2 rounded-full" style={{ background: "var(--ink-3)" }} />
+                  <i className="h-2 w-2 rounded-full bg-muted" />
                 ) : (
-                  <i className="h-2 w-2 rounded-full" style={{ background: KIND_DOTS[c] ?? "var(--accent)" }} />
+                  <i className="h-2 w-2 rounded-full" style={{ background: KIND_DOTS[c] ?? "var(--kit-primary)" }} />
                 )}
                 {c}
-                <span className="mono-meta ml-auto text-xs" style={{ color: cat === c ? "inherit" : "var(--ink-3)" }}>{counts[c] ?? 0}</span>
+                <span className="ml-auto font-mono text-xs opacity-70">{counts[c] ?? 0}</span>
               </button>
             ))}
-            <h4 className="mono-meta mb-1 ml-2.5 mt-4 text-[11px] font-semibold uppercase" style={{ letterSpacing: "0.14em", color: "var(--ink-3)" }}>Plan</h4>
+            <h4 className="mb-1 ml-2.5 mt-4 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Plan</h4>
             {(["All", "Free", "Premium"] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => setTier(p)}
-                className="rounded-[10px] px-2.5 py-2 text-left text-sm transition-colors hover:bg-black/[0.045]"
-                style={tier === p ? { background: "var(--accent-soft)", color: "var(--accent-text)", fontWeight: 600 } : { color: "var(--ink-2)" }}
+                className={`rounded-full px-2.5 py-2 text-left text-sm transition-colors ${tier === p ? "bg-foreground font-semibold text-background" : "text-muted hover:bg-foreground/5"}`}
               >
                 {p === "All" ? "All plans" : p}
               </button>
             ))}
-            <p className="px-2.5 pt-3 text-xs leading-relaxed" style={{ color: "var(--ink-3)" }}>
+            <p className="px-2.5 pt-3 text-xs leading-relaxed text-muted">
               Whole sites with their own components and copy — never a recolor.
             </p>
           </div>
@@ -134,7 +130,7 @@ export default function TemplatesPage() {
 
         {/* Grid */}
         <div className="min-w-0 flex-1">
-          <p aria-live="polite" className="mono-meta mb-4 hidden text-xs md:block" style={{ color: "var(--ink-3)" }}>
+          <p aria-live="polite" className="mb-4 hidden font-mono text-xs text-muted md:block">
             {list.length === 1 ? "1 site" : `${list.length} sites`}{q && <> for “{q}”</>}
           </p>
           <div className="grid gap-[18px] sm:grid-cols-2">
@@ -144,22 +140,22 @@ export default function TemplatesPage() {
                   <LiveCard templateId={t.id} />
                   <Link href={`/templates/${t.id}`} aria-label={`Open ${t.name}`} className="absolute inset-0" />
                   <span className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center opacity-0 transition-all duration-300 group-hover:opacity-100">
-                    <span className="rounded-full bg-white/95 px-4 py-1.5 text-[13px] font-semibold text-neutral-900 shadow-lg">Open full preview →</span>
+                    <span className="rounded-full bg-foreground/95 px-4 py-1.5 text-[13px] font-semibold text-background shadow-lg">Open full preview →</span>
                   </span>
                 </div>
                 <div className="flex items-center gap-3 px-[18px] py-[13px]">
                   <div className="min-w-0 flex-1">
                     <span className="flex items-center gap-2">
-                      <span className="block truncate text-[14.5px] font-semibold" style={{ letterSpacing: "-0.015em" }}>{t.name}</span>
+                      <span className="block truncate font-serif text-lg tracking-[-0.02em]">{t.name}</span>
                       {t.tier === "premium" && (
-                        <span className="mono-meta flex-none rounded-full px-2 py-0.5 text-[10px] font-bold uppercase" style={{ background: "var(--accent-soft)", color: "var(--accent-text)", letterSpacing: "0.08em" }}>Pro</span>
+                        <span className="flex-none rounded-full border border-primary/50 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-primary-strong">Pro</span>
                       )}
                     </span>
-                    <span className="mono-meta text-[10.5px] uppercase" style={{ letterSpacing: "0.08em", color: "var(--ink-3)" }}>{t.category} · {t.sections.length} sections</span>
+                    <span className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-muted">{t.category} · {t.sections.length} sections</span>
                   </div>
                   <span className="flex flex-none gap-1" aria-hidden>
                     {[t.theme.primary, t.theme.accent, t.theme.surface].map((c, i) => (
-                      <i key={i} className="h-4 w-4 rounded-full border" style={{ background: c, borderColor: "var(--line-2)" }} />
+                      <i key={i} className="h-4 w-4 rounded-full border border-border/40" style={{ background: c }} />
                     ))}
                   </span>
                 </div>
@@ -175,9 +171,9 @@ export default function TemplatesPage() {
             ))}
           </div>
           {list.length === 0 && (
-            <div className="grid justify-items-center gap-2.5 rounded-[20px] border border-dashed px-5 py-[90px] text-center" style={{ borderColor: "var(--line-2)", color: "var(--ink-2)" }}>
-              <strong className="text-[17px]" style={{ color: "var(--ink)" }}>Nothing struck</strong>
-              <p className="text-sm">Try a different search or kind.</p>
+            <div className="kit-panel grid justify-items-center gap-2.5 px-5 py-[90px] text-center" style={{ borderStyle: "dashed" }}>
+              <strong className="font-serif text-2xl">Nothing struck</strong>
+              <p className="text-sm text-muted">Try a different search or kind.</p>
             </div>
           )}
         </div>

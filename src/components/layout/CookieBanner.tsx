@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const KEY = "createio-cookie-consent";
 
@@ -9,15 +9,13 @@ const KEY = "createio-cookie-consent";
  *  choice persists; the only cookie we set (create_io_session) is strictly
  *  necessary for login — see /cookies. */
 export function CookieBanner() {
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
+  const [show, setShow] = useState<boolean>(() => {
     try {
-      if (!window.localStorage.getItem(KEY)) setShow(true);
+      return !window.localStorage.getItem(KEY);
     } catch {
-      setShow(true);
+      return true;
     }
-  }, []);
+  });
 
   if (!show) return null;
 
@@ -38,28 +36,25 @@ export function CookieBanner() {
       className="fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:px-6 sm:pb-6"
     >
       <div
-        className="mx-auto flex max-w-3xl flex-col gap-4 rounded-2xl border bg-white/95 p-5 shadow-2xl backdrop-blur sm:flex-row sm:items-center sm:gap-6"
-        style={{ borderColor: "var(--line-2)" }}
+        className="kit-panel mx-auto flex max-w-3xl flex-col gap-4 p-5 shadow-2xl sm:flex-row sm:items-center sm:gap-6"
       >
-        <p className="text-sm leading-relaxed" style={{ color: "var(--ink-2)" }}>
-          <strong style={{ color: "var(--ink)" }}>A quick word on cookies.</strong> We use
+        <p className="text-sm leading-relaxed text-muted">
+          <strong className="text-foreground">A quick word on cookies.</strong> We use
           one strictly-necessary cookie to keep you logged in — no trackers, no ads.{" "}
-          <Link href="/cookies" className="font-medium underline underline-offset-4">
+          <Link href="/cookies" className="font-medium text-foreground underline underline-offset-4">
             Cookie policy
           </Link>
         </p>
         <div className="flex flex-none gap-2">
           <button
             onClick={() => pick("declined")}
-            className="btn-ghost flex-1 whitespace-nowrap sm:flex-none"
-            style={{ height: 40, fontSize: 13 }}
+            className="inline-flex h-10 flex-1 items-center justify-center whitespace-nowrap rounded-full border border-border px-5 text-[13px] font-medium transition hover:bg-foreground hover:text-background sm:flex-none"
           >
             Decline
           </button>
           <button
             onClick={() => pick("accepted")}
-            className="btn-primary flex-1 whitespace-nowrap sm:flex-none"
-            style={{ height: 40, fontSize: 13 }}
+            className="inline-flex h-10 flex-1 items-center justify-center whitespace-nowrap rounded-full bg-foreground px-5 text-[13px] font-medium text-background transition hover:bg-primary sm:flex-none"
           >
             Accept
           </button>

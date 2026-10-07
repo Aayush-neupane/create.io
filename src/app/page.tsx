@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Navbar, Footer } from "@/components/layout/chrome";
 import { Reveal } from "@/components/layout/Reveal";
-import { LiveCard } from "@/components/templates/LiveCard";
+import { TemplateRow } from "@/components/templates/TemplateRow";
 import { Hero } from "@/components/kit/Hero";
 import { Ticker } from "@/components/kit/Ticker";
 import { Capabilities } from "@/components/kit/Capabilities";
@@ -17,76 +17,9 @@ import { FinalCta } from "@/components/kit/FinalCta";
 import { currentUser } from "@/lib/auth";
 import { TEMPLATES } from "@/lib/templates";
 
-/** Five featured sites divided exactly like the other sections — bordered
- *  cells with dividers, alternating tints and mono numbers (cf. Capabilities).
- *  Four cells in two columns, closed by one full-width feature cell. */
+/** Five featured sites as full-bleed shelf rows — the same division as the
+ *  templates index, with alternating sides. Closes with the whole library. */
 const FEATURED_IDS = ["minimal-portfolio", "restaurant", "agency", "saas-starter", "creative-portfolio"];
-
-function FeaturedCell({
-  t,
-  n,
-  cls = "",
-  wide,
-}: {
-  t: (typeof TEMPLATES)[number];
-  n: string;
-  cls?: string;
-  wide?: boolean;
-}) {
-  return (
-    <article
-      data-scroll-reveal
-      className={`capability-card group relative overflow-hidden border-border p-6 transition-colors duration-500 hover:bg-[#ebe4d4] sm:p-10 lg:p-12 ${cls}`}
-    >
-      <span className="capability-accent absolute left-0 top-0 h-1 bg-primary" />
-      <div className="flex items-start justify-between">
-        <span className="font-mono text-[10px] tracking-[0.16em] text-muted">{n}</span>
-        <span className="font-mono text-[10px] tracking-[0.16em] text-muted">{t.category}</span>
-      </div>
-      <div className={wide ? "mt-10 grid items-end gap-8 lg:grid-cols-2" : "mt-10"}>
-        <div>
-          <h3 className="max-w-[17ch] font-serif text-3xl leading-[1.05] tracking-[-0.035em] sm:text-4xl">
-            {t.name}
-          </h3>
-          <p className="mt-5 max-w-lg text-sm leading-7 text-[#5e5952] sm:text-base">{t.description}</p>
-          <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2 border-t border-border/25 pt-5 text-xs text-muted">
-            {[
-              `${t.sections.length} sections`,
-              t.tier === "premium" ? "Premium site" : "Free site",
-              "Live render",
-            ].map((tag) => (
-              <li key={tag} className="flex items-start gap-2">
-                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
-                {tag}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-7 flex items-center gap-4">
-            <Link
-              href={`/templates/${t.id}`}
-              className="inline-flex h-12 items-center gap-2 rounded-full border border-border px-6 text-sm font-medium transition hover:bg-foreground hover:text-background"
-            >
-              Open live preview
-            </Link>
-            <Link
-              href={`/new?template=${t.id}`}
-              className="group/link inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:bg-primary"
-            >
-              Use template
-              <ArrowRight className="h-4 w-4 transition-transform group-hover/link:translate-x-1" />
-            </Link>
-          </p>
-        </div>
-        <div className="capability-visual" aria-hidden="true">
-          <div className="absolute inset-0">
-            <LiveCard templateId={t.id} />
-          </div>
-          <Link href={`/templates/${t.id}`} aria-label={`Open ${t.name}`} className="absolute inset-0" />
-        </div>
-      </div>
-    </article>
-  );
-}
 
 function LibraryGrid() {
   const featured = FEATURED_IDS.map((id) => TEMPLATES.find((t) => t.id === id)).filter(
@@ -106,30 +39,29 @@ function LibraryGrid() {
               Five finished starting points.
             </h2>
             <p className="mt-7 max-w-2xl text-base leading-7 text-[#5e5952] sm:text-lg sm:leading-8">
-              Live renders — what you see is the actual site. The full library
-              holds {TEMPLATES.length} of them.
+              Readable crops of real sites — the full library holds {TEMPLATES.length} of them.
             </p>
-            <Link
-              href="/templates"
-              className="group mt-8 inline-flex h-12 items-center gap-2 rounded-full border border-border px-6 text-sm font-medium transition hover:bg-foreground hover:text-background"
-            >
-              Browse all {TEMPLATES.length} sites
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2">
-          {featured.slice(0, 4).map((t, i) => (
-            <FeaturedCell
-              key={t.id}
-              t={t}
-              n={String(i + 1).padStart(2, "0")}
-              cls={["md:border-r", "border-t md:border-t-0", "border-t md:border-r", "border-t"][i]}
-            />
+        <div className="border-b border-border">
+          {featured.map((t, i) => (
+            <TemplateRow key={t.id} t={t} n={String(i + 1).padStart(2, "0")} flip={i % 2 === 1} />
           ))}
         </div>
-        {featured[4] ? <FeaturedCell t={featured[4]} n="05" cls="border-t md:col-span-2" wide /> : null}
+
+        <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-8 sm:px-10 lg:px-16 xl:px-20">
+          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+            {TEMPLATES.length - featured.length} more on the shelf
+          </p>
+          <Link
+            href="/templates"
+            className="group inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:bg-primary"
+          >
+            Browse all {TEMPLATES.length} sites
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
       </div>
     </section>
   );

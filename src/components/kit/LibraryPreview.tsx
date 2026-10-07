@@ -126,17 +126,9 @@ export function LibraryPreview() {
                         </div>
                       ))}
                     </div>
-                    <div className="mt-6 flex flex-wrap gap-2">
-                      {shelf.slice(0, 3).map((t) => (
-                        <Link
-                          key={t.id}
-                          href={`/templates/${t.id}`}
-                          className="flex items-center gap-2 border border-border/40 bg-surface px-3 py-1.5 text-xs font-medium transition hover:-translate-y-0.5"
-                        >
-                          <span className="h-3 w-3 rounded-full" style={{ background: t.theme.primary }} aria-hidden />
-                          {t.name}
-                        </Link>
-                      ))}
+                    <div className="mt-6 flex flex-wrap gap-2 font-mono text-[9px] uppercase tracking-[0.12em] text-[#777168]">
+                      <span className="border border-border/30 px-2.5 py-1">Hero crops below</span>
+                      <span className="border border-border/30 px-2.5 py-1">Full sites inside</span>
                     </div>
                   </div>
 

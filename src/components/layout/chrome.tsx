@@ -52,6 +52,7 @@ const NAV = [
   { href: "/templates", label: "Templates" },
   { href: "/#library", label: "Library" },
   { href: "/#how", label: "How it works" },
+  { href: "/about", label: "About" },
   { href: "/#faq", label: "FAQ" },
 ];
 
@@ -266,7 +267,7 @@ export function AppNavbar({ user, active, actions }: { user?: { name: string } |
 export function Footer() {
   const styleCount = Object.values(SECTION_META).reduce((n, m) => n + m.variants.length, 0);
   const cols: { h: string; links: { href: string; label: string }[] }[] = [
-    { h: "Explore", links: [{ href: "/templates", label: "Templates" }, { href: "/#library", label: "Library" }, { href: "/#how", label: "How it works" }, { href: "/#faq", label: "FAQ" }] },
+    { h: "Explore", links: [{ href: "/templates", label: "Templates" }, { href: "/#library", label: "Library" }, { href: "/#how", label: "How it works" }, { href: "/about", label: "About" }, { href: "/#faq", label: "FAQ" }] },
     { h: "Start", links: [{ href: "/new", label: "Create a site" }, { href: "/dashboard", label: "Dashboard" }, { href: "/demo", label: "Live demo" }] },
     { h: "Account", links: [{ href: "/login", label: "Log in" }, { href: "/signup", label: "Sign up" }, { href: "/settings", label: "Settings" }] },
     { h: "Legal", links: [{ href: "/privacy", label: "Privacy" }, { href: "/terms", label: "Terms" }, { href: "/cookies", label: "Cookies" }] },

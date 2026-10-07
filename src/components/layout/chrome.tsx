@@ -12,22 +12,29 @@ import { site } from "@/config/site";
 /** ui-kit paper-editorial chrome for create.io:
  *  sticky hard-border bar, serif letter mark, pill CTAs. */
 
-export function LogoTile({ size = 28 }: { size?: number }) {
+export function LogoTile({ size = 28, invert }: { size?: number; invert?: boolean }) {
   return (
     <span
       aria-hidden="true"
       className="block flex-none overflow-hidden rounded-md border border-border/25 bg-surface"
       style={{ width: size, height: size }}
     >
-      <Image src="/logo.png" alt="" width={size} height={size} className="h-full w-full object-cover" />
+      <Image
+        src="/logo.png"
+        alt=""
+        width={size}
+        height={size}
+        className="h-full w-full object-cover"
+        style={invert ? { filter: "invert(1)" } : undefined}
+      />
     </span>
   );
 }
 
-export function BrandMark({ size = 28 }: { size?: number }) {
+export function BrandMark({ size = 28, invert }: { size?: number; invert?: boolean }) {
   return (
     <span className="flex items-center gap-2.5 text-base font-semibold tracking-[-0.025em]">
-      <LogoTile size={size} />
+      <LogoTile size={size} invert={invert} />
       {site.brand}
     </span>
   );
@@ -62,7 +69,7 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 text-foreground backdrop-blur-md">
       <div className="mx-auto flex h-20 w-full max-w-shell items-center justify-between px-6 sm:px-10 lg:px-16 xl:px-20">
         <Link href="/" aria-label="create.io home">
-          <BrandMark />
+          <BrandMark invert />
         </Link>
 
         <nav aria-label="Primary navigation" className="hidden items-center gap-6 text-sm lg:flex xl:gap-8">
@@ -194,7 +201,7 @@ export function AppNavbar({ user, active, actions }: { user?: { name: string } |
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 text-foreground backdrop-blur-md">
       <div className="mx-auto flex h-20 w-full max-w-shell items-center justify-between px-6 sm:px-10 lg:px-16 xl:px-20">
         <Link href="/dashboard" aria-label="create.io dashboard">
-          <BrandMark />
+          <BrandMark invert />
         </Link>
         <nav aria-label="App navigation" className="hidden items-center gap-6 text-sm lg:flex xl:gap-8">
           {APP_NAV.map((n) => {

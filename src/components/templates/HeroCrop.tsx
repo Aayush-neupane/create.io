@@ -1,13 +1,29 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { ReactNode } from "react";
+import type { ReactNode, RefObject } from "react";
 import type { WebsiteConfig } from "@/types/builder";
 import { TemplateRenderer } from "./Renderer";
 import { getTemplate } from "@/lib/templates";
 import { baseTheme, buildConfigFromTemplate } from "@/lib/website-defaults";
 
 const STAGE_W = 1280;
+
+/** Template sections carry hardcoded anchor ids (faq, pricing, contact…).
+ *  Inside a crop those duplicate across every render on the page and hijack
+ *  document-wide `#hash` navigation (e.g. nav FAQ landing on a template's
+ *  FAQ in the hero strip). Crops are pointer-events-none visuals, so their
+ *  inner ids serve no purpose — remove them after mount and after every
+ *  config change. Full-page renders (preview, published, builder) bypass
+ *  SiteCrop and keep their ids intact. */
+function useStripCropIds(root: RefObject<HTMLDivElement | null>, deps: unknown[]) {
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    el.querySelectorAll("[id]").forEach((n) => n.removeAttribute("id"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+}
 
 /** Defers heavy live renders until they approach the viewport. The parent
  *  must fix the visible size so the placeholder reserves the same space and
@@ -49,6 +65,7 @@ export function SiteCrop({ config, templateId }: { config: WebsiteConfig; templa
   const ref = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
   const [ready, setReady] = useState(false);
+  useStripCropIds(ref, [config, templateId]);
 
   useLayoutEffect(() => {
     const el = ref.current;

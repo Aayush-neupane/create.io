@@ -20,7 +20,7 @@ export function LogoutButton() {
     router.refresh();
   }
   return (
-    <button onClick={logout} className="btn-ghost" style={{ height: 36, fontSize: 13 }}>
+    <button onClick={logout} className="inline-flex h-9 items-center rounded-full border border-border px-4 text-[13px] font-medium transition hover:bg-foreground hover:text-background">
       Log out
     </button>
   );
@@ -61,13 +61,12 @@ export function NameForm({ initial }: { initial: string }) {
         onChange={(e) => setName(e.target.value)}
         aria-label="Display name"
         maxLength={60}
-        className="w-full flex-1 rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-neutral-400"
-        style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}
+        className="w-full flex-1 border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted/70 focus:border-primary"
       />
-      <button disabled={busy || !name.trim() || name.trim() === initial} className="btn-primary flex-none disabled:opacity-50" style={{ height: 38, fontSize: 13 }}>
+      <button disabled={busy || !name.trim() || name.trim() === initial} className="inline-flex h-10 flex-none items-center justify-center rounded-full bg-foreground px-5 text-[13px] font-medium text-background transition hover:bg-primary disabled:opacity-50">
         {busy ? "Saving…" : "Save"}
       </button>
-      {note && <p className={`text-xs sm:self-center ${note.ok ? "" : "text-red-600"}`} style={note.ok ? { color: "var(--ink-3)" } : undefined}>{note.msg}</p>}
+      {note && <p className={`text-xs sm:self-center ${note.ok ? "text-muted" : "text-red-600"}`}>{note.msg}</p>}
     </form>
   );
 }
@@ -104,16 +103,16 @@ export function PasswordForm() {
     }
   }
 
-  const input = "w-full rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-neutral-400";
+  const input = "w-full border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted/70 focus:border-primary";
   return (
     <form onSubmit={submit} className="grid gap-2.5 sm:grid-cols-2">
-      <input value={current} onChange={(e) => setCurrent(e.target.value)} required type="password" placeholder="Current password" aria-label="Current password" className={input} style={{ borderColor: "var(--line-2)", background: "var(--surface)" }} />
-      <input value={next} onChange={(e) => setNext(e.target.value)} required type="password" placeholder="New password (8+ characters)" aria-label="New password" minLength={8} className={input} style={{ borderColor: "var(--line-2)", background: "var(--surface)" }} />
+      <input value={current} onChange={(e) => setCurrent(e.target.value)} required type="password" placeholder="Current password" aria-label="Current password" className={input} />
+      <input value={next} onChange={(e) => setNext(e.target.value)} required type="password" placeholder="New password (8+ characters)" aria-label="New password" minLength={8} className={input} />
       <div className="flex items-center gap-3 sm:col-span-2">
-        <button disabled={busy} className="btn-primary flex-none disabled:opacity-50" style={{ height: 38, fontSize: 13 }}>
+        <button disabled={busy} className="inline-flex h-10 flex-none items-center justify-center rounded-full bg-foreground px-5 text-[13px] font-medium text-background transition hover:bg-primary disabled:opacity-50">
           {busy ? "Updating…" : "Change password"}
         </button>
-        {note && <p className={`text-xs ${note.ok ? "" : "text-red-600"}`} style={note.ok ? { color: "var(--ink-3)" } : undefined}>{note.msg}</p>}
+        {note && <p className={`text-xs ${note.ok ? "text-muted" : "text-red-600"}`}>{note.msg}</p>}
       </div>
     </form>
   );
@@ -151,7 +150,7 @@ export function DeleteAccount({ email, siteCount }: { email: string; siteCount: 
 
   return (
     <div>
-      <p className="text-sm" style={{ color: "var(--ink-2)" }}>
+      <p className="text-sm text-muted">
         Permanently deletes your account{siteCount > 0 && <> and all {siteCount} of your site{siteCount === 1 ? "" : "s"}</>}. Published pages stop working immediately.
       </p>
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
@@ -160,14 +159,12 @@ export function DeleteAccount({ email, siteCount }: { email: string; siteCount: 
           onChange={(e) => setConfirm(e.target.value)}
           placeholder={`Type ${email} to confirm`}
           aria-label="Type your email to confirm deletion"
-          className="w-full flex-1 rounded-lg border px-3 py-2 font-mono text-sm outline-none transition-colors focus:border-red-400"
-          style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}
+          className="w-full flex-1 border border-border bg-background px-3 py-2 font-mono text-sm text-foreground outline-none transition-colors placeholder:text-muted/70 focus:border-red-400"
         />
         <button
           onClick={destroy}
           disabled={!armed || busy}
-          className="flex-none rounded-[11px] px-4 py-2 text-[13px] font-semibold text-white transition-opacity disabled:opacity-40"
-          style={{ height: 38, background: "#dc2626" }}
+          className="inline-flex h-10 flex-none items-center justify-center rounded-full bg-red-700 px-5 text-[13px] font-semibold text-white transition-opacity disabled:opacity-40"
         >
           {busy ? "Deleting…" : "Delete account"}
         </button>

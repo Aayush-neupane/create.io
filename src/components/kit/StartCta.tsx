@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
+import { Chapter } from "@/components/kit/Chapter";
 
 function Pipeline() {
   return (
@@ -34,7 +35,7 @@ export function StartCta() {
     <section id="start" className="scroll-mt-20 border-b border-border">
       <div className="mx-auto grid max-w-shell lg:grid-cols-[0.78fr_1.22fr]">
         <div data-scroll-reveal className="kit-scroll px-6 py-16 sm:px-10 lg:border-r lg:border-border lg:px-16 lg:py-20 xl:px-20" data-reveal="">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Ch. 10 — Start with one site</p>
+          <Chapter n="10" label="Start with one site" />
           <h2 className="mt-7 max-w-[10ch] font-serif text-[clamp(3rem,5vw,5.8rem)] font-normal leading-[0.94] tracking-[-0.05em]">
             Your website is waiting.
           </h2>

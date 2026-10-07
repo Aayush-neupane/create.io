@@ -1,3 +1,5 @@
+import { Chapter } from "@/components/kit/Chapter";
+
 const quotes = [
   ["I published my trekking site between two bus rides to Pokhara. Bookings came before I got home.", "Binod Thapa", "Guide, Himalayan Trails"],
   ["Clients think I hired an agency in Jhamsikhel. It was me, on a Sunday, with chiya.", "Sabina Karki", "Designer, Lalitpur"],
@@ -12,7 +14,7 @@ export function Testimonials() {
       <div className="mx-auto max-w-shell">
         <div className="grid border-b border-border lg:grid-cols-[0.62fr_1.38fr]">
           <div className="px-6 py-10 sm:px-10 lg:border-r lg:border-border lg:px-16 lg:py-16 xl:px-20">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Ch. 07 — Wall of love</p>
+            <Chapter n="07" label="Wall of love" />
           </div>
           <div className="px-6 py-10 sm:px-10 lg:px-16 lg:py-16 xl:px-20">
             <h2 className="max-w-[14ch] font-serif text-[clamp(2.7rem,5.2vw,5.6rem)] font-normal leading-[0.98] tracking-[-0.045em]">

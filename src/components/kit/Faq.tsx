@@ -1,4 +1,5 @@
 import { ArrowDownRight, Plus } from "lucide-react";
+import { Chapter } from "@/components/kit/Chapter";
 
 const faqs = [
   ["Do I need to write any code?", "Never. If you can fill a form and upload a photo, you can ship a site."],
@@ -14,9 +15,7 @@ export function Faq() {
     <section id="faq" className="scroll-mt-20 border-b border-border">
       <div className="mx-auto grid max-w-shell lg:grid-cols-[0.72fr_1.28fr]">
         <div className="px-6 py-14 sm:px-10 lg:border-r lg:border-border lg:px-16 lg:py-20 xl:px-20">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-            Ch. 09 — Fair questions
-          </p>
+          <Chapter n="09" label="Fair questions" />
           <h2 className="mt-7 max-w-[10ch] font-serif text-[clamp(3rem,5vw,5.8rem)] font-normal leading-[0.94] tracking-[-0.05em]">
             Asked often.
           </h2>

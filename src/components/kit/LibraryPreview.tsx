@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { TEMPLATES } from "@/lib/templates";
+import { Chapter } from "@/components/kit/Chapter";
 
 const SHELF_IDS = ["minimal-portfolio", "restaurant", "agency", "saas-starter", "creative-portfolio"];
 
@@ -29,7 +30,7 @@ export function LibraryPreview() {
       <div className="mx-auto max-w-shell">
         <div className="grid border-b border-border lg:grid-cols-[0.62fr_1.38fr]">
           <div className="px-6 py-10 sm:px-10 lg:border-r lg:border-border lg:px-16 lg:py-16 xl:px-20">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Ch. 03 — Inside the library</p>
+            <Chapter n="03" label="Inside the library" />
             <div className="mt-8 hidden h-24 w-px bg-border/35 lg:block" />
           </div>
           <div className="px-6 py-10 sm:px-10 lg:px-16 lg:py-16 xl:px-20">

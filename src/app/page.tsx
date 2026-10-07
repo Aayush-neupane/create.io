@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Navbar, Footer } from "@/components/layout/chrome";
 import { Reveal } from "@/components/layout/Reveal";
 import { TemplateRow } from "@/components/templates/TemplateRow";
+import { Chapter } from "@/components/kit/Chapter";
 import { Hero } from "@/components/kit/Hero";
 import { Ticker } from "@/components/kit/Ticker";
 import { FieldsDemo } from "@/components/kit/FieldsDemo";
@@ -31,9 +32,7 @@ function LibraryGrid() {
       <div className="mx-auto max-w-shell">
         <div className="grid border-b border-border lg:grid-cols-[0.62fr_1.38fr]">
           <div className="px-6 py-10 sm:px-10 lg:border-r lg:border-border lg:px-16 lg:py-16 xl:px-20">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-              Ch. 04 — The shortlist · {TEMPLATES.length} on the shelf
-            </p>
+            <Chapter n="04" label={<>The shortlist · {TEMPLATES.length} on the shelf</>} />
           </div>
           <div className="px-6 py-10 sm:px-10 lg:px-16 lg:py-16 xl:px-20">
             <h2 className="max-w-[17ch] font-serif text-[clamp(2.7rem,5.2vw,5.6rem)] font-normal leading-[0.98] tracking-[-0.045em]">

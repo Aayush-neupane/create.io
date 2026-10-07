@@ -15,7 +15,7 @@ function Flow() {
   const [step, setStep] = useState(validInitial ? 2 : 1);
   const [templateId, setTemplateId] = useState(validInitial || "minimal-portfolio");
   const [siteType, setSiteType] = useState("Portfolio");
-  const [name, setName] = useState("");
+  const [name, setName] = useState(sp.get("name") ?? "");
   const [ownerName, setOwnerName] = useState("");
   const [tagline, setTagline] = useState("");
   const [err, setErr] = useState("");
@@ -44,13 +44,11 @@ function Flow() {
   return (
     <div className="mx-auto w-full max-w-3xl">
       <div className="mb-8 grid justify-items-center gap-3 text-center">
-        <p className="eyebrow">
-          <span className="mono-meta" style={{ color: "var(--ink-3)" }}>New site</span>
-          <span aria-hidden className="h-px w-8" style={{ background: "var(--line-2)" }} />
-          Step {step} of 2
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+          New site · Step {step} of 2
         </p>
-        <h1 className="font-semibold" style={{ fontSize: "clamp(28px, 4vw, 40px)", lineHeight: 1.05 }}>
-          {step === 1 ? <>Choose your <span className="serif-accent">starting point.</span></> : <>Make it <span className="serif-accent">yours.</span></>}
+        <h1 className="font-serif text-[clamp(2.2rem,4vw,3.4rem)] font-normal leading-[0.95]">
+          {step === 1 ? <>Choose your starting point.</> : <>Make it yours.</>}
         </h1>
         <div className="flex items-center gap-2" aria-hidden>
           {[1, 2].map((n) => (
@@ -61,7 +59,7 @@ function Flow() {
         </div>
       </div>
 
-      <div className="rounded-2xl border p-6 md:p-8" style={{ borderColor: "var(--line)", background: "var(--surface)" }}>
+      <div className="kit-panel p-6 md:p-8" style={{ borderRadius: "1.25rem" }}>
       {step === 1 && (
         <>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -154,8 +152,8 @@ function Flow() {
 
 export default function NewPage() {
   return (
-    <div className="min-h-screen px-6 py-10" style={{ background: "var(--paper)" }}>
-      <div className="mx-auto mb-6 max-w-3xl"><Link href="/dashboard" className="text-sm text-neutral-500">← Dashboard</Link></div>
+    <div className="marketing-theme min-h-screen bg-background px-6 py-10 text-foreground">
+      <div className="mx-auto mb-6 max-w-3xl"><Link href="/dashboard" className="text-sm text-muted transition-colors hover:text-foreground">← Dashboard</Link></div>
       <Suspense><Flow /></Suspense>
     </div>
   );

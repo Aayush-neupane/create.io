@@ -20,11 +20,32 @@
   --accent-line: rgba(79, 70, 229, 0.35);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --r: 14px;
+
+  /* ─── ui-kit paper editorial tokens (marketing frontend) ─── */
+  --kit-background: #f5f0e5;
+  --kit-foreground: #292721;
+  --kit-muted: #6d675f;
+  --kit-body: #5e5952;
+  --kit-border: #292721;
+  --kit-surface: #f7f2e7;
+  --kit-surface-2: #eae2d2;
+  --kit-surface-3: #ded4c1;
+  --kit-strip: #e8dfcf;
+  --kit-primary: #d75c3f;
+  --kit-primary-strong: #c94f34;
+  --kit-secondary: #667a60;
 }
 
 @theme inline {
-  --color-background: var(--paper);
-  --color-foreground: var(--ink);
+  --color-background: var(--kit-background);
+  --color-foreground: var(--kit-foreground);
+  --color-muted: var(--kit-muted);
+  --color-border: var(--kit-border);
+  --color-surface: var(--kit-surface);
+  --color-surface-2: var(--kit-surface-2);
+  --color-primary: var(--kit-primary);
+  --color-primary-strong: var(--kit-primary-strong);
+  --color-secondary: var(--kit-secondary);
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-serif), ui-serif, Georgia, serif;
   --font-mono: var(--font-mono), ui-monospace, monospace;
@@ -397,3 +418,102 @@ details[open] .faq-a { grid-template-rows: 1fr; }
 /* mobile safety: never allow page-level horizontal scroll.
  * clip (not hidden) preserves position:sticky navbars. */
 html, body { overflow-x: clip; }
+
+/* ─── ui-kit paper editorial system (marketing frontend) ───
+   Ported from ui-kit/src/app/globals.css. Scoped tokens above;
+   utilities below work alongside the legacy paper/ink system. */
+
+.max-w-shell { max-width: 90rem; }
+
+.marketing-theme {
+  background: var(--kit-background);
+  color: var(--kit-foreground);
+  color-scheme: light;
+  width: 100%;
+}
+.marketing-theme h1, .marketing-theme h2, .marketing-theme h3 {
+  font-family: var(--font-serif), "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+}
+
+.marketing-grid {
+  background-image:
+    linear-gradient(to right, rgba(41, 39, 33, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(41, 39, 33, 0.08) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 88%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 88%);
+}
+
+.kit-panel {
+  background: var(--kit-surface);
+  border: 1px solid var(--kit-border);
+}
+.kit-panel-raised {
+  background:
+    linear-gradient(165deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.05) 100%),
+    var(--kit-surface);
+  border: 1px solid var(--kit-border);
+}
+.kit-visual {
+  background: rgba(234, 226, 210, 0.7);
+  border-top: 1px solid rgba(41, 39, 33, 0.42);
+  border-bottom: 1px solid rgba(41, 39, 33, 0.42);
+  height: 10.5rem;
+  overflow: hidden;
+  position: relative;
+  transition: transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.kit-card:hover .kit-visual { transform: translateY(-2px); }
+.kit-accent { width: 0; transition: width 500ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.kit-card:hover .kit-accent { width: 3rem; }
+
+/* capability cards (ui-kit Capabilities visuals — tokens added here) */
+.capability-visual {
+  background: rgba(234, 226, 210, 0.7);
+  border-top: 1px solid rgba(41, 39, 33, 0.42);
+  border-bottom: 1px solid rgba(41, 39, 33, 0.42);
+  height: 12rem;
+  overflow: hidden;
+  position: relative;
+}
+.capability-layer { transition: transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.capability-card:hover .capability-layer { transform: translateX(2px); }
+.capability-accent { width: 0; transition: width 500ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.capability-card:hover .capability-accent { width: 100%; }
+
+@keyframes kit-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes kit-drift {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.015); }
+}
+@keyframes kit-dash { to { stroke-dashoffset: -48; } }
+@keyframes kit-scan {
+  from { transform: translateX(-140%); }
+  to { transform: translateX(680%); }
+}
+.reveal, .kit-reveal { animation: kit-rise 720ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.kit-float { animation: kit-drift 12s ease-in-out infinite; }
+.kit-dash { stroke-dasharray: 7 8; animation: kit-dash 8s linear infinite; }
+.kit-scan-beam { animation: kit-scan 7s ease-in-out infinite; }
+
+.motion-ready [data-scroll-reveal], .kit-scroll[data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 680ms cubic-bezier(0.2, 0.8, 0.2, 1), transform 680ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.motion-ready [data-scroll-reveal].is-revealed,
+.kit-scroll[data-reveal].is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .kit-reveal, .kit-float, .kit-dash, .kit-scan-beam { animation: none !important; }
+  .kit-scroll[data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+}

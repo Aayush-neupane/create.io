@@ -13,20 +13,21 @@ export default async function DashboardPage() {
   const sites = await websitesForUser(user.id);
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--paper)" }}>
+    <div className="marketing-theme min-h-screen bg-background text-foreground">
       <AppNavbar user={user} active="/dashboard" actions={<DashboardActions />} />
 
-      <main className="mx-auto max-w-7xl px-6 py-10">
-        <h1 className="text-2xl font-semibold tracking-tight">Welcome back, {user.name.split(" ")[0]}.</h1>
-        <p className="mt-1 text-sm text-neutral-600">Manage your websites — edit, preview, publish and share.</p>
+      <main className="mx-auto max-w-shell px-6 py-10 sm:px-10 lg:px-16 xl:px-20">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Dashboard</p>
+        <h1 className="mt-3 font-serif text-[clamp(2rem,3.5vw,3rem)] font-normal leading-[0.95]">Welcome back, {user.name.split(" ")[0]}.</h1>
+        <p className="mt-2 text-sm text-muted">Manage your websites — edit, preview, publish and share.</p>
 
         {sites.length === 0 ? (
-          <div className="mt-10 flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-white px-8 py-16 text-center">
-            <h3 className="text-lg font-semibold">You don&apos;t have a website yet.</h3>
-            <p className="mt-2 max-w-sm text-sm text-neutral-500">Choose a template and start building your first website.</p>
+          <div className="kit-panel mt-10 flex flex-col items-center justify-center px-8 py-16 text-center" style={{ borderRadius: "1.25rem", borderStyle: "dashed" }}>
+            <h3 className="font-serif text-2xl">You don&apos;t have a website yet.</h3>
+            <p className="mt-2 max-w-sm text-sm text-muted">Choose a template and start building your first website.</p>
             <div className="mt-6 flex gap-2">
-              <Link href="/new" className="btn-primary" style={{ height: 42, padding: "0 20px" }}>Create Website</Link>
-              <Link href="/templates" className="rounded-lg border border-neutral-200 px-5 py-2.5 text-sm font-medium">Browse Templates</Link>
+              <Link href="/new" className="inline-flex h-[42px] items-center rounded-full bg-foreground px-5 text-sm font-medium text-background transition hover:bg-primary">Create Website</Link>
+              <Link href="/templates" className="inline-flex h-[42px] items-center rounded-full border border-border px-5 text-sm font-medium transition hover:bg-foreground hover:text-background">Browse Templates</Link>
             </div>
           </div>
         ) : (
@@ -34,7 +35,7 @@ export default async function DashboardPage() {
             {sites.map((s) => {
               const tpl = getTemplate(s.templateId);
               return (
-              <div key={s.id} className="card card-hover p-5">
+              <div key={s.id} className="kit-card border border-border bg-surface p-5">
                 <div className="flex items-center gap-3">
                   <span className="grid h-10 w-10 flex-none place-items-center rounded-[13px] text-sm font-bold text-white" style={{ background: tpl.theme.primary }} aria-hidden>
                     {s.name.slice(0, 1)}
@@ -52,9 +53,9 @@ export default async function DashboardPage() {
                   </Link>
                 )}
                 <div className="mt-4 grid grid-cols-3 gap-2">
-                  <Link href={`/builder/${s.id}`} className="btn-primary flex-1" style={{ height: 36, fontSize: 13 }}>Edit</Link>
-                  <Link href={`/s/${s.slug}`} className="rounded-lg border border-neutral-200 px-2 py-2 text-center text-[13px] font-medium transition-colors hover:border-neutral-400">Preview</Link>
-                  <Link href={`/builder/${s.id}?tab=settings`} className="rounded-lg border border-neutral-200 px-2 py-2 text-center text-[13px] font-medium transition-colors hover:border-neutral-400">Settings</Link>
+                  <Link href={`/builder/${s.id}`} className="inline-flex h-9 flex-1 items-center justify-center rounded-full bg-foreground text-[13px] font-medium text-background transition hover:bg-primary">Edit</Link>
+                  <Link href={`/s/${s.slug}`} className="rounded-full border border-border px-2 py-2 text-center text-[13px] font-medium transition-colors hover:bg-foreground hover:text-background">Preview</Link>
+                  <Link href={`/builder/${s.id}?tab=settings`} className="rounded-full border border-border px-2 py-2 text-center text-[13px] font-medium transition-colors hover:bg-foreground hover:text-background">Settings</Link>
                 </div>
                 <DashboardCardActions id={s.id} slug={s.slug} />
               </div>

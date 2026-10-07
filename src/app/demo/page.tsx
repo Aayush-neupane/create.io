@@ -16,21 +16,19 @@ const TINTS = [
 
 export default function DemoChooserPage() {
   return (
-    <div className="min-h-screen">
+    <div className="marketing-theme min-h-screen bg-background text-foreground">
       <SiteNavbar />
       <Reveal>
-        <div style={{ background: "var(--surface-2)", borderBottom: "1px solid var(--line)" }}>
-          <div className="mx-auto max-w-7xl px-6 pb-10 pt-14">
+        <div className="border-b border-border bg-[#e8dfcf]">
+          <div className="mx-auto max-w-shell px-6 pb-10 pt-14 sm:px-10 lg:px-16 xl:px-20">
             <div className="grid justify-items-center gap-4 text-center">
-              <p className="eyebrow">
-                <span className="mono-meta" style={{ color: "var(--ink-3)" }}>01</span>
-                <span aria-hidden className="h-px w-8" style={{ background: "var(--line-2)" }} />
-                Guest mode
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+                01 · Guest mode
               </p>
-              <h1 className="max-w-2xl font-semibold" style={{ fontSize: "clamp(34px, 5vw, 56px)", lineHeight: 1.02 }}>
-                Pick a site. <span className="serif-accent">Edit it live.</span>
+              <h1 className="max-w-2xl font-serif text-[clamp(2.8rem,5vw,4.5rem)] font-normal leading-[0.95]">
+                Pick a site. Edit it live.
               </h1>
-              <p className="max-w-[600px] text-[15px]" style={{ color: "var(--ink-2)" }}>
+              <p className="max-w-[600px] text-[15px] text-muted">
                 No account, no setup. Choose any finished site below and the full builder
                 opens with real content — every change saves in this browser.
               </p>
@@ -51,14 +49,14 @@ export default function DemoChooserPage() {
             </div>
           </div>
         </div>
-        <div className="mx-auto max-w-7xl px-6 py-10">
+        <div className="mx-auto max-w-shell px-6 py-10 sm:px-10 lg:px-16 xl:px-20">
 
           <p aria-live="polite" className="mono-meta mb-4 text-xs" style={{ color: "var(--ink-3)" }}>
             {TEMPLATES.length} sites · all editable
           </p>
           <div className="grid gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
             {TEMPLATES.map((t) => (
-              <article key={t.id} className="card card-hover group flex min-w-0 flex-col overflow-hidden">
+              <article key={t.id} className="kit-card group flex min-w-0 flex-col overflow-hidden border border-border bg-surface">
                 <div className="relative flex h-28 items-center gap-3 overflow-hidden px-5" style={{ borderBottom: "1px solid var(--line)", background: t.theme.surface }}>
                   <span className="grid h-12 w-12 flex-none place-items-center rounded-2xl text-lg font-bold text-white" style={{ background: t.theme.primary }} aria-hidden>
                     {t.name.slice(0, 1)}

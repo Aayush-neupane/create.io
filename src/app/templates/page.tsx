@@ -42,19 +42,17 @@ export default function TemplatesPage() {
   });
 
   return (
-    <div className="min-h-screen">
+    <div className="marketing-theme min-h-screen bg-background text-foreground">
       <SiteNavbar />
-      <div style={{ background: "var(--surface-2)", borderBottom: "1px solid var(--line)" }}>
-        <div className="mx-auto max-w-7xl px-6 pb-8 pt-10">
-          <p className="eyebrow">
-            <span className="mono-meta" style={{ color: "var(--ink-3)" }}>Library</span>
-            <span aria-hidden className="h-px w-8" style={{ background: "var(--line-2)" }} />
-            {list.length === 1 ? "1 site" : `${list.length} sites`}
+      <div className="border-b border-border bg-[#e8dfcf]">
+        <div className="mx-auto max-w-shell px-6 pb-8 pt-10 sm:px-10 lg:px-16 xl:px-20">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+            Library · {list.length === 1 ? "1 site" : `${list.length} sites`}
           </p>
-          <h1 className="mt-3 font-semibold" style={{ fontSize: "clamp(32px, 4.2vw, 46px)", lineHeight: 1.04 }}>
-            Pick a <span className="serif-accent">finished</span> site
+          <h1 className="mt-4 max-w-[14ch] font-serif text-[clamp(2.6rem,4.5vw,4rem)] font-normal leading-[0.95]">
+            Pick a finished site
           </h1>
-          <p className="mt-2.5 max-w-[520px] text-[15px]" style={{ color: "var(--ink-2)" }}>
+          <p className="mt-2.5 max-w-[520px] text-[15px] text-muted">
             Live renders — what you see is the actual template, components and copy included.
           </p>
           <div className="mt-5 flex h-[46px] max-w-md items-center gap-2.5 rounded-[13px] border px-3.5 transition-colors focus-within:border-neutral-400 md:hidden" style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}>
@@ -79,7 +77,7 @@ export default function TemplatesPage() {
           </div>
         </div>
       </div>
-      <div className="mx-auto flex max-w-7xl gap-11 px-6 py-8">
+      <div className="mx-auto flex max-w-shell gap-11 px-6 py-8 sm:px-10 lg:px-16 xl:px-20">
         {/* Sidebar */}
         <aside className="hidden w-[236px] shrink-0 md:block">
           <div className="sticky grid gap-2 overflow-auto" style={{ top: 88, maxHeight: "calc(100vh - 112px)", paddingBottom: 20 }}>
@@ -141,8 +139,8 @@ export default function TemplatesPage() {
           </p>
           <div className="grid gap-[18px] sm:grid-cols-2">
             {list.map((t) => (
-              <article key={t.id} className="card card-hover group flex min-w-0 flex-col overflow-hidden">
-                <div className="relative aspect-[16/10] overflow-hidden" style={{ borderBottom: "1px solid var(--line)" }}>
+              <article key={t.id} className="kit-card group flex min-w-0 flex-col overflow-hidden border border-border bg-surface">
+                <div className="relative aspect-[16/10] overflow-hidden border-b border-border/40">
                   <LiveCard templateId={t.id} />
                   <Link href={`/templates/${t.id}`} aria-label={`Open ${t.name}`} className="absolute inset-0" />
                   <span className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center opacity-0 transition-all duration-300 group-hover:opacity-100">
@@ -165,11 +163,11 @@ export default function TemplatesPage() {
                     ))}
                   </span>
                 </div>
-                <div className="flex gap-2 border-t px-[14px] py-3" style={{ borderColor: "var(--line)" }}>
-                  <Link href={`/templates/${t.id}`} className="flex-1 rounded-[9px] border px-3 py-2 text-center text-[13px] font-medium transition-colors" style={{ borderColor: "var(--line-2)" }}>
+                <div className="flex gap-2 border-t border-border/40 px-[14px] py-3">
+                  <Link href={`/templates/${t.id}`} className="flex-1 rounded-full border border-border px-3 py-2 text-center text-[13px] font-medium transition-colors hover:bg-foreground hover:text-background">
                     Open full preview
                   </Link>
-                  <Link href={`/new?template=${t.id}`} className="btn-primary flex-1" style={{ height: 37, fontSize: 13 }}>
+                  <Link href={`/new?template=${t.id}`} className="inline-flex flex-1 items-center justify-center rounded-full bg-foreground px-3 py-2 text-center text-[13px] font-medium text-background transition-colors hover:bg-primary" style={{ height: 37 }}>
                     Use template
                   </Link>
                 </div>

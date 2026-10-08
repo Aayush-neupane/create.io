@@ -16,7 +16,7 @@ function safeNext(): string {
 }
 
 const inputCls =
-  "h-13 w-full border border-border bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted/70 focus:border-primary";
+  "h-12 w-full border border-border bg-background px-4 text-sm text-foreground outline-none placeholder:text-muted/70 focus:border-primary";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -60,19 +60,19 @@ export default function LoginPage() {
           <input id="login-password" value={password} onChange={(e) => setPassword(e.target.value)} required type="password" placeholder="••••••••" className={inputCls} />
         </div>
         {err && <p className="border border-red-900/30 bg-red-50 px-3 py-2 text-sm text-red-700">{err}</p>}
-        <button disabled={loading} className="inline-flex h-13 w-full items-center justify-center rounded-full bg-foreground text-sm font-medium text-background transition hover:bg-primary disabled:opacity-60">
+        <button disabled={loading} className="inline-flex h-12 w-full items-center justify-center rounded-full bg-foreground text-sm font-medium text-background transition hover:bg-primary disabled:opacity-60">
           {loading ? "Logging in…" : "Log in"}
         </button>
       </form>
-      <div className="my-5 flex items-center gap-3 font-mono text-[9px] uppercase tracking-[0.14em] text-muted">
+      <div className="my-4 flex items-center gap-3 font-mono text-[9px] uppercase tracking-[0.14em] text-muted">
         <span className="h-px flex-1 bg-border/40" />
         or continue as guest
         <span className="h-px flex-1 bg-border/40" />
       </div>
-      <Link href="/demo" className="inline-flex h-13 w-full items-center justify-center rounded-full border border-border text-sm font-medium transition hover:bg-foreground hover:text-background">
+      <Link href="/demo" className="inline-flex h-12 w-full items-center justify-center rounded-full border border-border text-sm font-medium transition hover:bg-foreground hover:text-background">
         Continue as guest — no signup
       </Link>
-      <p className="mt-5 text-center text-sm text-muted">No account yet? <AuthSwitchLink href="/signup" dir="forward" className="font-medium text-foreground underline underline-offset-4">Sign up</AuthSwitchLink></p>
+      <p className="mt-4 text-center text-sm text-muted">No account yet? <AuthSwitchLink href="/signup" dir="forward" className="font-medium text-foreground underline underline-offset-4">Sign up</AuthSwitchLink></p>
     </AuthSplit>
   );
 }

@@ -30,8 +30,8 @@ export function AuthSplit({
   children: ReactNode;
 }) {
   const form = (
-    <div className={`flex flex-col px-6 py-8 sm:px-10 lg:px-16 xl:px-20 ${flip ? "auth-in-right lg:border-l lg:border-border" : "auth-in-left lg:border-r lg:border-border"}`}>
-      <div className="flex items-center justify-between">
+    <div className={`flex min-h-0 flex-col overflow-hidden px-6 py-6 sm:px-10 lg:px-16 xl:px-20 ${flip ? "auth-in-right lg:border-l lg:border-border" : "auth-in-left lg:border-r lg:border-border"}`}>
+      <div className="flex flex-none items-center justify-between">
         <Link href="/" className="text-sm text-muted transition-colors hover:text-foreground">
           ← Back home
         </Link>
@@ -40,33 +40,33 @@ export function AuthSplit({
         </Link>
       </div>
 
-      <div id={formId} className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-14">
+      <div id={formId} className="mx-auto flex w-full max-w-md min-h-0 flex-1 flex-col justify-center py-4">
         <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">{eyebrow}</p>
-        <h1 className="mt-4 font-serif text-[clamp(2.4rem,4vw,3.6rem)] font-normal leading-[0.95]">
+        <h1 className="mt-3 font-serif text-[clamp(2rem,3.4vw,2.9rem)] font-normal leading-[0.95]">
           {title}
         </h1>
-        <p className="mt-4 text-[15px] leading-7 text-[#5e5952]">{sub}</p>
-        <div className="mt-8">{children}</div>
+        <p className="mt-3 text-sm leading-6 text-[#5e5952]">{sub}</p>
+        <div className="mt-6">{children}</div>
       </div>
 
-      <p className="border-t border-border/40 pt-4 font-mono text-[8px] uppercase tracking-[0.14em] text-muted">
+      <p className="flex-none border-t border-border/40 pt-3 font-mono text-[8px] uppercase tracking-[0.14em] text-muted">
         {foot}
       </p>
     </div>
   );
 
   const panel = (
-    <div className={`relative hidden overflow-hidden bg-surface-2 lg:flex lg:flex-col ${flip ? "auth-in-left" : "auth-in-right"}`} style={{ animationDelay: "90ms" }}>
+    <div className={`relative hidden min-h-0 overflow-hidden bg-surface-2 lg:flex lg:flex-col ${flip ? "auth-in-left" : "auth-in-right"}`} style={{ animationDelay: "90ms" }}>
       <div className="marketing-grid pointer-events-none absolute inset-0 opacity-45" aria-hidden="true" />
-      <div className="relative flex flex-1 flex-col justify-center px-14 py-16 xl:px-20">
+      <div className="relative flex min-h-0 flex-1 flex-col justify-center px-14 py-8 xl:px-20">
         <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
           Whole websites, predesigned
         </p>
-        <h2 className="mt-4 max-w-[14ch] font-serif text-[clamp(2.2rem,3.4vw,3.4rem)] font-normal leading-[0.95]">
+        <h2 className="mt-3 max-w-[14ch] font-serif text-[clamp(1.9rem,2.8vw,2.7rem)] font-normal leading-[0.95]">
           The shortest path to a live site.
         </h2>
 
-        <div className="relative mt-10 overflow-hidden rounded-[1.25rem] border border-[#25231f] bg-[#22211d] text-[#f2efe7]">
+            <div className="relative mt-8 overflow-hidden rounded-[1.25rem] border border-[#25231f] bg-[#22211d] text-[#f2efe7]">
           <div className="flex items-center justify-between border-b border-white/10 px-5 py-3.5">
             <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#aaa69b]">
               Live site / 01
@@ -96,7 +96,7 @@ export function AuthSplit({
           </svg>
           <div className="grid grid-cols-3 border-t border-white/10">
             {STEPS.map(([n, verb, noun]) => (
-              <div key={n} className="border-r border-white/10 px-4 py-3.5 last:border-r-0">
+              <div key={n} className="border-r border-white/10 px-4 py-3 last:border-r-0">
                 <p className="font-mono text-[8px] tracking-[0.15em] text-[#d97757]">{n}</p>
                 <p className="mt-1 text-xs font-medium">{verb}</p>
                 <p className="mt-0.5 text-[11px] leading-4 text-[#aaa69b]">{noun}</p>
@@ -113,14 +113,14 @@ export function AuthSplit({
   );
 
   return (
-    <div className="marketing-theme min-h-screen bg-background text-foreground">
+    <div className="marketing-theme h-svh overflow-hidden bg-background text-foreground">
       <a
         href={`#${formId}`}
         className="pointer-events-none fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background opacity-0 transition focus-visible:pointer-events-auto focus-visible:translate-y-0 focus-visible:opacity-100"
       >
         Skip to form
       </a>
-      <div className="mx-auto grid min-h-screen max-w-shell lg:grid-cols-[0.9fr_1.1fr]">
+      <div className="mx-auto grid h-svh max-w-shell overflow-hidden lg:grid-cols-[0.9fr_1.1fr]">
         {flip ? (
           <>
             {panel}

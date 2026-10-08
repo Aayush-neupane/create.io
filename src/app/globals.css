@@ -22,15 +22,15 @@
   --r: 14px;
 
   /* ─── ui-kit paper editorial tokens (marketing frontend) ─── */
-  --kit-background: #f5f0e5;
+  --kit-background: #f1e7d1;
   --kit-foreground: #292721;
   --kit-muted: #6d675f;
   --kit-body: #5e5952;
   --kit-border: #292721;
-  --kit-surface: #f7f2e7;
-  --kit-surface-2: #eae2d2;
-  --kit-surface-3: #ded4c1;
-  --kit-strip: #e8dfcf;
+  --kit-surface: #f8f2e4;
+  --kit-surface-2: #e6d7b8;
+  --kit-surface-3: #d9c6a0;
+  --kit-strip: #e0d0ae;
   --kit-primary: #bc4f30;
   --kit-primary-strong: #a03e23;
   --kit-secondary: #667a60;
@@ -452,6 +452,16 @@ html, body { overflow-x: clip; }
   background-size: 72px 72px;
   mask-image: linear-gradient(to bottom, black 0%, transparent 88%);
   -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 88%);
+}
+
+/* faint architectural grid for ink bands */
+.inkgrid {
+  background-image:
+    linear-gradient(to right, rgba(244, 239, 228, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(244, 239, 228, 0.06) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 90%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 90%);
 }
 
 .kit-panel {

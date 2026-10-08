@@ -34,7 +34,7 @@ const cols = [
 
 export function Trust() {
   return (
-    <section id="builder" className="scroll-mt-20 border-b border-border bg-[#e8dfcf]">
+    <section id="builder" className="scroll-mt-20 border-b border-border bg-surface-2">
       <div className="mx-auto max-w-shell">
         <div className="grid border-b border-border lg:grid-cols-[1.05fr_0.95fr]">
           <div className="px-6 py-14 sm:px-10 lg:border-r lg:border-border lg:px-16 lg:py-20 xl:px-20">

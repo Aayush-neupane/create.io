@@ -19,7 +19,7 @@ export default function DemoChooserPage() {
     <div className="marketing-theme min-h-screen bg-background text-foreground">
       <SiteNavbar />
       <Reveal>
-        <div className="border-b border-border bg-[#e8dfcf]">
+        <div className="border-b border-border bg-surface-2">
           <div className="mx-auto max-w-shell px-6 pb-10 pt-14 sm:px-10 lg:px-16 xl:px-20">
             <div className="grid justify-items-center gap-4 text-center">
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary-strong">

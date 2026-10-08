@@ -109,7 +109,7 @@ export function LibraryPreview() {
                 </div>
 
                 <div className="grid gap-px bg-border lg:grid-cols-[1.08fr_0.92fr]">
-                  <div className="bg-[#e8dfcf] p-5 sm:p-7">
+                  <div className="bg-surface-2 p-5 sm:p-7">
                     <div className="flex items-center justify-between">
                       <p className="font-mono text-[8px] uppercase tracking-[0.15em] text-muted">What&apos;s on the shelf</p>
                       <span className="font-mono text-[8px] text-[#777168]">Live data</span>

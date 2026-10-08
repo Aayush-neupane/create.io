@@ -12,11 +12,13 @@ import { site } from "@/config/site";
 /** ui-kit paper-editorial chrome for create.io:
  *  sticky hard-border bar, serif letter mark, pill CTAs. */
 
-export function LogoTile({ size = 28, invert }: { size?: number; invert?: boolean }) {
+export function LogoTile({ size = 28, invert, onDark }: { size?: number; invert?: boolean; onDark?: boolean }) {
   return (
     <span
       aria-hidden="true"
-      className="block flex-none overflow-hidden rounded-md border border-border/25 bg-surface"
+      className={`block flex-none overflow-hidden rounded-md border ${
+        onDark ? "border-white/25 bg-white/10" : "border-border/25 bg-surface"
+      }`}
       style={{ width: size, height: size }}
     >
       <Image
@@ -31,23 +33,25 @@ export function LogoTile({ size = 28, invert }: { size?: number; invert?: boolea
   );
 }
 
-export function BrandMark({ size = 28, invert }: { size?: number; invert?: boolean }) {
+export function BrandMark({ size = 28, invert, onDark }: { size?: number; invert?: boolean; onDark?: boolean }) {
   return (
     <span className="flex items-center gap-2.5 text-base font-semibold tracking-[-0.025em]">
-      <LogoTile size={size} invert={invert} />
+      <LogoTile size={size} invert={invert} onDark={onDark} />
       {site.brand}
     </span>
   );
 }
 
 /** Circular profile entry point — links to the account page everywhere. */
-export function ProfileIcon({ name, size = 34 }: { name: string; size?: number }) {
+export function ProfileIcon({ name, size = 34, onDark }: { name: string; size?: number; onDark?: boolean }) {
   return (
     <Link
       href="/settings"
       aria-label={`Account settings for ${name}`}
       title={name}
-      className="grid flex-none place-items-center rounded-full bg-foreground font-semibold text-background transition-colors hover:bg-primary"
+      className={`grid flex-none place-items-center rounded-full font-semibold transition-colors ${
+        onDark ? "bg-background text-foreground hover:bg-surface" : "bg-foreground text-background hover:bg-primary"
+      }`}
       style={{ width: size, height: size, fontSize: Math.round(size * 0.42) }}
     >
       {name.slice(0, 1).toUpperCase()}
@@ -65,21 +69,52 @@ const NAV = [
 
 export function Navbar({ user }: { user?: { name: string } | null }) {
   const [open, setOpen] = useState(false);
+  // Adapt to the surface under the bar: dark while the ink hero is behind
+  // it, paper everywhere else. Pages without a #hero stay paper.
+  const [overDark, setOverDark] = useState(true);
+  useEffect(() => {
+    const hero = document.getElementById("hero");
+    if (!hero) {
+      setOverDark(false);
+      return;
+    }
+    let raf = 0;
+    const update = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = hero.getBoundingClientRect();
+        setOverDark(r.top < 120 && r.bottom > 80);
+      });
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+  const linkHover = overDark ? "hover:text-[#d97757]" : "hover:text-primary-strong";
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 text-foreground backdrop-blur-md">
+    <header
+      className={`sticky top-0 z-50 border-b backdrop-blur-md transition-colors ${
+        overDark ? "border-white/10 bg-[#171310]/95 text-[#f4efe4]" : "border-border bg-background/95 text-foreground"
+      }`}
+    >
       <div className="mx-auto flex h-20 w-full max-w-shell items-center justify-between px-6 sm:px-10 lg:px-16 xl:px-20">
         <Link href="/" aria-label="create.io home">
-          <BrandMark invert />
+          <BrandMark onDark={overDark} invert={!overDark} />
         </Link>
 
         <nav aria-label="Primary navigation" className="hidden items-center gap-6 text-sm lg:flex xl:gap-8">
           {NAV.map((n) => (
-            <Link key={n.href} href={n.href} className="transition hover:text-primary-strong">
+            <Link key={n.href} href={n.href} className={`transition ${linkHover}`}>
               {n.label}
             </Link>
           ))}
           {user && (
-            <Link href="/dashboard" className="font-medium transition hover:text-primary-strong">
+            <Link href="/dashboard" className={`font-medium transition ${linkHover}`}>
               Dashboard
             </Link>
           )}
@@ -94,11 +129,11 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
               >
                 Start building
               </Link>
-              <ProfileIcon name={user.name} />
+              <ProfileIcon name={user.name} onDark={overDark} />
             </>
           ) : (
             <>
-              <Link href="/login" className="hidden px-2 py-2 text-sm font-medium transition hover:text-primary-strong sm:inline">
+              <Link href="/login" className={`hidden px-2 py-2 text-sm font-medium transition ${linkHover} sm:inline`}>
                 Log in
               </Link>
               <Link
@@ -114,7 +149,9 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle navigation"
             aria-expanded={open}
-            className="grid h-10 w-10 place-items-center rounded-full border border-border lg:hidden"
+            className={`grid h-10 w-10 place-items-center rounded-full border lg:hidden ${
+              overDark ? "border-white/20" : "border-border"
+            }`}
           >
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
@@ -122,14 +159,17 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
       </div>
 
       {open ? (
-        <nav aria-label="Mobile navigation" className="border-t border-border bg-background px-6 py-5 lg:hidden">
+        <nav
+          aria-label="Mobile navigation"
+          className={`px-6 py-5 lg:hidden ${overDark ? "border-t border-white/10 bg-[#171310]" : "border-t border-border bg-background"}`}
+        >
           <div className="flex flex-col">
             {[...NAV, ...(user ? [{ href: "/dashboard", label: "Dashboard" }, { href: "/settings", label: "Account" }] : [])].map((n) => (
               <Link
                 key={n.href}
                 href={n.href}
                 onClick={() => setOpen(false)}
-                className="border-b border-border/20 py-4 text-lg font-medium"
+                className={`border-b py-4 text-lg font-medium ${overDark ? "border-white/10" : "border-border/20"}`}
               >
                 {n.label}
               </Link>
@@ -148,7 +188,9 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
                   <Link
                     href="/login"
                     onClick={() => setOpen(false)}
-                    className="flex h-12 flex-1 items-center justify-center rounded-full border border-border text-sm font-medium"
+                    className={`flex h-12 flex-1 items-center justify-center rounded-full border text-sm font-medium ${
+                      overDark ? "border-white/25" : "border-border"
+                    }`}
                   >
                     Log in
                   </Link>

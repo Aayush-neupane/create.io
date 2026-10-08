@@ -186,7 +186,7 @@ export function Capabilities() {
               <article
                 key={item.n}
                 data-scroll-reveal
-                className={`capability-card group relative min-h-[34rem] overflow-hidden border-border p-6 transition-colors duration-500 hover:bg-[#ebe4d4] sm:p-10 lg:p-12 xl:p-14 ${
+                className={`capability-card group relative min-h-[34rem] overflow-hidden border-border p-6 transition-colors duration-500 hover:bg-surface-2 sm:p-10 lg:p-12 xl:p-14 ${
                   index % 2 === 0 ? "md:border-r" : ""
                 } ${index < 3 ? "border-b" : ""} ${index === 2 ? "md:border-b-0" : ""} ${
                   index === 1 || index === 2 ? "bg-surface/40" : ""

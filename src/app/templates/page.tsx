@@ -43,7 +43,7 @@ export default function TemplatesPage() {
       <div className="border-b border-border">
         <div className="mx-auto grid max-w-shell lg:grid-cols-[0.62fr_1.38fr]">
           <div className="px-6 py-10 sm:px-10 lg:border-r lg:border-border lg:px-16 lg:py-16 xl:px-20">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Library index</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary-strong">Library index</p>
             <p className="mt-6 font-serif text-6xl tabular-nums leading-none">{String(list.length).padStart(2, "0")}</p>
             <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
               {list.length === 1 ? "site" : "sites"} on the shelf
@@ -51,7 +51,7 @@ export default function TemplatesPage() {
           </div>
           <div className="px-6 py-10 sm:px-10 lg:px-16 lg:py-16 xl:px-20">
             <h1 className="max-w-[14ch] font-serif text-[clamp(2.6rem,5vw,4.5rem)] font-normal leading-[0.95]">
-              Every site, finished.
+              Every site, <span className="italic text-primary-strong">finished.</span>
             </h1>
             <p className="mt-5 max-w-xl text-base leading-7 text-[#5e5952]">
               Readable crops of real sites — what you see is the actual template,
@@ -86,7 +86,7 @@ export default function TemplatesPage() {
                 onClick={() => setCat(c)}
                 aria-pressed={cat === c}
                 className={`flex flex-none items-center gap-2 rounded-full border px-3.5 py-1.5 text-[13px] transition-colors ${
-                  cat === c ? "border-foreground bg-foreground text-background" : "border-border bg-surface"
+                  cat === c ? "border-primary bg-primary text-white" : "border-border bg-surface"
                 }`}
               >
                 {c !== "All" ? (
@@ -103,7 +103,7 @@ export default function TemplatesPage() {
                 onClick={() => setTier(p)}
                 aria-pressed={tier === p}
                 className={`rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.1em] transition-colors ${
-                  tier === p ? "bg-foreground text-background" : "text-muted hover:bg-foreground/5"
+                  tier === p ? "bg-primary text-white" : "text-muted hover:bg-foreground/5"
                 }`}
               >
                 {p}

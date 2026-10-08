@@ -49,11 +49,11 @@ export default async function AboutPage() {
           <section className="relative overflow-hidden border-b border-border">
             <div className="marketing-grid absolute inset-0 opacity-50" aria-hidden="true" />
             <div className="relative mx-auto max-w-shell px-6 py-16 sm:px-10 sm:py-24 lg:px-16 xl:px-20">
-              <p className="reveal font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
+              <p className="reveal font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-primary-strong">
                 About · The workshop
               </p>
               <h1 className="reveal mt-8 max-w-[14ch] font-serif text-[clamp(3rem,7vw,6.5rem)] font-normal leading-[0.9] tracking-[-0.055em] [animation-delay:80ms]">
-                Websites should start finished.
+                Websites should start <span className="italic text-primary-strong">finished.</span>
               </h1>
               <p className="reveal mt-8 max-w-[41rem] text-base leading-7 text-[#5e5952] sm:text-lg sm:leading-8 [animation-delay:160ms]">
                 create.io is a small workshop for finished websites. The blank
@@ -100,7 +100,7 @@ export default async function AboutPage() {
                 [String(kindCount), "kinds of site"],
                 ["0", "lines of code"],
               ].map(([v, l]) => (
-                <div key={l} className="border-t border-white/25 pt-5">
+                <div key={l} className="border-t-2 border-primary pt-5">
                   <p className="font-serif text-5xl tabular-nums leading-none sm:text-6xl">{v}</p>
                   <p className="mt-3 font-mono text-[9px] uppercase tracking-[0.16em] text-[#aaa398]">{l}</p>
                 </div>

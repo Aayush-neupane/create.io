@@ -59,12 +59,12 @@ function Visual({ index }: { index: number }) {
               <path className="kit-dash" d="M88 64 129 102H205" />
               <path d="M127 29 129 102" />
             </g>
-            <circle cx="26" cy="64" r="13" fill="#D75C3F" />
+            <circle cx="26" cy="64" r="13" fill="#BC4F30" />
             <circle cx="88" cy="64" r="18" fill="#292721" />
             <circle cx="127" cy="29" r="10" fill="#809177" />
             <circle cx="129" cy="102" r="12" fill="#F5F0E5" stroke="#292721" />
             <circle cx="205" cy="29" r="14" fill="#F5F0E5" stroke="#292721" />
-            <circle cx="205" cy="102" r="9" fill="#D75C3F" />
+            <circle cx="205" cy="102" r="9" fill="#BC4F30" />
           </svg>
         </div>
       </div>
@@ -86,12 +86,12 @@ function Visual({ index }: { index: number }) {
             <path d="M142 61 175 137 239 92 337 139 468 88" />
             <path d="M45 102 175 137M350 42 337 139" />
           </g>
-          <circle cx="45" cy="102" r="17" fill="#D75C3F" />
+          <circle cx="45" cy="102" r="17" fill="#BC4F30" />
           <circle cx="142" cy="61" r="10" fill="#F5F0E5" />
           <circle cx="175" cy="137" r="13" fill="#809177" />
           <circle cx="239" cy="92" r="24" fill="#F5F0E5" />
           <circle cx="350" cy="42" r="12" fill="#809177" />
-          <circle cx="337" cy="139" r="15" fill="#D75C3F" />
+          <circle cx="337" cy="139" r="15" fill="#BC4F30" />
           <circle cx="468" cy="88" r="19" fill="#F5F0E5" />
           <g fill="#292721" fontFamily="ui-monospace, monospace" fontSize="7" textAnchor="middle">
             <text x="45" y="105">NAV</text>

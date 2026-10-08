@@ -22,11 +22,11 @@ export default function DemoChooserPage() {
         <div className="border-b border-border bg-[#e8dfcf]">
           <div className="mx-auto max-w-shell px-6 pb-10 pt-14 sm:px-10 lg:px-16 xl:px-20">
             <div className="grid justify-items-center gap-4 text-center">
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary-strong">
                 01 · Guest mode
               </p>
               <h1 className="max-w-2xl font-serif text-[clamp(2.8rem,5vw,4.5rem)] font-normal leading-[0.95]">
-                Pick a site. Edit it live.
+                Pick a site. Edit it <span className="italic text-primary-strong">live.</span>
               </h1>
               <p className="max-w-[600px] text-[15px] text-muted">
                 No account, no setup. Choose any finished site below and the full builder
@@ -78,7 +78,7 @@ export default function DemoChooserPage() {
                   <Link href={`/templates/${t.id}`} className="flex-1 rounded-full border border-border px-3 py-2 text-center text-[13px] font-medium transition-colors hover:bg-foreground hover:text-background">
                     Preview
                   </Link>
-                  <Link href={`/demo/${t.id}`} className="inline-flex h-[37px] flex-1 items-center justify-center rounded-full bg-foreground px-3 text-center text-[13px] font-medium text-background transition-colors hover:bg-primary">
+                  <Link href={`/demo/${t.id}`} className="inline-flex h-[37px] flex-1 items-center justify-center rounded-full bg-primary px-3 text-center text-[13px] font-medium text-white transition-colors hover:bg-primary-strong">
                     Edit live demo →
                   </Link>
                 </div>
@@ -93,7 +93,7 @@ export default function DemoChooserPage() {
               publish and share your site with the world.
             </p>
             <div className="mt-1 flex flex-wrap justify-center gap-3">
-              <Link href="/signup" className="inline-flex h-11 items-center rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:bg-primary">Sign up free</Link>
+              <Link href="/signup" className="inline-flex h-11 items-center rounded-full bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary-strong">Sign up free</Link>
               <Link href="/login" className="inline-flex h-11 items-center rounded-full border border-border px-6 text-sm font-medium transition hover:bg-foreground hover:text-background">Log in</Link>
             </div>
           </div>

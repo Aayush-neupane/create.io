@@ -48,7 +48,7 @@ export function OfflineGate() {
         </div>
         <button
           onClick={() => window.location.reload()}
-          className="mt-7 inline-flex h-13 items-center rounded-full bg-foreground px-7 text-sm font-medium text-background transition hover:bg-primary"
+          className="mt-7 inline-flex h-13 items-center rounded-full bg-primary px-7 text-sm font-medium text-white transition hover:bg-primary-strong"
         >
           Try again
         </button>

@@ -56,7 +56,7 @@ function LibraryGrid() {
           </p>
           <Link
             href="/templates"
-            className="group inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:bg-primary"
+            className="group inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary-strong"
           >
             Browse all {TEMPLATES.length} sites
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

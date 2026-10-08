@@ -16,7 +16,7 @@ export const metadata = {
 function Card({ index, title, sub, children }: { index: string; title: string; sub?: string; children: React.ReactNode }) {
   return (
     <section className="kit-panel p-6 md:p-7">
-      <p className="font-mono text-[9px] tracking-[0.16em] text-muted">{index}</p>
+      <p className="font-mono text-[9px] tracking-[0.16em] text-primary-strong">{index}</p>
       <h2 className="mt-2 font-serif text-2xl tracking-[-0.03em]">{title}</h2>
       {sub && <p className="mt-1 text-sm text-muted">{sub}</p>}
       <div className="mt-5">{children}</div>
@@ -41,7 +41,7 @@ export default async function AccountPage() {
       <AppNavbar user={user} active="/settings" actions={<LogoutButton />} />
 
       <main className="mx-auto max-w-3xl px-6 py-10 sm:px-10">
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Account</p>
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary-strong">Account</p>
         <div className="mt-4 flex items-center gap-4">
           <span className="grid h-14 w-14 flex-none place-items-center rounded-md bg-primary font-serif text-2xl text-white" aria-hidden>
             {user.name.slice(0, 1).toUpperCase()}
@@ -89,7 +89,7 @@ export default async function AccountPage() {
               <div className="grid justify-items-center gap-2 py-4 text-center">
                 <p className="text-sm text-muted">No websites yet — start with any finished template.</p>
                 <div className="mt-1 flex gap-2">
-                  <Link href="/new" className="inline-flex h-10 items-center rounded-full bg-foreground px-5 text-[13px] font-medium text-background transition hover:bg-primary">Create website</Link>
+                  <Link href="/new" className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-[13px] font-medium text-white transition hover:bg-primary-strong">Create website</Link>
                   <Link href="/templates" className="inline-flex h-10 items-center rounded-full border border-border px-5 text-[13px] font-medium transition hover:bg-foreground hover:text-background">Browse templates</Link>
                 </div>
               </div>

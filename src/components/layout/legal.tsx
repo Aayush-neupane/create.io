@@ -27,7 +27,7 @@ export async function LegalShell({
       <main>
         <div className="border-b border-border">
           <div className="mx-auto max-w-shell px-6 py-14 sm:px-10 lg:px-16 lg:py-20 xl:px-20">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary-strong">
               Legal · {eyebrow}
             </p>
             <h1 className="mt-4 max-w-[14ch] font-serif text-[clamp(2.6rem,5vw,4.5rem)] font-normal leading-[0.95]">
@@ -52,7 +52,7 @@ export async function LegalShell({
             </Link>
             <Link
               href="/new"
-              className="inline-flex h-12 items-center rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:bg-primary"
+              className="inline-flex h-12 items-center rounded-full bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary-strong"
             >
               Start building
             </Link>

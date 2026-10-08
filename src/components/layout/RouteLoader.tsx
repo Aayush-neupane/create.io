@@ -32,7 +32,7 @@ export function RouteLoader() {
 
   return (
     <div
-      className="relative grid min-h-[70vh] place-items-center overflow-hidden px-6 py-20"
+      className="relative grid min-h-[92svh] place-items-center overflow-hidden px-6 py-20"
       role="status"
       aria-live="polite"
       aria-label="Preparing your shelf"

@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode, RefObject } from "react";
 import type { WebsiteConfig } from "@/types/builder";
+import { OrbitCluster } from "@/components/layout/Orbit";
 import { TemplateRenderer } from "./Renderer";
 import { getTemplate } from "@/lib/templates";
 import { baseTheme, buildConfigFromTemplate } from "@/lib/website-defaults";
@@ -27,7 +28,8 @@ function useStripCropIds(root: RefObject<HTMLDivElement | null>, deps: unknown[]
 
 /** Defers heavy live renders until they approach the viewport. The parent
  *  must fix the visible size so the placeholder reserves the same space and
- *  nothing shifts when the real render mounts. */
+ *  nothing shifts when the real render mounts. While waiting, a mini orbit
+ *  holds the space so expanding sections read as loading, not blank. */
 export function LazyMount({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState<boolean>(
@@ -52,7 +54,13 @@ export function LazyMount({ children }: { children: ReactNode }) {
 
   return (
     <div ref={ref} className="h-full w-full">
-      {inView ? children : <div className="h-full w-full animate-pulse bg-surface-2" aria-hidden="true" />}
+      {inView ? (
+        children
+      ) : (
+        <div className="grid h-full w-full place-items-center bg-surface-2/60" aria-hidden="true">
+          <OrbitCluster box={104} mark={30} />
+        </div>
+      )}
     </div>
   );
 }

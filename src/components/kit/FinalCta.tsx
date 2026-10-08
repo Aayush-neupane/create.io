@@ -24,7 +24,7 @@ export function FinalCta() {
         <div data-scroll-reveal className="mt-9 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/new"
-            className="group inline-flex h-14 items-center gap-3 rounded-full bg-foreground px-8 text-[15px] font-medium text-background transition hover:bg-primary"
+            className="group inline-flex h-14 items-center gap-3 rounded-full bg-primary px-8 text-[15px] font-medium text-white transition hover:bg-primary-strong"
           >
             Start building
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

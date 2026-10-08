@@ -31,8 +31,8 @@
   --kit-surface-2: #eae2d2;
   --kit-surface-3: #ded4c1;
   --kit-strip: #e8dfcf;
-  --kit-primary: #d75c3f;
-  --kit-primary-strong: #c94f34;
+  --kit-primary: #bc4f30;
+  --kit-primary-strong: #a03e23;
   --kit-secondary: #667a60;
 }
 
@@ -431,6 +431,13 @@ html, body { overflow-x: clip; }
   color-scheme: light;
   width: 100%;
 }
+.marketing-theme ::selection {
+  background: rgba(188, 79, 48, 0.28);
+  color: var(--kit-foreground);
+}
+.marketing-theme :focus-visible {
+  outline-color: var(--kit-primary);
+}
 .marketing-theme h1, .marketing-theme h2, .marketing-theme h3 {
   font-family: var(--font-serif), "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   font-weight: 400;
@@ -467,8 +474,8 @@ html, body { overflow-x: clip; }
   transition: transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .kit-card:hover .kit-visual { transform: translateY(-2px); }
-.kit-accent { width: 0; transition: width 500ms cubic-bezier(0.2, 0.8, 0.2, 1); }
-.kit-card:hover .kit-accent { width: 3rem; }
+.kit-accent { width: 2.5rem; transition: width 500ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.kit-card:hover .kit-accent { width: 100%; }
 
 /* capability cards (ui-kit Capabilities visuals — tokens added here) */
 .capability-visual {
@@ -481,7 +488,7 @@ html, body { overflow-x: clip; }
 }
 .capability-layer { transition: transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1); }
 .capability-card:hover .capability-layer { transform: translateX(2px); }
-.capability-accent { width: 0; transition: width 500ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.capability-accent { width: 2.5rem; transition: width 500ms cubic-bezier(0.2, 0.8, 0.2, 1); }
 .capability-card:hover .capability-accent { width: 100%; }
 
 @keyframes kit-rise {
@@ -520,7 +527,9 @@ html, body { overflow-x: clip; }
 
 /* ─── orbit loader: rings, halo, tracked line ─── */
 @keyframes loader-orbit-spin { to { transform: rotate(360deg); } }
-.loader-orbit-spin { animation: loader-orbit-spin 16s linear infinite; }
+.loader-orbit-spin { animation: loader-orbit-spin 7s linear infinite; }
+@keyframes loader-orbit-spin-rev { to { transform: rotate(-360deg); } }
+.loader-orbit-spin-rev { animation: loader-orbit-spin-rev 14s linear infinite; }
 @keyframes loader-halo-ping {
   0% { transform: scale(1); opacity: 0.7; }
   80%, 100% { transform: scale(1.4); opacity: 0; }
@@ -537,7 +546,7 @@ html, body { overflow-x: clip; }
 }
 .route-loader-in { animation: route-loader-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 @media (prefers-reduced-motion: reduce) {
-  .loader-orbit-spin, .loader-halo, .loader-track-slide { animation: none !important; }
+  .loader-orbit-spin, .loader-orbit-spin-rev, .loader-halo, .loader-track-slide { animation: none !important; }
   .route-loader-in { animation: none; }
 }
 

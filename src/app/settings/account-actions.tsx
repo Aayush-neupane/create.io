@@ -63,7 +63,7 @@ export function NameForm({ initial }: { initial: string }) {
         maxLength={60}
         className="w-full flex-1 border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted/70 focus:border-primary"
       />
-      <button disabled={busy || !name.trim() || name.trim() === initial} className="inline-flex h-10 flex-none items-center justify-center rounded-full bg-foreground px-5 text-[13px] font-medium text-background transition hover:bg-primary disabled:opacity-50">
+      <button disabled={busy || !name.trim() || name.trim() === initial} className="inline-flex h-10 flex-none items-center justify-center rounded-full bg-primary px-5 text-[13px] font-medium text-white transition hover:bg-primary-strong disabled:opacity-50">
         {busy ? "Saving…" : "Save"}
       </button>
       {note && <p className={`text-xs sm:self-center ${note.ok ? "text-muted" : "text-red-600"}`}>{note.msg}</p>}
@@ -109,7 +109,7 @@ export function PasswordForm() {
       <input value={current} onChange={(e) => setCurrent(e.target.value)} required type="password" placeholder="Current password" aria-label="Current password" className={input} />
       <input value={next} onChange={(e) => setNext(e.target.value)} required type="password" placeholder="New password (8+ characters)" aria-label="New password" minLength={8} className={input} />
       <div className="flex items-center gap-3 sm:col-span-2">
-        <button disabled={busy} className="inline-flex h-10 flex-none items-center justify-center rounded-full bg-foreground px-5 text-[13px] font-medium text-background transition hover:bg-primary disabled:opacity-50">
+        <button disabled={busy} className="inline-flex h-10 flex-none items-center justify-center rounded-full bg-primary px-5 text-[13px] font-medium text-white transition hover:bg-primary-strong disabled:opacity-50">
           {busy ? "Updating…" : "Change password"}
         </button>
         {note && <p className={`text-xs ${note.ok ? "text-muted" : "text-red-600"}`}>{note.msg}</p>}

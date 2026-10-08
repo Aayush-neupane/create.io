@@ -28,7 +28,7 @@ export default async function DashboardPage() {
       <main className="mx-auto max-w-shell px-6 py-10 sm:px-10 lg:px-16 lg:py-14 xl:px-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Studio</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary-strong">Studio</p>
             <h1 className="mt-3 font-serif text-[clamp(2.2rem,4vw,3.6rem)] font-normal leading-[0.95]">
               Welcome back, {user.name.split(" ")[0]}.
             </h1>
@@ -43,7 +43,7 @@ export default async function DashboardPage() {
             </Link>
             <Link
               href="/new"
-              className="group inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:bg-primary"
+              className="group inline-flex h-12 items-center gap-2 rounded-full bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary-strong"
             >
               New website
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -62,11 +62,11 @@ export default async function DashboardPage() {
 
         {sites.length === 0 ? (
           <div className="kit-panel mt-8 flex flex-col items-center justify-center px-8 py-16 text-center" style={{ borderStyle: "dashed" }}>
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Empty shelf</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary-strong">Empty shelf</p>
             <h3 className="mt-3 font-serif text-3xl">You don&apos;t have a website yet.</h3>
             <p className="mt-2 max-w-sm text-sm text-muted">Choose a finished template and publish your first page in minutes.</p>
             <div className="mt-6 flex flex-wrap justify-center gap-2">
-              <Link href="/new" className="inline-flex h-12 items-center rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:bg-primary">Create website</Link>
+              <Link href="/new" className="inline-flex h-12 items-center rounded-full bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary-strong">Create website</Link>
               <Link href="/templates" className="inline-flex h-12 items-center rounded-full border border-border px-6 text-sm font-medium transition hover:bg-foreground hover:text-background">Browse templates</Link>
             </div>
           </div>

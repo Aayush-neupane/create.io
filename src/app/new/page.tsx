@@ -44,11 +44,11 @@ function Flow() {
   return (
     <div className="mx-auto w-full max-w-3xl">
       <div className="mb-8 grid justify-items-center gap-3 text-center">
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary-strong">
           New site · Step {step} of 2
         </p>
         <h1 className="font-serif text-[clamp(2.2rem,4vw,3.4rem)] font-normal leading-[0.95]">
-          {step === 1 ? <>Choose your starting point.</> : <>Make it yours.</>}
+          {step === 1 ? <>Choose your <span className="italic text-primary-strong">starting point.</span></> : <>Make it <span className="italic text-primary-strong">yours.</span></>}
         </h1>
         <div className="flex items-center gap-2" aria-hidden>
           {[1, 2].map((n) => (
@@ -93,7 +93,7 @@ function Flow() {
               );
             })}
           </div>
-          <button onClick={() => setStep(2)} className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-foreground text-sm font-medium text-background transition hover:bg-primary">
+          <button onClick={() => setStep(2)} className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-primary text-sm font-medium text-white transition hover:bg-primary-strong">
             Continue with {TEMPLATES.find((t) => t.id === templateId)?.name} →
           </button>
         </>
@@ -111,7 +111,7 @@ function Flow() {
                 key={t}
                 onClick={() => setSiteType(t)}
                 aria-pressed={siteType === t}
-                className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${siteType === t ? "border-foreground bg-foreground text-background" : "border-border bg-background"}`}
+                className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${siteType === t ? "border-primary bg-primary text-white" : "border-border bg-background"}`}
               >
                 {t}
               </button>
@@ -140,7 +140,7 @@ function Flow() {
           {err && <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{err}</p>}
           <div className="mt-6 flex gap-2">
             <button onClick={() => setStep(1)} className="rounded-full border border-border bg-background px-5 py-2.5 text-sm font-medium transition-colors hover:bg-foreground hover:text-background">← Back</button>
-            <button onClick={create} disabled={loading} className="inline-flex h-12 flex-1 items-center justify-center rounded-full bg-foreground text-sm font-medium text-background transition hover:bg-primary disabled:opacity-60">{loading ? "Creating…" : "Create website →"}</button>
+            <button onClick={create} disabled={loading} className="inline-flex h-12 flex-1 items-center justify-center rounded-full bg-primary text-sm font-medium text-white transition hover:bg-primary-strong disabled:opacity-60">{loading ? "Creating…" : "Create website →"}</button>
           </div>
         </>
       )}
@@ -152,7 +152,7 @@ function Flow() {
 export default function NewPage() {
   return (
     <div className="marketing-theme min-h-screen bg-background px-6 py-10 text-foreground">
-      <div className="mx-auto mb-6 max-w-3xl"><Link href="/dashboard" className="text-sm text-muted transition-colors hover:text-foreground">← Dashboard</Link></div>
+      <div className="mx-auto mb-6 max-w-3xl"><Link href="/dashboard" className="text-sm text-muted transition-colors hover:text-primary-strong">← Dashboard</Link></div>
       <Suspense><Flow /></Suspense>
     </div>
   );

@@ -97,7 +97,7 @@ export function FieldsDemo() {
                         key={id}
                         onClick={() => setTplId(id)}
                         aria-pressed={on}
-                        className={`border px-2 py-3 text-center transition-colors ${on ? "border-foreground bg-foreground text-background" : "border-border bg-surface hover:bg-foreground/5"}`}
+                        className={`border px-2 py-3 text-center transition-colors ${on ? "border-primary bg-primary/10" : "border-border bg-surface hover:border-primary/50"}`}
                       >
                         <span className="mx-auto grid h-8 w-8 place-items-center rounded-[10px] text-sm font-bold text-white" style={{ background: t.theme.primary }} aria-hidden>
                           {t.name.slice(0, 1)}
@@ -110,7 +110,7 @@ export function FieldsDemo() {
               </div>
               <Link
                 href={`/new?template=${tpl.id}`}
-                className="group flex h-13 w-full items-center justify-center gap-2 rounded-full bg-foreground text-sm font-medium text-background transition hover:bg-primary"
+                className="group flex h-13 w-full items-center justify-center gap-2 rounded-full bg-primary text-sm font-medium text-white transition hover:bg-primary-strong"
               >
                 Start from {tpl.name}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

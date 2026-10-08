@@ -11,7 +11,7 @@ function Pipeline() {
       <svg viewBox="0 0 640 96" className="w-full">
         <path d="M62 48H578" stroke="#292721" strokeOpacity=".42" strokeWidth="1.2" className="kit-dash" />
         <circle cx="62" cy="48" r="23" fill="#F7F2E7" stroke="#292721" />
-        <circle cx="320" cy="48" r="27" fill="#D75C3F" stroke="#292721" />
+        <circle cx="320" cy="48" r="27" fill="#BC4F30" stroke="#292721" />
         <circle cx="578" cy="48" r="23" fill="#292721" />
         <g fontFamily="ui-monospace, monospace" fontSize="8" textAnchor="middle">
           <text x="62" y="52" fill="#292721">SITE</text>
@@ -85,7 +85,7 @@ export function StartCta() {
                   />
                   <Link
                     href={value.trim() ? `/new?name=${encodeURIComponent(value.trim())}` : "/new"}
-                    className="inline-flex h-13 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:bg-primary"
+                    className="inline-flex h-13 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary-strong"
                   >
                     Start building
                     <ArrowRight className="h-4 w-4" />

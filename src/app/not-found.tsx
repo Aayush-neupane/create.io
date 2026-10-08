@@ -21,11 +21,11 @@ export default function NotFound() {
       <main className="relative mx-auto grid w-full max-w-shell flex-1 content-center overflow-hidden px-6 py-20 text-center sm:px-10">
         <div className="relative grid justify-items-center">
         <OrbitCluster box={232} mark={68} />
-        <p className="mt-7 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+        <p className="mt-7 font-mono text-[10px] uppercase tracking-[0.18em] text-primary-strong">
           404 — No such shelf
         </p>
         <h1 className="mx-auto mt-8 max-w-[14ch] font-serif text-[clamp(3rem,9vw,8rem)] font-normal leading-[0.9] tracking-[-0.05em]">
-          Lost, or early.
+          Lost, or <span className="italic text-primary-strong">early.</span>
         </h1>
         <p className="mx-auto mt-6 max-w-md text-base leading-7 text-[#5e5952]">
           This page was never published — or it moved while the ink was wet.
@@ -37,7 +37,7 @@ export default function NotFound() {
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/"
-            className="inline-flex h-13 items-center rounded-full bg-foreground px-7 text-sm font-medium text-background transition hover:bg-primary"
+            className="inline-flex h-13 items-center rounded-full bg-primary px-7 text-sm font-medium text-white transition hover:bg-primary-strong"
           >
             Return home
           </Link>

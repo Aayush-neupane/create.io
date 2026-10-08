@@ -90,7 +90,7 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
             <>
               <Link
                 href="/new"
-                className="hidden rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:bg-primary sm:inline-flex"
+                className="hidden rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white transition hover:bg-primary-strong sm:inline-flex"
               >
                 Start building
               </Link>
@@ -103,7 +103,7 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
               </Link>
               <Link
                 href="/new"
-                className="hidden rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:bg-primary sm:inline-flex"
+                className="hidden rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white transition hover:bg-primary-strong sm:inline-flex"
               >
                 Try create.io
               </Link>
@@ -139,7 +139,7 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
                 <Link
                   href="/new"
                   onClick={() => setOpen(false)}
-                  className="flex h-12 flex-1 items-center justify-center rounded-full bg-foreground text-sm font-medium text-background"
+                  className="flex h-12 flex-1 items-center justify-center rounded-full bg-primary text-sm font-medium text-white"
                 >
                   New website
                 </Link>
@@ -155,7 +155,7 @@ export function Navbar({ user }: { user?: { name: string } | null }) {
                   <Link
                     href="/new"
                     onClick={() => setOpen(false)}
-                    className="flex h-12 flex-1 items-center justify-center rounded-full bg-foreground text-sm font-medium text-background"
+                    className="flex h-12 flex-1 items-center justify-center rounded-full bg-primary text-sm font-medium text-white"
                   >
                     Try create.io
                   </Link>
@@ -221,7 +221,7 @@ export function AppNavbar({ user, active, actions }: { user?: { name: string } |
         <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/new"
-            className="hidden rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:bg-primary sm:inline-flex"
+            className="hidden rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white transition hover:bg-primary-strong sm:inline-flex"
           >
             New website
           </Link>
@@ -259,7 +259,7 @@ export function AppNavbar({ user, active, actions }: { user?: { name: string } |
               <Link
                 href="/new"
                 onClick={() => setOpen(false)}
-                className="flex h-12 flex-1 items-center justify-center rounded-full bg-foreground text-sm font-medium text-background"
+                className="flex h-12 flex-1 items-center justify-center rounded-full bg-primary text-sm font-medium text-white"
               >
                 New website
               </Link>

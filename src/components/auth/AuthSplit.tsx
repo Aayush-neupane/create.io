@@ -32,7 +32,7 @@ export function AuthSplit({
   const form = (
     <div className={`flex min-h-0 flex-col overflow-hidden px-6 py-6 sm:px-10 lg:px-16 xl:px-20 ${flip ? "auth-in-right lg:border-l lg:border-border" : "auth-in-left lg:border-r lg:border-border"}`}>
       <div className="flex flex-none items-center justify-between">
-        <Link href="/" className="text-sm text-muted transition-colors hover:text-foreground">
+        <Link href="/" className="text-sm text-muted transition-colors hover:text-primary-strong">
           ← Back home
         </Link>
         <Link href="/" aria-label="create.io home">
@@ -41,7 +41,7 @@ export function AuthSplit({
       </div>
 
       <div id={formId} className="mx-auto flex w-full max-w-md min-h-0 flex-1 flex-col justify-center py-4">
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">{eyebrow}</p>
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary-strong">{eyebrow}</p>
         <h1 className="mt-3 font-serif text-[clamp(2rem,3.4vw,2.9rem)] font-normal leading-[0.95]">
           {title}
         </h1>
@@ -86,7 +86,7 @@ export function AuthSplit({
           <svg viewBox="0 0 640 60" className="w-full px-2 py-4" aria-hidden="true">
             <path d="M62 30H578" stroke="#77746c" strokeOpacity=".5" strokeWidth="1.2" className="kit-dash" />
             <circle cx="62" cy="30" r="16" fill="#F7F2E7" stroke="#77746c" />
-            <circle cx="320" cy="30" r="19" fill="#D75C3F" />
+            <circle cx="320" cy="30" r="19" fill="#BC4F30" />
             <circle cx="578" cy="30" r="16" fill="#E8E3D8" />
             <g fontFamily="ui-monospace, monospace" fontSize="8" textAnchor="middle">
               <text x="62" y="33" fill="#292721">SITE</text>

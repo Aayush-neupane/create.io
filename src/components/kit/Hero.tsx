@@ -15,11 +15,11 @@ export function Hero() {
       <section className="relative overflow-hidden border-b border-border">
         <div className="marketing-grid absolute inset-0 opacity-80" aria-hidden="true" />
         <div className="relative mx-auto max-w-shell px-6 pb-14 pt-16 text-center sm:px-10 sm:pt-24 lg:px-16 xl:px-20">
-          <p className="reveal font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
+          <p className="reveal font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-primary-strong">
             {site.eyebrow}
           </p>
           <h1 className="reveal mx-auto mt-8 max-w-[14ch] font-serif text-[clamp(3.2rem,9vw,9rem)] font-normal leading-[0.88] tracking-[-0.055em] [animation-delay:80ms]">
-            {site.heroTitle}
+            Whole websites, <span className="italic text-primary-strong">predesigned.</span>
           </h1>
           <p className="reveal mx-auto mt-8 max-w-[41rem] text-base leading-7 text-[#5e5952] sm:text-lg sm:leading-8 [animation-delay:160ms]">
             {site.heroSub}
@@ -27,7 +27,7 @@ export function Hero() {
           <div className="reveal mt-9 flex flex-wrap items-center justify-center gap-4 [animation-delay:240ms]">
             <Link
               href={site.primaryCta.href}
-              className="group inline-flex h-13 items-center gap-3 rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:bg-primary"
+              className="group inline-flex h-13 items-center gap-3 rounded-full bg-primary px-6 text-sm font-medium text-white transition hover:bg-primary-strong"
             >
               {site.primaryCta.label}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -40,9 +40,12 @@ export function Hero() {
               <ArrowDownRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="reveal mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 font-mono text-[8px] uppercase tracking-[0.14em] text-muted [animation-delay:300ms]">
-            {site.trustRow.map((t) => (
-              <span key={t}>{t}</span>
+          <div className="reveal mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 font-mono text-[8px] uppercase tracking-[0.14em] text-muted [animation-delay:300ms]">
+            {site.trustRow.map((t, i) => (
+              <span key={t} className="flex items-center gap-3">
+                {i > 0 ? <span className="h-1 w-1 rounded-full bg-primary" aria-hidden="true" /> : null}
+                {t}
+              </span>
             ))}
           </div>
 

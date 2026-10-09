@@ -14,8 +14,9 @@ export const metadata = {
 
 function Card({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border p-6 md:p-7" style={{ borderColor: "var(--line)", background: "var(--surface)" }}>
-      <h2 className="font-semibold" style={{ letterSpacing: "-0.015em" }}>{title}</h2>
+    <section className="card p-6 md:p-7" style={{ borderRadius: 12 }}>
+      <p className="mono-meta font-mono text-[10px] font-bold uppercase" style={{ letterSpacing: "0.2em", color: "var(--accent-text)" }}>Account</p>
+      <h2 className="display display-upper mt-1.5 text-2xl">{title}</h2>
       {sub && <p className="mt-1 text-sm" style={{ color: "var(--ink-2)" }}>{sub}</p>}
       <div className="mt-5">{children}</div>
     </section>
@@ -40,12 +41,13 @@ export default async function AccountPage() {
 
       <main className="mx-auto max-w-3xl px-6 py-10">
         <div className="flex items-center gap-4">
-          <span className="grid h-14 w-14 flex-none place-items-center rounded-2xl text-xl font-bold text-white" style={{ background: "var(--ink)" }} aria-hidden>
+          <span className="grid h-14 w-14 flex-none place-items-center font-mono text-xl font-bold" style={{ background: "var(--ink)", color: "var(--accent)" }} aria-hidden>
             {user.name.slice(0, 1).toUpperCase()}
           </span>
           <div className="min-w-0">
-            <h1 className="truncate text-2xl font-semibold tracking-tight">{user.name}</h1>
-            <p className="mono-meta mt-0.5 text-xs" style={{ color: "var(--ink-3)" }}>
+            <p className="mono-meta font-mono text-[10px] font-bold uppercase" style={{ letterSpacing: "0.2em", color: "var(--accent-text)" }}>Account settings</p>
+            <h1 className="display display-upper truncate text-3xl md:text-4xl">{user.name}</h1>
+            <p className="mono-meta mt-1 font-mono text-[11px]" style={{ color: "var(--ink-3)" }}>
               {user.email} · member since {new Date(user.createdAt).toLocaleDateString()}
             </p>
           </div>
@@ -53,8 +55,8 @@ export default async function AccountPage() {
 
         <div className="mt-6 grid grid-cols-3 gap-3">
           {stats.map((s) => (
-            <div key={s.l} className="rounded-2xl border p-4 text-center sm:p-5" style={{ borderColor: "var(--line)", background: "var(--surface)" }}>
-              <p className="text-2xl font-bold tabular-nums sm:text-3xl" style={{ letterSpacing: "-0.03em" }}>{s.v}</p>
+            <div key={s.l} className="card p-4 text-center sm:p-5" style={{ borderRadius: 10 }}>
+              <p className="display text-2xl tabular-nums sm:text-3xl">{s.v}</p>
               <p className="mono-meta mt-1 text-[10.5px] uppercase" style={{ letterSpacing: "0.1em", color: "var(--ink-3)" }}>{s.l}</p>
             </div>
           ))}
@@ -102,7 +104,7 @@ export default async function AccountPage() {
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold">{s.name}</p>
                         <p className="mono-meta mt-0.5 flex items-center gap-1.5 text-[11px]" style={{ color: "var(--ink-3)" }}>
-                          <i className="h-1.5 w-1.5 rounded-full" style={{ background: s.status === "published" ? "#16a34a" : "var(--ink-3)" }} />
+                          <i className="h-1.5 w-1.5 rounded-full" style={{ background: s.status === "published" ? "var(--ink)" : "var(--ink-3)" }} />
                           {s.status} · updated {timeAgo(s.updatedAt)}
                         </p>
                       </div>

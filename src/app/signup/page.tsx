@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BrandMark } from "@/components/layout/chrome";
+import { AuthSplit } from "../login/page";
 
 /** Return path requested via ?next= — internal paths only, else dashboard. */
 function safeNext(): string {
@@ -13,6 +13,9 @@ function safeNext(): string {
   } catch { /* ignore */ }
   return "/dashboard";
 }
+
+const inputStyle = { borderColor: "var(--line-2)", background: "#fff", borderRadius: 0 } as const;
+const inputCls = "w-full border px-4 py-3 text-sm outline-none transition-colors";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -43,42 +46,44 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-6" style={{ background: "var(--paper)" }}>
-      <div className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-8">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">← Back</Link>
-          <Link href="/" aria-label="create.io home"><BrandMark size={26} /></Link>
+    <AuthSplit
+      kicker="New account · Free start"
+      panelTitle={<>Fourteen sites. Zero lines of code.</>}
+      panelPoints={[
+        ["Pick", "A finished site with its own sections and copy."],
+        ["Fill", "Plain fields — projects, menus, hours, photos."],
+        ["Publish", "One click to a fast public page."],
+      ]}
+      title="Join create.io"
+      sub="Start building your website in minutes."
+      footer={<p className="mt-6 text-center text-sm" style={{ color: "var(--ink-2)" }}>Already have an account? <Link href="/login" className="font-bold underline underline-offset-4" style={{ color: "var(--ink)" }}>Log in</Link></p>}
+    >
+      <form onSubmit={submit} className="space-y-4">
+        <div>
+          <label className="mb-1.5 block font-mono text-[10px] font-bold uppercase" style={{ letterSpacing: "0.14em" }}>Name</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Alex Morgan" className={inputCls} style={inputStyle} />
         </div>
-        <h1 className="mt-4 text-2xl font-semibold tracking-tight">Create your account</h1>
-        <p className="mt-1 text-sm text-neutral-600">Start building your website in minutes.</p>
-        <form onSubmit={submit} className="mt-6 space-y-4">
-          <div>
-            <label className="mb-1.5 block text-[13px] font-medium">Name</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Alex Morgan" className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[13px] font-medium">Email</label>
-            <input value={email} onChange={(e) => setEmail(e.target.value)} required type="email" placeholder="you@example.com" className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[13px] font-medium">Password</label>
-            <input value={password} onChange={(e) => setPassword(e.target.value)} required type="password" minLength={8} placeholder="Minimum 8 characters" className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none" />
-          </div>
-          {err && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{err}</p>}
-          <button disabled={loading} className="btn-primary w-full disabled:opacity-60">
-            {loading ? "Creating…" : "Create account"}
-          </button>
-        </form>
-        <div className="my-4 flex items-center gap-3 text-xs" style={{ color: "var(--ink-3)" }}>
-            <span className="h-px flex-1" style={{ background: "var(--line)" }} />
-            or
-            <span className="h-px flex-1" style={{ background: "var(--line)" }} />
-          </div>
-          <Link href="/demo" className="btn-ghost w-full">
-            Continue as guest — no signup
-          </Link>
-<p className="mt-5 text-center text-sm text-neutral-600">Already have an account? <Link href="/login" className="font-medium text-neutral-900 underline">Log in</Link></p>
+        <div>
+          <label className="mb-1.5 block font-mono text-[10px] font-bold uppercase" style={{ letterSpacing: "0.14em" }}>Email</label>
+          <input value={email} onChange={(e) => setEmail(e.target.value)} required type="email" placeholder="you@example.com" className={inputCls} style={inputStyle} />
+        </div>
+        <div>
+          <label className="mb-1.5 block font-mono text-[10px] font-bold uppercase" style={{ letterSpacing: "0.14em" }}>Password</label>
+          <input value={password} onChange={(e) => setPassword(e.target.value)} required type="password" minLength={8} placeholder="Minimum 8 characters" className={inputCls} style={inputStyle} />
+        </div>
+        {err && <p className="border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">{err}</p>}
+        <button disabled={loading} className="btn-primary w-full disabled:opacity-60">
+          {loading ? "Creating…" : "Create account →"}
+        </button>
+      </form>
+      <div className="my-4 flex items-center gap-3 font-mono text-[10px] font-bold uppercase" style={{ letterSpacing: "0.16em", color: "var(--ink-3)" }}>
+        <span className="h-px flex-1" style={{ background: "var(--line-2)" }} />
+        or
+        <span className="h-px flex-1" style={{ background: "var(--line-2)" }} />
       </div>
-    </div>
+      <Link href="/demo" className="btn-ghost w-full">
+        Continue as guest
+      </Link>
+    </AuthSplit>
   );
 }

@@ -61,11 +61,11 @@ export function DashboardActions({ compact, id, slug }: { compact?: boolean; id?
 
   if (compact && id) {
     return (
-      <div className="mt-2 text-[13px]">
+      <div className="mt-3 text-[13px]">
         <div className="flex gap-2">
-          <button onClick={duplicate} disabled={busy} className="flex-1 rounded-lg bg-neutral-100 py-1.5 font-medium text-neutral-700 hover:bg-neutral-200 disabled:opacity-60">Duplicate</button>
-          <button onClick={remove} disabled={busy} className="flex-1 rounded-lg bg-neutral-100 py-1.5 font-medium text-red-700 hover:bg-red-100 disabled:opacity-60">Delete</button>
-          {slug && <Link href={`/s/${slug}`} target="_blank" className="flex-1 rounded-lg bg-neutral-100 py-1.5 text-center font-medium text-neutral-700">Visit</Link>}
+          <button onClick={duplicate} disabled={busy} className="flex-1 border py-2 font-mono text-[10px] font-bold uppercase transition-colors disabled:opacity-60" style={{ borderColor: "var(--line-2)", letterSpacing: "0.1em", color: "var(--ink-2)" }}>Duplicate</button>
+          <button onClick={remove} disabled={busy} className="flex-1 border border-red-300 py-2 font-mono text-[10px] font-bold uppercase transition-colors disabled:opacity-60" style={{ letterSpacing: "0.1em", color: "#b91c1c" }}>Delete</button>
+          {slug && <Link href={`/s/${slug}`} target="_blank" className="flex-1 border py-2 text-center font-mono text-[10px] font-bold uppercase" style={{ borderColor: "var(--line-2)", letterSpacing: "0.1em", color: "var(--ink-2)" }}>Visit</Link>}
         </div>
         {err && <p className="mt-1.5 text-xs text-red-600">{err}</p>}
       </div>
@@ -73,7 +73,7 @@ export function DashboardActions({ compact, id, slug }: { compact?: boolean; id?
   }
 
   return (
-    <button onClick={logout} className="rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-600 hover:border-neutral-400">
+    <button onClick={logout} className="border px-4 py-2.5 font-mono text-[11px] font-bold uppercase transition-colors" style={{ borderColor: "rgba(244,239,228,.3)", letterSpacing: "0.12em", color: "var(--cream-dim)" }}>
       Log out
     </button>
   );

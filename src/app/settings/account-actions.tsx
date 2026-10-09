@@ -61,8 +61,8 @@ export function NameForm({ initial }: { initial: string }) {
         onChange={(e) => setName(e.target.value)}
         aria-label="Display name"
         maxLength={60}
-        className="w-full flex-1 rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-neutral-400"
-        style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}
+        className="w-full flex-1 border px-4 py-2.5 text-sm outline-none transition-colors"
+        style={{ borderColor: "var(--line-2)", background: "var(--surface)", borderRadius: 0 }}
       />
       <button disabled={busy || !name.trim() || name.trim() === initial} className="btn-primary flex-none disabled:opacity-50" style={{ height: 38, fontSize: 13 }}>
         {busy ? "Saving…" : "Save"}
@@ -104,7 +104,7 @@ export function PasswordForm() {
     }
   }
 
-  const input = "w-full rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-neutral-400";
+  const input = "w-full border px-4 py-2.5 text-sm outline-none transition-colors";
   return (
     <form onSubmit={submit} className="grid gap-2.5 sm:grid-cols-2">
       <input value={current} onChange={(e) => setCurrent(e.target.value)} required type="password" placeholder="Current password" aria-label="Current password" className={input} style={{ borderColor: "var(--line-2)", background: "var(--surface)" }} />
@@ -160,14 +160,14 @@ export function DeleteAccount({ email, siteCount }: { email: string; siteCount: 
           onChange={(e) => setConfirm(e.target.value)}
           placeholder={`Type ${email} to confirm`}
           aria-label="Type your email to confirm deletion"
-          className="w-full flex-1 rounded-lg border px-3 py-2 font-mono text-sm outline-none transition-colors focus:border-red-400"
-          style={{ borderColor: "var(--line-2)", background: "var(--surface)" }}
+          className="w-full flex-1 border px-4 py-2.5 font-mono text-sm outline-none transition-colors"
+          style={{ borderColor: "var(--line-2)", background: "var(--surface)", borderRadius: 0 }}
         />
         <button
           onClick={destroy}
           disabled={!armed || busy}
-          className="flex-none rounded-[11px] px-4 py-2 text-[13px] font-semibold text-white transition-opacity disabled:opacity-40"
-          style={{ height: 38, background: "#dc2626" }}
+          className="flex-none px-5 py-2.5 text-[12px] font-bold uppercase text-white transition-opacity disabled:opacity-40"
+          style={{ background: "#b91c1c", letterSpacing: "0.08em" }}
         >
           {busy ? "Deleting…" : "Delete account"}
         </button>

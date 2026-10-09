@@ -856,7 +856,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
         <span className="mono-meta hidden text-[11px] sm:inline" style={{ color: "var(--ink-3)" }}>/s/{site.slug}</span>
         <div className="mx-auto hidden items-center gap-0.5 rounded-[11px] border p-[3px] md:flex" style={{ borderColor: "var(--line)", background: "var(--paper-2)" }}>
           {(["desktop", "tablet", "mobile"] as const).map((d) => (
-            <button key={d} onClick={() => setDevice(d)} className="rounded-lg px-3 py-1 text-xs font-medium capitalize transition-all" style={device === d ? { background: "var(--surface)", color: "var(--ink)", boxShadow: "0 1px 3px rgba(0,0,0,.12)" } : { color: "var(--ink-2)" }}>{d}</button>
+            <button key={d} onClick={() => setDevice(d)} className="rounded-full px-3 py-1 text-xs font-semibold capitalize transition-all" style={device === d ? { background: "var(--accent)", color: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,.12)" } : { color: "var(--ink-2)" }}>{d}</button>
           ))}
         </div>
         <div className="ml-auto flex items-center gap-1.5">
@@ -914,7 +914,7 @@ export function BuilderClient({ initial, initialTab, demo }: { initial: WebsiteR
         <aside className="flex max-h-[46vh] w-full shrink-0 flex-col border-b bg-white md:max-h-none md:w-64 md:border-b-0 md:border-r" style={{ borderColor: "var(--line)" }}>
           <div className="grid grid-cols-3 gap-1 border-b p-2" style={{ borderColor: "var(--line)", background: "var(--paper)" }}>
             {TABS.map((t) => (
-              <button key={t.id} onClick={() => setTab(t.id)} aria-current={tab === t.id ? "page" : undefined} className="mono-meta rounded-lg px-1 py-2 text-[11px] font-semibold uppercase transition-colors" style={tab === t.id ? { background: "var(--ink)", color: "#fff" } : { color: "var(--ink-3)" }}>
+              <button key={t.id} onClick={() => setTab(t.id)} aria-current={tab === t.id ? "page" : undefined} className="mono-meta rounded-full px-1 py-2 text-[11px] font-semibold uppercase transition-colors" style={tab === t.id ? { background: "var(--accent)", color: "#fff" } : { color: "var(--ink-3)" }}>
                 {t.label}
               </button>
             ))}

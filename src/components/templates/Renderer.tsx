@@ -268,7 +268,7 @@ export function TemplateRenderer({ config, templateId, slug, pagePath, selectedI
       {/* Builder credit — always rendered, outside editable sections. */}
       <div className="template-credit px-6 py-5 text-center" style={{ borderTop: `1px solid ${config.theme.surface}` }}>
         <a
-          href="https://dynamic-aayush38.netlify.app"
+          href="https://aayushnp.netlify.app"
           target="_blank"
           rel="noopener noreferrer"
           className="mono-meta text-[11px] uppercase"

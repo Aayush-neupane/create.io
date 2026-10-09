@@ -366,7 +366,7 @@ export function Footer() {
         </div>
         <div className="pt-5">
           <a
-            href="https://dynamic-aayush38.netlify.app"
+            href="https://aayushnp.netlify.app"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Aayush Neupane — portfolio"

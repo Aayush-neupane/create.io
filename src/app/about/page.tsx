@@ -137,7 +137,7 @@ export default async function AboutPage() {
                   free, keep it as you grow.
                 </p>
                 <p className="border-t border-border/25 pt-5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-                  Made by <Link href="https://dynamic-aayush38.netlify.app" target="_blank" rel="noopener noreferrer" className="text-foreground underline underline-offset-4">Aayush Neupane</Link> · No code · No canvas · No kidding
+                  Made by <Link href="https://aayushnp.netlify.app" target="_blank" rel="noopener noreferrer" className="text-foreground underline underline-offset-4">Aayush Neupane</Link> · No code · No canvas · No kidding
                 </p>
               </div>
             </div>
